@@ -1,16 +1,21 @@
 # prabhas -- # setwd("~/Dropbox/Nigeria/Nigeria 661 Baseline Data Cleaning/")
-source("scripts/formhub.R")
+# prabhas -- # source("~/Code/nga_cleaning_scripts/formhub.R")
+# source("formhub.R")
 library(stringr)
 extraSchema = setNames(data.frame(rbind(
                     c("mylga", "select one", "LGA"),
                     c("mylga_state", "select one", "State"))),
               c("name", "type", "label"))
-#education <- formhubRead("raw_data/Education_05_06_2012_2012_10_05_09_56_27.csv",
-#                         "raw_data/json_schemas/Education_05_06_2012.json",extraSchema = extraSchema)
+education <- formhubRead("raw_data/Education_05_06_2012_2012_10_05_09_56_27.csv",
+                         "raw_data/json_schemas/Education_05_06_2012.json",
+                         extraSchema = extraSchema)
+education2 <- formhubRead("raw_data/Education_17_04_2012_2012_10_05_16_37_54.csv",
+                         "raw_data/json_schemas/Education_05_06_2012.json",
+                         extraSchema = extraSchema)
+education3 <- formhubRead("raw_data/Education_22_05_2012_2012_10_22_11_16_03.csv",
+                         "raw_data/json_schemas/Education_05_06_2012.json",
+                         extraSchema = extraSchema)
 
-education <- read.csv("raw_data/Education_05_06_2012_2012_10_05_09_56_27.csv", header = TRUE)
-education2 <- read.csv("raw_data/Education_17_04_2012_2012_10_05_16_37_54.csv", header = TRUE)
-education3 <- read.csv("raw_data/Education_22_05_2012_2012_10_22_11_16_03.csv", header = TRUE)
 health <- read.csv("raw_data/Health_05_06_2012_2012_10_03_16_48_41.csv", header = TRUE)
 health2 <- read.csv("raw_data/Health_17_04_2012_2012_10_03_16_49_35.csv", header = TRUE)
 health3 <- read.csv("raw_data/Health_22_05_2012_2012_10_03_16_51_22.csv", header = TRUE)

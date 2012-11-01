@@ -1,7 +1,7 @@
 # prabhas -- # setwd("~/Dropbox/Nigeria/Nigeria 661 Baseline Data Cleaning/")
 library(RJSONIO)
 formhubRead  = function(csvfilename, jsonfilename, extraSchema) {
-  dataframe <- read.csv(csvfilename, stringsAsFactors=FALSE, header=TRUE)
+  dataframe <- read.csv(csvfilename, stringsAsFactors=FALSE, header=TRUE, na.strings=c("n/a"))
   schemadf <- schema_to_df(fromJSON(jsonfilename))
   
   # over-ride select items with "extraSchema" -- note this assumes that first found schema element is used
@@ -28,12 +28,12 @@ recastRVectorBasedOnFormhubType = function(RVector, FormhubType) {
 }
 
 recastDataFrameBasedOnSchemaDF = function(df, schemadf) {
-  setNames(ldply(names(df), function(colName) {
+  data.frame(setNames(lapply(names(df), function(colName) {
     matches <- str_match(colName, '([^.]*)[-.]([^.]*)')
     FormhubType <- subset(schemadf, subset=(name==colName))[[2]]
     #print(paste(colName, " ", FormhubType))
     recastRVectorBasedOnFormhubType(df[[colName]], FormhubType)
-  }), names(df))
+  }), names(df)))
 }
 
 removecolumns <- function(df, columnNameRegExpMatcher) {
