@@ -36,6 +36,5 @@ recastDataFrameBasedOnSchemaDF = function(df, schemadf) {
 }
 
 removecolumns <- function(df, columnNameRegExpMatcher) {
-  df[,-which(str_detect(names(df), columnNameRegExpMatcher))]
   df[,-which(any(str_detect(names(df), columnNameRegExpMatcher)))]
 }
