@@ -28,13 +28,14 @@ recastRVectorBasedOnFormhubType = function(RVector, FormhubType) {
 }
 
 recastDataFrameBasedOnSchemaDF = function(df, schemadf) {
-  setNames(lapply(names(df), function(colName) {
+  setNames(ldply(names(df), function(colName) {
+    matches <- str_match(colName, '([^.]*)[-.]([^.]*)')
     FormhubType <- subset(schemadf, subset=(name==colName))[[2]]
-    print(paste(colName, " ", FormhubType))
+    #print(paste(colName, " ", FormhubType))
     recastRVectorBasedOnFormhubType(df[[colName]], FormhubType)
   }), names(df))
 }
 
 removecolumns <- function(df, columnNameRegExpMatcher) {
-  df[,-which(any(str_detect(names(df), columnNameRegExpMatcher)))]
+  df[,-which(str_detect(names(df), columnNameRegExpMatcher))]
 }
