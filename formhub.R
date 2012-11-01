@@ -34,3 +34,7 @@ recastDataFrameBasedOnSchemaDF = function(df, schemadf) {
     recastRVectorBasedOnFormhubType(df[[colName]], FormhubType)
   }), names(df))
 }
+
+removecolumns <- function(df, columnNameRegExpMatcher) {
+  df[,-which(str_detect(names(df), columnNameRegExpMatcher))]
+}
