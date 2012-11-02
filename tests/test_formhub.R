@@ -53,17 +53,28 @@ test_that("passing extraSchema in works", {
   expect_true(is.factor(edu_df_with_extra$mylga_state))
 })
 
+test_that("passing na.strings works", {
+  na.strings = c("southeast")
+  edu_df_wo_SE <- formhubRead(edu_datafile, edu_schemafile, na.strings=na.strings)
+  expect_equal(levels(edu_df_wo_SE$mylga_zone), c("northwest"))
+})
+
+
 test_that("column deletion works", {
-  edu_df_dropped <- removecolumns(edu_df, "mylga_.*_in_.*")
+  edu_df_dropped <- removeColumns(edu_df, "")
+  edu_df_dropped <- removeColumns(edu_df_dropped, NA)
+  expect_equal(names(edu_df), names(edu_df_dropped))
+  
+  edu_df_dropped <- removeColumns(edu_df, "mylga_.*_in_.*")
   expect_equal(names(edu_df_dropped)[which(str_detect(names(edu_df_dropped), "mylga"))],
                c("mylga_zone", "mylga_state", "mylga"))
 
-  edu_df_dropped <- removecolumns(edu_df, "^num.*")
+  edu_df_dropped <- removeColumns(edu_df, "^num.*")
   expect_false(any(str_detect("num", names(edu_df_dropped))))
   expect_false("num_pry_total_gender.num_pry_female" %in% names(edu_df_dropped))
   expect_true("mylga_lga_in_benue" %in% names(edu_df_dropped))
 
-  edu_df_dropped <- removecolumns(edu_df, c("num.*", "mylga_.*"))
+  edu_df_dropped <- removeColumns(edu_df, c("num.*", "mylga_.*"))
   #expect_false("mylga_lga_in_benue" %in% names(edu_df_dropped))
   expect_false("num_pry_total_gender.num_pry_male" %in% names(edu_df_dropped))
   expect_false("mylga_lga_in_benue" %in% names(edu_df_dropped))

@@ -1,20 +1,25 @@
 # prabhas -- # setwd("~/Dropbox/Nigeria/Nigeria 661 Baseline Data Cleaning/")
 # prabhas -- # source("~/Code/nga_cleaning_scripts/formhub.R")
-# source("formhub.R")
-library(stringr)
+source("scripts/formhub.R")
+
 extraSchema = setNames(data.frame(rbind(
                     c("mylga", "select one", "LGA"),
                     c("mylga_state", "select one", "State"))),
               c("name", "type", "label"))
+dropCols = c("mylga_.*_in_.*", ".*_calc") # cascading selects; calcs with propagated 999s
+
 education <- formhubRead("raw_data/Education_05_06_2012_2012_10_05_09_56_27.csv",
                          "raw_data/json_schemas/Education_05_06_2012.json",
-                         extraSchema = extraSchema)
+                         extraSchema = extraSchema, dropCols=dropCols)
 education2 <- formhubRead("raw_data/Education_17_04_2012_2012_10_05_16_37_54.csv",
                          "raw_data/json_schemas/Education_05_06_2012.json",
-                         extraSchema = extraSchema)
+                         extraSchema = extraSchema, dropCols=dropCols)
 education3 <- formhubRead("raw_data/Education_22_05_2012_2012_10_22_11_16_03.csv",
                          "raw_data/json_schemas/Education_05_06_2012.json",
-                         extraSchema = extraSchema)
+                         extraSchema = extraSchema, dropCols=dropCols)
+(names(education) == names(education2)) && (names(education2) == names(education3)) && (names(education3) == names(education))
+merged_education <- rbind(education, education2, education3)
+
 
 health <- read.csv("raw_data/Health_05_06_2012_2012_10_03_16_48_41.csv", header = TRUE)
 health2 <- read.csv("raw_data/Health_17_04_2012_2012_10_03_16_49_35.csv", header = TRUE)
@@ -27,7 +32,7 @@ nigeria_remove <- function(df) { removecolumns(df, "mylga_.*_in_.*") }
 education <- nigeria_remove(education)
 education2 <- nigeria_remove(education2)
 education3 <- nigeria_remove(education3)
-(names(education) == names(education2)) && (names(education2) == names(education3)) && (names(education3) == names(education))
+
 health <- nigeria_remove(health)
 health2 <- nigeria_remove(health2)
 health3 <- nigeria_remove(health3)
@@ -37,7 +42,6 @@ water2 <- nigeria_remove(water2)
 water3 <- nigeria_remove(water3)
 (names(water) == names(water2)) && (names(water2) == names(water3)) && (names(water3) == names(water))
 
-merged_education <- rbind(education, education2, education3)
 merged_health <- rbind(health, health2, health3)
 merged_water <- rbind(water, water2, water3)
 

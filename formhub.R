@@ -1,13 +1,13 @@
 # prabhas -- # setwd("~/Dropbox/Nigeria/Nigeria 661 Baseline Data Cleaning/")
 library(RJSONIO)
-formhubRead  = function(csvfilename, jsonfilename, extraSchema=data.frame()) {
-  dataframe <- read.csv(csvfilename, stringsAsFactors=FALSE, header=TRUE, na.strings=c("n/a"))
+formhubRead  = function(csvfilename, jsonfilename, extraSchema=data.frame(), dropCols="", na.strings=c("n/a")) {
+  dataframe <- read.csv(csvfilename, stringsAsFactors=FALSE, header=TRUE, na.strings=na.strings)
   schemadf <- schema_to_df(fromJSON(jsonfilename))
   
   # over-ride select items with "extraSchema" -- note this assumes that first found schema element is used
   schemadf <- rbind(extraSchema, schemadf)
   
-  recastDataFrameBasedOnSchemaDF(dataframe, schemadf)
+  removeColumns(recastDataFrameBasedOnSchemaDF(dataframe, schemadf), dropCols)
 }
 
 schema_to_df = function(schema) 
@@ -40,7 +40,11 @@ recastDataFrameBasedOnSchemaDF = function(df, schemadf) {
 }
 
 # Remove Column names passed in as regex. If list of strings passed in, match any name
-removecolumns <- function(df, columnNameRegExpMatcher) {
-  orMatcher <- paste(columnNameRegExpMatcher, collapse="|")
-  df[,-which(str_detect(names(df), orMatcher))]
+removeColumns <- function(df, columnNameRegExpMatcher) {
+  if (columnNameRegExpMatcher=="" || is.na(columnNameRegExpMatcher)) { 
+    df 
+  } else {
+    orMatcher <- paste(columnNameRegExpMatcher, collapse="|")
+    df[,-which(str_detect(names(df), orMatcher))]
+  }
 }
