@@ -39,6 +39,8 @@ recastDataFrameBasedOnSchemaDF = function(df, schemadf) {
   df
 }
 
+# Remove Column names passed in as regex. If list of strings passed in, match any name
 removecolumns <- function(df, columnNameRegExpMatcher) {
-  df[,-which(str_detect(names(df), columnNameRegExpMatcher))]
+  orMatcher <- paste(columnNameRegExpMatcher, collapse="|")
+  df[,-which(str_detect(names(df), orMatcher))]
 }
