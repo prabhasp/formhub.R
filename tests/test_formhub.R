@@ -18,6 +18,8 @@ test_that("reCastingRVectors Works as expected", {
   expect_true(is.character(edu_rawdf$mylga))
   expect_true(is.factor(recastRVectorBasedOnFormhubType(edu_rawdf$mylga, "select one")))
   expect_true(is.character(recastRVectorBasedOnFormhubType(edu_rawdf$ward, "text")))
+  expect_true(is.numeric(recastRVectorBasedOnFormhubType(
+      edu_rawdf$num_students_total_gender.num_students_female, "integer")))
 })
 
 
