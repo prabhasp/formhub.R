@@ -1,6 +1,6 @@
 # prabhas -- # setwd("~/Dropbox/Nigeria/Nigeria 661 Baseline Data Cleaning/")
 library(RJSONIO)
-formhubRead  = function(csvfilename, jsonfilename, extraSchema) {
+formhubRead  = function(csvfilename, jsonfilename, extraSchema=data.frame()) {
   dataframe <- read.csv(csvfilename, stringsAsFactors=FALSE, header=TRUE, na.strings=c("n/a"))
   schemadf <- schema_to_df(fromJSON(jsonfilename))
   
@@ -19,11 +19,13 @@ recastRVectorBasedOnFormhubType = function(RVector, FormhubType) {
   if(is.null(FormhubType) || length(FormhubType) == 0) {
     RVector
   } else if (FormhubType == "integer" || FormhubType == "decimal") {
-      as.numeric(RVector)
+      as.numeric(as.character(RVector))
   } else if (as.logical(length(grep("select.one", FormhubType)))) {
       as.factor(RVector)
+  } else if (FormhubType == "string" || FormhubType == "text") {
+      as.character(RVector)
   } else {
-      RVector
+      as.character(RVector)
   }
 }
 
