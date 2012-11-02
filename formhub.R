@@ -2,12 +2,13 @@
 library(RJSONIO)
 formhubRead  = function(csvfilename, jsonfilename, extraSchema=data.frame(), dropCols="", na.strings=c("n/a")) {
   dataframe <- read.csv(csvfilename, stringsAsFactors=FALSE, header=TRUE, na.strings=na.strings)
+  dataframe <- removeColumns(dataframe, dropCols)
   schemadf <- schema_to_df(fromJSON(jsonfilename))
   
   # over-ride select items with "extraSchema" -- note this assumes that first found schema element is used
   schemadf <- rbind(extraSchema, schemadf)
   
-  removeColumns(recastDataFrameBasedOnSchemaDF(dataframe, schemadf), dropCols)
+  recastDataFrameBasedOnSchemaDF(dataframe, schemadf)
 }
 
 schema_to_df = function(schema) 

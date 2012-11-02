@@ -20,6 +20,12 @@ education3 <- formhubRead("raw_data/Education_22_05_2012_2012_10_22_11_16_03.csv
 (names(education) == names(education2)) && (names(education2) == names(education3)) && (names(education3) == names(education))
 merged_education <- rbind(education, education2, education3)
 
+# challenge = get merged_education and merged_education2 to have same str()
+na.strings = c('999', '9999', '99999', '999999' , 'n/a')
+merged_education2 <- formhubRead("in_process_data/merged/Education_661_Merged.csv",
+                                 "raw_data/json_schemas/Education_05_06_2012.json",
+                                 extraSchema = extraSchema, dropCols=dropCols, na.strings=na.strings)
+
 
 health <- read.csv("raw_data/Health_05_06_2012_2012_10_03_16_48_41.csv", header = TRUE)
 health2 <- read.csv("raw_data/Health_17_04_2012_2012_10_03_16_49_35.csv", header = TRUE)
