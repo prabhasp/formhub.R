@@ -35,22 +35,6 @@ schema_to_df = function(schema, prefix="") {
   })
 }
 
-recastRVectorBasedOnFormhubType = function(RVector, FormhubType) {
-  if(is.null(FormhubType) || length(FormhubType) == 0) {
-    RVector
-  } else if (FormhubType == "integer" || FormhubType == "decimal") {
-      as.numeric(as.character(RVector))
-  } else if (FormhubType == "boolean") {
-    as.logical(RVector)
-  } else if (as.logical(length(grep("select.one", FormhubType)))) {
-      as.factor(RVector)
-  } else if (FormhubType == "string" || FormhubType == "text") {
-      as.character(RVector)
-  } else {
-      as.character(RVector)
-  }
-}
-
 recastDataFrameBasedOnSchemaDF = function(df, schemadf) {
   # do this by type
   #TODO: refactor
