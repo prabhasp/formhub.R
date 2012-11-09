@@ -52,13 +52,23 @@ recastRVectorBasedOnFormhubType = function(RVector, FormhubType) {
 }
 
 recastDataFrameBasedOnSchemaDF = function(df, schemadf) {
-  for (colName in names(df)) {
-    #matches <- str_match(colName, '([^.]*)[-.]([^.]*)')
-    FormhubType <- subset(schemadf, subset=(name==colName))[[2]]
-    #print(paste(colName, " ", FormhubType))
-    df[[colName]] <- recastRVectorBasedOnFormhubType(df[[colName]], FormhubType)
+  # do this by type
+  #TODO: refactor
+  #TODO: pre-allocate newdf for performance boost
+  
+  subsetdfbytype <- function(df, types) {
+    df[,which(names(df) %in% (subset(schemadf, type %in% types)$name))]
   }
-  df
+  ints <- subsetdfbytype(df, c("integer", "decimal"))
+  bools <- subsetdfbytype(df, c("boolean"))
+  cats <- subsetdfbytype(df, c("select one"))
+  rest <- df[,which(!names(df) %in% c(names(ints), names(bools), names(cats)))]
+
+  newdf <- colwise(as.numeric)(ints)
+  newdf <- cbind(newdf, colwise(as.logical)(bools))
+  newdf <- cbind(newdf, colwise(as.factor)(cats))
+  newdf <- cbind(newdf, colwise(as.character)(rest))
+  newdf  
 }
 
 # Remove Column names passed in as regex. If list of strings passed in, match any name

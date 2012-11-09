@@ -12,6 +12,12 @@ edu_rawdf <- read.csv(edu_datafile, na.strings="n/a", stringsAsFactors=FALSE, he
 edu_df <- formhubRead(edu_datafile, edu_schemafile)
 schema_df <- schema_to_df(fromJSON(edu_schemafile))
 
+test_that("schemadf is read properly", {
+  typeofname <- function(nom) { subset(schema_df, name==nom)$type }
+  expect_true(typeofname("km_to_catchment_area") == "integer")
+  #expect_true(typeofname("generator_funct_yn") == "select one")
+})
+
 test_that("reCastingRVectors Works as expected", {
   expect_true(is.character(edu_rawdf$mylga))
   
@@ -39,7 +45,7 @@ test_that("groups and select multiples convert correctly", {
   expect_true(is.factor(edu_rawdf2$power_sources.generator))
   expect_true(is.factor(edu_rawdf2$power_sources.grid))
   
-  expect_warning(edu_df2 <- recastDataFrameBasedOnSchemaDF(edu_rawdf2, schema_df))
+  edu_df2 <- recastDataFrameBasedOnSchemaDF(edu_rawdf2, schema_df)
   expect_true(is.numeric(edu_df2$num_pry_total_gender.num_pry_female))
   expect_true(is.numeric(edu_df2$num_pry_total_gender.num_pry_male))
   
