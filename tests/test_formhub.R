@@ -1,11 +1,12 @@
 library(testthat)
 
 source("~/Code/nga_cleaning_scripts/formhub.R")
+test_dir = ""
+# test_dir = "~/Code/nga_cleaning_scripts/tests/"
 # test_dir("~/Code/nga_cleaning_scripts/tests/")
-# setwd("~/Code/nga_cleaning_scripts/tests/")
 
-edu_datafile <- "fixtures/edu1.csv"
-edu_schemafile <- "fixtures/edu1.json"
+edu_datafile <- paste(test_dir, "fixtures/edu1.csv", sep="")
+edu_schemafile <- paste(test_dir, "fixtures/edu1.json", sep="")
 
 edu_rawdf <- read.csv(edu_datafile, na.strings="n/a", stringsAsFactors=FALSE, header=TRUE)
 edu_df <- formhubRead(edu_datafile, edu_schemafile)
@@ -35,10 +36,15 @@ test_that("groups and select multiples convert correctly", {
   #again, just to make sure input is perpared
   expect_true(is.factor(edu_rawdf2$num_pry_total_gender.num_pry_female))
   expect_true(is.factor(edu_rawdf2$num_pry_total_gender.num_pry_male))
+  expect_true(is.factor(edu_rawdf2$power_sources.generator))
+  expect_true(is.factor(edu_rawdf2$power_sources.grid))
   
   expect_warning(edu_df2 <- recastDataFrameBasedOnSchemaDF(edu_rawdf2, schema_df))
   expect_true(is.numeric(edu_df2$num_pry_total_gender.num_pry_female))
   expect_true(is.numeric(edu_df2$num_pry_total_gender.num_pry_male))
+  
+  expect_true(is.logical(edu_df2$power_sources.generator))
+  expect_true(is.logical(edu_df2$power_sources.grid))
 })
 
 test_that("formhubRead converted types properly", {

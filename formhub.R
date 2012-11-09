@@ -21,6 +21,12 @@ schema_to_df = function(schema, prefix="") {
   ldply(schema[["children"]], function(child) {
       if (child[["type"]] == "group") {
         schema_to_df(child, child[["name"]])
+      } else if (child[["type"]] == "select all that apply") {
+        options <- child[["children"]]
+        ldply(options, function(option) { 
+          c(name=paste(child[["name"]],option[["name"]], sep="."), 
+            label=option[["label"]], type="boolean")
+        })   
       } else {
         name <- if (prefix == "") { child[["name"]] } else { paste(prefix, child[["name"]], sep=".") }
         data.frame(name=name, type=child[["type"]], 
@@ -34,6 +40,8 @@ recastRVectorBasedOnFormhubType = function(RVector, FormhubType) {
     RVector
   } else if (FormhubType == "integer" || FormhubType == "decimal") {
       as.numeric(as.character(RVector))
+  } else if (FormhubType == "boolean") {
+    as.logical(RVector)
   } else if (as.logical(length(grep("select.one", FormhubType)))) {
       as.factor(RVector)
   } else if (FormhubType == "string" || FormhubType == "text") {
