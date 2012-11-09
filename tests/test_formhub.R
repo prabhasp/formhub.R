@@ -14,8 +14,14 @@ schema_df <- schema_to_df(fromJSON(edu_schemafile))
 
 test_that("schemadf is read properly", {
   typeofname <- function(nom) { subset(schema_df, name==nom)$type }
+  expect_true(typeofname("start") == "start")
   expect_true(typeofname("km_to_catchment_area") == "integer")
-  #expect_true(typeofname("generator_funct_yn") == "select one")
+  expect_true(typeofname("num_toilet.num_toilet_boy") == "integer")
+  expect_true(typeofname("generator_funct_yn") == "select one")
+  expect_true(typeofname("uuid") == "calculate")
+  expect_true(typeofname("respondent_name") == "text")
+  expect_true(typeofname("respondent_contact") == "string")
+  expect_true(typeofname("power_sources.generator") == "boolean")
 })
 
 test_that("reCastingRVectors Works as expected", {
