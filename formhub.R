@@ -54,7 +54,6 @@ recastRVectorBasedOnFormhubType = function(RVector, FormhubType) {
 recastDataFrameBasedOnSchemaDF = function(df, schemadf) {
   # do this by type
   #TODO: refactor
-  #TODO: pre-allocate newdf for performance boost
   
   subsetdfbytype <- function(df, types) {
     df[,which(names(df) %in% (subset(schemadf, type %in% types)$name))]
