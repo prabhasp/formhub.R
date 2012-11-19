@@ -1,9 +1,10 @@
 ## ALIASES / PREP ##
-
-e <- merged_education
+# prabhas -- # setwd("~/Dropbox/Nigeria/Nigeria 661 Baseline Data Cleaning/")
+source("scripts/formhub.R")
+e <- read.csv("in_process_data/999cleaned/Education_661_999Cleaned.csv")
 
 ## SNAPSHOT ##
-ed <- data.frame(uuid=e$uuid, mylga=e$mylga, mylga_state=e$mylga_state, mylga_zone=e$mylga_zone)
+ed <- subset(e, select=c("uuid", "mylga", "mylga_state", "mylga_zone"))
 # ed <- e
 ed$`Type` <- e$education_type
 ed$school_1kmplus_catchment_area <- e$km_to_catchment_area > 1
@@ -88,7 +89,7 @@ ed$provide_pens_yn <- e$provide_pens_yn
 ed$teacher_guide_yn <- e$teacher_guide_yn
 ed$functioning_library_yn <- e$functioning_library_yn
 
-
+write.csv(ed, "in_process_data/nmis/Education_661_NMIS.csv")
 str(ed)
-summary(ed)
 head(ed)
+summary(ed)
