@@ -7,34 +7,40 @@ test_dir = ""
 
 edu_datafile <- paste(test_dir, "fixtures/edu1.csv", sep="")
 edu_schemafile <- paste(test_dir, "fixtures/edu1.json", sep="")
+hlt_schemafile <- paste(test_dir, "fixtures/healthschema.json", sep="")
 
 edu_rawdf <- read.csv(edu_datafile, na.strings="n/a", stringsAsFactors=FALSE, header=TRUE)
 edu_df <- formhubRead(edu_datafile, edu_schemafile)
-schema_df <- schema_to_df(fromJSON(edu_schemafile))
+edu_schema_df <- schema_to_df(fromJSON(edu_schemafile))
+hlt_schema_df <- schema_to_df(fromJSON(hlt_schemafile))
+
 
 test_that("schemadf is read properly", {
-  typeofname <- function(nom) { subset(schema_df, name==nom)$type }
-  expect_true(typeofname("start") == "start")
-  expect_true(typeofname("km_to_catchment_area") == "integer")
-  expect_true(typeofname("num_toilet.num_toilet_boy") == "integer")
-  expect_true(typeofname("generator_funct_yn") == "select one")
-  expect_true(typeofname("uuid") == "calculate")
-  expect_true(typeofname("respondent_name") == "text")
-  expect_true(typeofname("respondent_contact") == "string")
-  expect_true(typeofname("power_sources.generator") == "boolean")
-})
-
-test_that("reCastingRVectors Works as expected", {
-  expect_true(is.character(edu_rawdf$mylga))
+  edu_typeofname <- function(nom) { subset(edu_schema_df, name==nom)$type }
+  expect_true(edu_typeofname("start") == "start")
+  expect_true(edu_typeofname("km_to_catchment_area") == "integer")
+  expect_true(edu_typeofname("num_toilet.num_toilet_boy") == "integer")
+  expect_true(edu_typeofname("generator_funct_yn") == "select one")
+  expect_true(edu_typeofname("uuid") == "calculate")
+  expect_true(edu_typeofname("respondent_name") == "text")
+  expect_true(edu_typeofname("respondent_contact") == "string")
+  expect_true(edu_typeofname("power_sources.generator") == "boolean")
   
-  expect_true(is.factor(recastRVectorBasedOnFormhubType(edu_rawdf$mylga, "select one")))
-  expect_true(is.character(recastRVectorBasedOnFormhubType(edu_rawdf$ward, "text")))
-
-  expect_true(is.numeric(recastRVectorBasedOnFormhubType(
-      edu_rawdf$num_students_total_gender.num_students_female, "integer")))
-  expect_true(is.numeric(recastRVectorBasedOnFormhubType(
-    edu_rawdf$num_students_total_gender.num_students_female, "integer")))
+  hlt_typeofname <- function(nom) { subset(hlt_schema_df, name==nom)$type }
+  expect_true(hlt_typeofname("not_for_private_1.toilets_available.num_flush_or_pour_flush_piped")=="integer")
 })
+
+# test_that("reCastingRVectors Works as expected", {
+#   expect_true(is.character(edu_rawdf$mylga))
+#   
+#   expect_true(is.factor(recastRVectorBasedOnFormhubType(edu_rawdf$mylga, "select one")))
+#   expect_true(is.character(recastRVectorBasedOnFormhubType(edu_rawdf$ward, "text")))
+# 
+#   expect_true(is.numeric(recastRVectorBasedOnFormhubType(
+#       edu_rawdf$num_students_total_gender.num_students_female, "integer")))
+#   expect_true(is.numeric(recastRVectorBasedOnFormhubType(
+#     edu_rawdf$num_students_total_gender.num_students_female, "integer")))
+# })
 
 
 test_that("pre-conversion expectations are correct (if failing, fix dataset)", {
@@ -51,7 +57,7 @@ test_that("groups and select multiples convert correctly", {
   expect_true(is.factor(edu_rawdf2$power_sources.generator))
   expect_true(is.factor(edu_rawdf2$power_sources.grid))
   
-  edu_df2 <- recastDataFrameBasedOnSchemaDF(edu_rawdf2, schema_df)
+  edu_df2 <- recastDataFrameBasedOnSchemaDF(edu_rawdf2, edu_schema_df)
   expect_true(is.numeric(edu_df2$num_pry_total_gender.num_pry_female))
   expect_true(is.numeric(edu_df2$num_pry_total_gender.num_pry_male))
   

@@ -18,17 +18,18 @@ formhubCast  = function(dataDataFrame, schemaJSON, extraSchema=data.frame(), dro
 
 
 schema_to_df = function(schema, prefix="") {
+  
   ldply(schema[["children"]], function(child) {
-      #if (child[["name"]] == "generator_funct_yn") { browser() }
+      nom <- if (prefix == "") { child[["name"]] } else { paste(prefix, child[["name"]], sep=".") }
+  
       if (child[["type"]] == "group") {
-        schema_to_df(child, child[["name"]])
+        schema_to_df(child, nom)
       } else if (child[["type"]] == "select all that apply") {
         options <- child[["children"]]
         names <- paste(child[["name"]], sapply(options, function(o) o['name']), sep=".")
         labels <- sapply(options, function(o) o['label'])
         data.frame(name=names, label=labels, type="boolean")
       } else {
-        nom <- if (prefix == "") { child[["name"]] } else { paste(prefix, child[["name"]], sep=".") }
         data.frame(name=nom, type=child[["type"]], 
                    label=if("label" %in% names(child)) {child[["label"]]} else {child[["name"]]})
       }
