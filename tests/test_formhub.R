@@ -14,7 +14,6 @@ edu_df <- formhubRead(edu_datafile, edu_schemafile)
 edu_schema_df <- schema_to_df(fromJSON(edu_schemafile))
 hlt_schema_df <- schema_to_df(fromJSON(hlt_schemafile))
 
-
 test_that("schemadf is read properly", {
   edu_typeofname <- function(nom) { subset(edu_schema_df, name==nom)$type }
   expect_true(edu_typeofname("start") == "start")
@@ -26,8 +25,18 @@ test_that("schemadf is read properly", {
   expect_true(edu_typeofname("respondent_contact") == "string")
   expect_true(edu_typeofname("power_sources.generator") == "boolean")
   
+  expect_true(is.factor(edu_schema_df$type))
+  expect_true(is.character(edu_schema_df$name))
+  expect_true(is.character(edu_schema_df$label))
+  
   hlt_typeofname <- function(nom) { subset(hlt_schema_df, name==nom)$type }
   expect_true(hlt_typeofname("not_for_private_1.toilets_available.num_flush_or_pour_flush_piped")=="integer")
+})
+
+test_that("formhubCast can handle unexpected inputs", {
+  extraSchema = data.frame(name=c("mylga"), type=c("select one"), label=c("LGA")))
+  emptydf = data.frame()
+  expect_error(formhubCast(edu_rawdf, edu_schema_df, extraSchema=extraSchema))
 })
 
 # test_that("reCastingRVectors Works as expected", {

@@ -5,6 +5,7 @@ library(plyr)
 
 formhubRead  = function(csvfilename, jsonfilename, extraSchema=data.frame(), dropCols="", na.strings=c("n/a")) {
   dataframe <- read.csv(csvfilename, stringsAsFactors=FALSE, header=TRUE, na.strings=na.strings)
+  
   formhubCast(dataframe, fromJSON(jsonfilename), extraSchema=extraSchema, dropCols=dropCols)
 }
 
@@ -12,14 +13,15 @@ formhubCast  = function(dataDataFrame, schemaJSON, extraSchema=data.frame(), dro
   dataDataFrame <- removeColumns(dataDataFrame, dropCols)
   schemadf <- rbind(extraSchema, schema_to_df(schemaJSON))
   # over-ride select items with "extraSchema" -- note this assumes that first found schema element is used
+  #stopifnot(is.character(schemadf$name) & is.character(schemadf$label) & is.character(extraSchema$name)
+  #          & is.character(extraSchema$label))
 
   recastDataFrameBasedOnSchemaDF(dataDataFrame, schemadf)
 }
 
 
 schema_to_df = function(schema, prefix="") {
-  
-  ldply(schema[["children"]], function(child) {
+  df <- ldply(schema[["children"]], function(child) {
       nom <- if (prefix == "") { child[["name"]] } else { paste(prefix, child[["name"]], sep=".") }
   
       if (child[["type"]] == "group") {
@@ -34,25 +36,32 @@ schema_to_df = function(schema, prefix="") {
                    label=if("label" %in% names(child)) {child[["label"]]} else {child[["name"]]})
       }
   })
+  df$type <- as.factor(df$type)
+  df$name <- as.character(df$name)
+  df$label <- as.character(df$label)
+  df
 }
 
 recastDataFrameBasedOnSchemaDF = function(df, schemadf) {
   # do this by type
   #TODO: refactor
-  
-  subsetdfbytype <- function(df, types) {
-    df[,which(names(df) %in% (subset(schemadf, type %in% types)$name))]
+  stopifnot(is.character(schemadf$name))
+  colsOfType <- function(df, types) {
+    cols <- c(subset(schemadf, type %in% types)$name)
+    cols[cols %in% names(df)]
   }
-  ints <- subsetdfbytype(df, c("integer", "decimal"))
-  bools <- subsetdfbytype(df, c("boolean"))
-  cats <- subsetdfbytype(df, c("select one"))
+  
+  ints <- colsOfType(df, c("integer", "decimal"))
+  bools <- colsOfType(df, c("boolean"))
+  cats <- colsOfType(df, c("select one"))
   rest <- df[,which(!names(df) %in% c(names(ints), names(bools), names(cats)))]
-
-  newdf <- colwise(as.numeric)(ints)
-  newdf <- cbind(newdf, colwise(as.logical)(bools))
-  newdf <- cbind(newdf, colwise(as.factor)(cats))
-  newdf <- cbind(newdf, colwise(as.character)(rest))
-  newdf  
+  
+  df[names(ints)] <- colwise(as.numeric)(df[names(ints)])
+  df[names(bools)] <- colwise(as.logical)(df[names(bools)])
+  df[names(cats)] <- colwise(as.factor)(df[names(cats)])
+  df[names(rest)] <- colwise(as.character)(df[names(rest)])
+  
+  df
 }
 
 # Remove Column names passed in as regex. If list of strings passed in, match any name
