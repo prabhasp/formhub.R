@@ -1,8 +1,10 @@
 library(testthat)
 
-source("~/Code/nga_cleaning_scripts/formhub.R")
+# source("~/Code/nga_cleaning_scripts/formhub.R")
+source("~/Dropbox/Nigeria/Nigeria 661 Baseline Data Cleaning/scripts/formhub.R")
 test_dir = ""
 # test_dir = "~/Code/nga_cleaning_scripts/tests/"
+# test_dir("~/Code/nga_cleaning_scripts/tests/")
 # test_dir("~/Code/nga_cleaning_scripts/tests/")
 
 edu_datafile <- paste(test_dir, "fixtures/edu1.csv", sep="")
@@ -34,7 +36,7 @@ test_that("schemadf is read properly", {
 })
 
 test_that("formhubCast can handle unexpected inputs", {
-  extraSchema = data.frame(name=c("mylga"), type=c("select one"), label=c("LGA")))
+  extraSchema = data.frame(name=c("mylga"), type=c("select one"), label=c("LGA"))
   emptydf = data.frame()
   expect_error(formhubCast(edu_rawdf, edu_schema_df, extraSchema=extraSchema))
 })
