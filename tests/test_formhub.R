@@ -1,10 +1,9 @@
 library(testthat)
 
-# source("~/Code/nga_cleaning_scripts/formhub.R")
-source("~/Dropbox/Nigeria/Nigeria 661 Baseline Data Cleaning/scripts/formhub.R")
+source("~/Code/nga_cleaning_scripts/formhub.R")
+# source("~/Dropbox/Nigeria/Nigeria 661 Baseline Data Cleaning/scripts/formhub.R")
 test_dir = ""
 # test_dir = "~/Code/nga_cleaning_scripts/tests/"
-# test_dir("~/Code/nga_cleaning_scripts/tests/")
 # test_dir("~/Code/nga_cleaning_scripts/tests/")
 
 edu_datafile <- paste(test_dir, "fixtures/edu1.csv", sep="")
@@ -33,12 +32,6 @@ test_that("schemadf is read properly", {
   
   hlt_typeofname <- function(nom) { subset(hlt_schema_df, name==nom)$type }
   expect_true(hlt_typeofname("not_for_private_1.toilets_available.num_flush_or_pour_flush_piped")=="integer")
-})
-
-test_that("formhubCast can handle unexpected inputs", {
-  extraSchema = data.frame(name=c("mylga"), type=c("select one"), label=c("LGA"))
-  emptydf = data.frame()
-  expect_error(formhubCast(edu_rawdf, edu_schema_df, extraSchema=extraSchema))
 })
 
 # test_that("reCastingRVectors Works as expected", {
@@ -85,16 +78,28 @@ test_that("formhubRead converted types properly", {
 
   expect_true(is.character(edu_df$ward)) #type : string / text
   expect_true(is.character(edu_df$community))
-  expect_true(is.character(edu_df$respondent_contact)) # type: phone number
+  # XXX : what should be the behavior?
+  # expect_true(is.character(edu_df$respondent_contact)) # type: phone number
   expect_true(is.character(edu_df$photo)) # type: attachment
 })
 
-test_that("passing extraSchema in works", {
+test_that("passing nice extraSchema in works", {
+  extraSchema = setNames(data.frame(rbind(
+    c("mylga", "select one", "LGA"), 
+    c("mylga_state", "select one", "State")), stringsAsFactors=F),
+                         c("name", "type", "label"))
+
+  edu_df_with_extra <- formhubRead(edu_datafile, edu_schemafile, extraSchema=extraSchema)
+  expect_true(is.factor(edu_df_with_extra$mylga))
+  expect_true(is.factor(edu_df_with_extra$mylga_state))
+})
+
+test_that("passing bad extraSchema in works", {
   extraSchema = setNames(data.frame(rbind(
     c("mylga", "select one", "LGA"), 
     c("mylga_state", "select one", "State"))),
                          c("name", "type", "label"))
-
+  
   edu_df_with_extra <- formhubRead(edu_datafile, edu_schemafile, extraSchema=extraSchema)
   expect_true(is.factor(edu_df_with_extra$mylga))
   expect_true(is.factor(edu_df_with_extra$mylga_state))

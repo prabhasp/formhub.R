@@ -11,34 +11,37 @@ formhubRead  = function(csvfilename, jsonfilename, extraSchema=data.frame(), dro
 
 formhubCast  = function(dataDataFrame, schemaJSON, extraSchema=data.frame(), dropCols="") {
   dataDataFrame <- removeColumns(dataDataFrame, dropCols)
-  schemadf <- rbind(extraSchema, schema_to_df(schemaJSON))
+
   # over-ride select items with "extraSchema" -- note this assumes that first found schema element is used
-  #stopifnot(is.character(schemadf$name) & is.character(schemadf$label) & is.character(extraSchema$name)
-  #          & is.character(extraSchema$label))
+  extraSchema$name <- as.character(extraSchema$name)
+  extraSchema$label <- as.character(extraSchema$label)
+  schemadf <- rbind(extraSchema, schema_to_df(schemaJSON))
 
   recastDataFrameBasedOnSchemaDF(dataDataFrame, schemadf)
 }
 
 
-schema_to_df = function(schema, prefix="") {
-  df <- ldply(schema[["children"]], function(child) {
+schema_to_df = function(schema) {
+  schema_to_df_internal = function(schema, prefix="") {
+    ldply(schema[["children"]], function(child) {
       nom <- if (prefix == "") { child[["name"]] } else { paste(prefix, child[["name"]], sep=".") }
   
       if (child[["type"]] == "group") {
-        schema_to_df(child, nom)
+        schema_to_df_internal(child, nom)
       } else if (child[["type"]] == "select all that apply") {
         options <- child[["children"]]
         names <- paste(child[["name"]], sapply(options, function(o) o['name']), sep=".")
         labels <- sapply(options, function(o) o['label'])
-        data.frame(name=names, label=labels, type="boolean")
+        data.frame(name=names, label=labels, type="boolean", stringsAsFactors=F)
       } else {
         data.frame(name=nom, type=child[["type"]], 
-                   label=if("label" %in% names(child)) {child[["label"]]} else {child[["name"]]})
+                   label=if("label" %in% names(child)) {child[["label"]]} else {child[["name"]]},
+                   stringsAsFactors=F)
       }
-  })
+    })
+  }
+  df <- schema_to_df_internal(schema)
   df$type <- as.factor(df$type)
-  df$name <- as.character(df$name)
-  df$label <- as.character(df$label)
   df
 }
 
@@ -50,17 +53,14 @@ recastDataFrameBasedOnSchemaDF = function(df, schemadf) {
     cols <- c(subset(schemadf, type %in% types)$name)
     cols[cols %in% names(df)]
   }
+  reType <- function(typeStrings, reTypeFunc) {
+    colsToRetype <- colsOfType(df, typeStrings)
+    df[colsToRetype] <<- colwise(reTypeFunc)(df[colsToRetype])
+  }
   
-  ints <- colsOfType(df, c("integer", "decimal"))
-  bools <- colsOfType(df, c("boolean"))
-  cats <- colsOfType(df, c("select one"))
-  rest <- df[,which(!names(df) %in% c(names(ints), names(bools), names(cats)))]
-  
-  df[names(ints)] <- colwise(as.numeric)(df[names(ints)])
-  df[names(bools)] <- colwise(as.logical)(df[names(bools)])
-  df[names(cats)] <- colwise(as.factor)(df[names(cats)])
-  df[names(rest)] <- colwise(as.character)(df[names(rest)])
-  
+  reType(c("integer", "decimal"), as.numeric)
+  reType(c("boolean"), as.logical)
+  reType(c("select one"), as.factor)
   df
 }
 
