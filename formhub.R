@@ -2,6 +2,32 @@
 library(RJSONIO)
 library(stringr)
 library(plyr)
+library(RCurl)
+library(lubridate)
+
+formhubDownload = function(formName, uname, pass=NA) {
+  fUrl <- function(formName, uname, schema=F) {
+    str_c('http://formhub.org/', uname, '/forms/', formName,
+          ifelse(schema,'/form.json', '/data.csv'))
+  }
+  dataUrl = fUrl(formName, uname)
+  schemaUrl = fUrl(formName, uname, schema=T)
+  
+  #TODO -- pre-flight check? below doesn't work; expects 200+ status
+  #if(!url.exists(datUrl)) { stop("could not find ", dataUrl)}
+  #if(!url.exists(schemaUrl)) { stop("could not find ", schemaUrl)}
+  
+  # get the data, depending on public or not
+  dataCSVstr <- ifelse(is.na(pass),
+                 getURI(dataUrl),
+                 getURI(dataUrl, userpwd=str_c(uname,pass,sep=":")))
+  # get the schema, depending on public or not
+  # TODO: situations where data is public, schema is not
+  schemaJSON <- ifelse(is.na(pass),
+                 getURI(schemaUrl),
+                 getURI(schemaUrl, userpwd=str_c(uname,pass,sep=":")))
+  formhubRead(textConnection(dataCSVstr), schemaJSON)
+}
 
 formhubRead  = function(csvfilename, jsonfilename, extraSchema=data.frame(), dropCols="", na.strings=c("n/a")) {
   dataframe <- read.csv(csvfilename, stringsAsFactors=FALSE, header=TRUE, na.strings=na.strings)
@@ -57,10 +83,14 @@ recastDataFrameBasedOnSchemaDF = function(df, schemadf) {
     colsToRetype <- colsOfType(df, typeStrings)
     df[colsToRetype] <<- colwise(reTypeFunc)(df[colsToRetype])
   }
+  # lubridate doesn't handle ISO 8601 datetimes yet, so we just chuck the timezone info
+  iso8601DateTimeConvert <- function(x) { ymdThms(str_extract(x, '^[^+]*')) }
   
   reType(c("integer", "decimal"), as.numeric)
   reType(c("boolean"), as.logical)
   reType(c("select one"), as.factor)
+  reType(c("date", "today"), ymd)
+  reType(c("start", "end", "datetime"), iso8601DateTimeConvert)
   df
 }
 
