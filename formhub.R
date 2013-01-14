@@ -88,7 +88,7 @@ recastDataFrameBasedOnSchemaDF = function(df, schemadf) {
   
   reType(c("integer", "decimal"), as.numeric)
   reType(c("boolean"), as.logical)
-  reType(c("select one"), as.factor)
+  reType(c("select one", "imei"), as.factor)
   reType(c("date", "today"), ymd)
   reType(c("start", "end", "datetime"), iso8601DateTimeConvert)
   df

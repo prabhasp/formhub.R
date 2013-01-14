@@ -9,11 +9,15 @@ test_dir = ""
 edu_datafile <- paste(test_dir, "fixtures/edu1.csv", sep="")
 edu_schemafile <- paste(test_dir, "fixtures/edu1.json", sep="")
 hlt_schemafile <- paste(test_dir, "fixtures/healthschema.json", sep="")
+good_eats_datafile <- paste(test_dir, "fixtures/good_eats.csv", sep="")
+good_eats_schemafile <- paste(test_dir, "fixtures/good_eats.json", sep="")
 
 edu_rawdf <- read.csv(edu_datafile, na.strings="n/a", stringsAsFactors=FALSE, header=TRUE)
-edu_df <- formhubRead(edu_datafile, edu_schemafile)
 edu_schema_df <- schema_to_df(fromJSON(edu_schemafile))
 hlt_schema_df <- schema_to_df(fromJSON(hlt_schemafile))
+
+edu_df <- formhubRead(edu_datafile, edu_schemafile)
+good_eats <- formhubRead(good_eats_datafile, good_eats_schemafile)
 
 test_that("schemadf is read properly", {
   edu_typeofname <- function(nom) { subset(edu_schema_df, name==nom)$type }
@@ -81,6 +85,13 @@ test_that("formhubRead converted types properly", {
   # XXX : what should be the behavior?
   # expect_true(is.character(edu_df$respondent_contact)) # type: phone number
   expect_true(is.character(edu_df$photo)) # type: attachment
+  
+  expect_true(is.instant(edu_df$start)) # type: start
+  expect_true(is.instant(edu_df$end)) # type: end 
+  # need to test type: datetime
+  is.instant(good_eats$submit_date)
+  is.instant(good_eats$submit_data)
+  is.factor(good_eats$imei)
 })
 
 test_that("passing nice extraSchema in works", {
@@ -132,4 +143,3 @@ test_that("column deletion works", {
   expect_false("mylga_lga_in_benue" %in% names(edu_df_dropped))
   expect_false("mylga_zone" %in% names(edu_df_dropped))
 })
-
