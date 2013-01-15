@@ -1,0 +1,18 @@
+<h1>A simple example using formhub.R</h1>
+
+<p>formhub.R makes is easy to download and work with datasets on formhub.R. After downloading, formhub.R post-processes your dataset to convert the different columns to the correct type, which it derives from the <code>type</code> you specified during the creation of your XLSform.</p>
+
+<p>Let us illustrate this with a simple example:</p>
+
+<pre><code class="r"># Download the dataset named good_eats in the account of mberg
+source(&quot;../formhub.R&quot;)
+good_eats &lt;- formhubDownload(&quot;good_eats&quot;, &quot;mberg&quot;)
+</code></pre>
+
+<p>The downloaded data has its fields converted to the right types, something you could discover by checking <code>str(good_eats)</code>. Note how gpplot can take advantage of the right type information for <code>submit_date</code>: </p>
+
+<pre><code class="r">library(ggplot2)
+qplot(data = good_eats, x = submit_date, fill = risk_factor)
+</code></pre>
+
+<p><img src="figure/unnamed-chunk-2.png" alt="plot of chunk unnamed-chunk-2"/> </p>
