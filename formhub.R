@@ -75,22 +75,20 @@ recastDataFrameBasedOnSchemaDF = function(df, schemadf) {
   # do this by type
   #TODO: refactor
   stopifnot(is.character(schemadf$name))
-  colsOfType <- function(df, types) {
+  # re-type everything in df of type in types with reTypeFunc
+  reTypeColumns <- function(types, reTypeFunc) { 
     cols <- c(subset(schemadf, type %in% types)$name)
-    cols[cols %in% names(df)]
-  }
-  reType <- function(typeStrings, reTypeFunc) {
-    colsToRetype <- colsOfType(df, typeStrings)
-    df[colsToRetype] <<- colwise(reTypeFunc)(df[colsToRetype])
+    colsToReType <- cols[cols %in% names(df)]
+    df[colsToReType] <<- colwise(reTypeFunc)(df[colsToReType])
   }
   # lubridate doesn't handle ISO 8601 datetimes yet, so we just chuck the timezone info
   iso8601DateTimeConvert <- function(x) { ymdThms(str_extract(x, '^[^+]*')) }
   
-  reType(c("integer", "decimal"), as.numeric)
-  reType(c("boolean"), as.logical)
-  reType(c("select one", "imei"), as.factor)
-  reType(c("date", "today"), ymd)
-  reType(c("start", "end", "datetime"), iso8601DateTimeConvert)
+  reTypeColumns(c("integer", "decimal"), as.numeric)
+  reTypeColumns(c("boolean"), as.logical)
+  reTypeColumns(c("select one", "imei"), as.factor)
+  reTypeColumns(c("date", "today"), ymd)
+  reTypeColumns(c("start", "end", "datetime"), iso8601DateTimeConvert)
   df
 }
 
