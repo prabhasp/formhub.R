@@ -1,4 +1,4 @@
-<h1>A simple example using formhub.R</h1>
+<h1>A simple example using formhub.R &ndash; good eats</h1>
 
 <p>formhub.R makes is easy to download and work with datasets on formhub.R. After downloading, formhub.R post-processes your dataset to convert the different columns to the correct type, which it derives from the <code>type</code> you specified during the creation of your XLSform.</p>
 
@@ -9,10 +9,19 @@ source(&quot;../formhub.R&quot;)
 good_eats &lt;- formhubDownload(&quot;good_eats&quot;, &quot;mberg&quot;)
 </code></pre>
 
-<p>The downloaded data has its fields converted to the right types, something you could discover by checking <code>str(good_eats)</code>. Note how gpplot can take advantage of the right type information for <code>submit_date</code>: </p>
+<p>The downloaded data has its fields converted to the right types, something we&#39;ll look at in depth later. Before we do that, lets present a quick example of the power of these conversions by looking at dates. Can we look at how much data mberg has been submitting over time?</p>
 
 <pre><code class="r">library(ggplot2)
-qplot(data = good_eats, x = submit_date, fill = risk_factor)
+qplot(data = good_eats, x = submit_date) + ylab(&quot;Submission Count&quot;)
 </code></pre>
 
-<p><img src="figure/unnamed-chunk-2.png" alt="plot of chunk unnamed-chunk-2"/> </p>
+<p><img src="figure/plot1.png" alt="plot of chunk plot1"/> </p>
+
+<p>How about riskiness of the food he is trying and reporting about&hellip; has that changed over time?</p>
+
+<pre><code class="r">qplot(data = good_eats, x = submit_date, fill = risk_factor)
+</code></pre>
+
+<p><img src="figure/plot2.png" alt="plot of chunk plot2"/> </p>
+
+<p>Looks like it has! mberg&#39;s getting riskier as time goes on.</p>

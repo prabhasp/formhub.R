@@ -1,10 +1,9 @@
 library(testthat)
 
-source("~/Code/nga_cleaning_scripts/formhub.R")
-# source("~/Dropbox/Nigeria/Nigeria 661 Baseline Data Cleaning/scripts/formhub.R")
+source("~/Code/formhub.R/formhub.R")
 test_dir = ""
-# test_dir = "~/Code/nga_cleaning_scripts/tests/"
-# test_dir("~/Code/nga_cleaning_scripts/tests/")
+# test_dir = "~/Code/formhub.R/tests/"
+# test_dir("~/Code/formhub.R/tests/")
 
 edu_datafile <- paste(test_dir, "fixtures/edu1.csv", sep="")
 edu_schemafile <- paste(test_dir, "fixtures/edu1.json", sep="")
