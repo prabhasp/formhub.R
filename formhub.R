@@ -19,12 +19,12 @@ formhubDownload = function(formName, uname, pass=NA) {
   # get the data, depending on public or not
   dataCSVstr <- ifelse(is.na(pass),
                  getURI(dataUrl),
-                 getURI(dataUrl, userpwd=str_c(uname,pass,sep=":")))
+                 getURI(dataUrl, userpwd=str_c(uname,pass,sep=":"), httpauth = 1L))
   # get the schema, depending on public or not
   # TODO: situations where data is public, schema is not
   schemaJSON <- ifelse(is.na(pass),
                  getURI(schemaUrl),
-                 getURI(schemaUrl, userpwd=str_c(uname,pass,sep=":")))
+                 getURI(schemaUrl, userpwd=str_c(uname,pass,sep=":"), httpauth = 1L))
   formhubRead(textConnection(dataCSVstr), schemaJSON)
 }
 

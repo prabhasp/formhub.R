@@ -15,9 +15,8 @@ test_that("downloading public data (with public schema) works", {
 })
 
 test_that("downloading private data works", {
-  data <- formhubDownload("Simple_Water_Points", uname="prabhasp", pass="testingbamboo")
-     #data <- formhubDownload("Private_Data_For_Testing", uname="formhub_r", 
-     #                      pass="t3st~p4ss")
+  data <- formhubDownload("Private_Data_For_Testing", uname="formhub_r", 
+                        pass="t3st~p4ss")
   expect_true("submit_date" %in% names(data))
   expect_true(nrow(data) > 0)
   expect_true(is.instant(data$submit_date))
