@@ -4,6 +4,25 @@ library(plyr)
 library(RCurl)
 library(lubridate)
 
+setClass("formhubData", representation(data="data.frame", schema="data.frame"))
+
+replaceHeaderNamesWithLabels <- function(formhubDataObj) {
+  newNames <- lapply(names(formhubDataObj@data), function(n) {
+    trySelectAllReplace <- function(name) {
+      index <- which(formhubDataObj@schema$name==n)
+    }
+    
+    index <- which(formhubDataObj@schema$name==n)
+    ifelse(length(index) == 0,
+           # maybe its a select-all
+           trySelectAllReplace(n),
+           formhubDataObj@schema$label[[index]])
+  })
+  new("formhubData",
+      data = setNames(formhubDataObj@data, newNames),
+      schema = formhubDataObj@schema)
+}
+
 formhubDownload = function(formName, uname, pass=NA) {
   fUrl <- function(formName, uname, schema=F) {
     str_c('http://formhub.org/', uname, '/forms/', formName,
@@ -42,7 +61,8 @@ formhubCast  = function(dataDataFrame, schemaJSON, extraSchema=data.frame(), dro
   extraSchema$label <- as.character(extraSchema$label)
   schemadf <- rbind(extraSchema, schema_to_df(schemaJSON))
 
-  recastDataFrameBasedOnSchemaDF(dataDataFrame, schemadf)
+  new("formhubData", data=recastDataFrameBasedOnSchemaDF(dataDataFrame, schemadf),
+                     schema=schemadf)
 }
 
 
@@ -55,8 +75,8 @@ schema_to_df = function(schema) {
         schema_to_df_internal(child, nom)
       } else if (child[["type"]] == "select all that apply") {
         options <- child[["children"]]
-        names <- paste(child[["name"]], sapply(options, function(o) o['name']), sep=".")
-        labels <- sapply(options, function(o) o['label'])
+        names <- paste(prefix, child[["name"]], sapply(options, function(o) o['name']), sep=".")
+        labels <- sapply(options, function(o) { paste( child[["label"]], o['label'], sep=" >> ")})
         data.frame(name=names, label=labels, type="boolean", stringsAsFactors=F)
       } else {
         data.frame(name=nom, type=child[["type"]], 
