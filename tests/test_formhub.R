@@ -1,22 +1,25 @@
 library(testthat)
+library(stringr)
 
-source("~/Code/formhub.R/formhub.R")
+source("../formhub.R")
 test_dir = ""
 # test_dir = "~/Code/formhub.R/tests/"
 # test_dir("~/Code/formhub.R/tests/")
 
-edu_datafile <- paste(test_dir, "fixtures/edu1.csv", sep="")
-edu_schemafile <- paste(test_dir, "fixtures/edu1.json", sep="")
-hlt_schemafile <- paste(test_dir, "fixtures/healthschema.json", sep="")
-good_eats_datafile <- paste(test_dir, "fixtures/good_eats.csv", sep="")
-good_eats_schemafile <- paste(test_dir, "fixtures/good_eats.json", sep="")
+edu_datafile <- str_c(test_dir, "fixtures/edu1.csv")
+edu_schemafile <- str_c(test_dir, "fixtures/edu1.json")
+hlt_schemafile <- str_c(test_dir, "fixtures/healthschema.json")
+good_eats_datafile <- str_c(test_dir, "fixtures/good_eats.csv")
+good_eats_schemafile <- str_c(test_dir, "fixtures/good_eats.json")
 
 edu_rawdf <- read.csv(edu_datafile, na.strings="n/a", stringsAsFactors=FALSE, header=TRUE)
-edu_schema_df <- schema_to_df(fromJSON(edu_schemafile))
 hlt_schema_df <- schema_to_df(fromJSON(hlt_schemafile))
 
-edu_df <- formhubRead(edu_datafile, edu_schemafile)
-good_eats <- formhubRead(good_eats_datafile, good_eats_schemafile)
+edu_formhubObj <- formhubRead(edu_datafile, edu_schemafile)
+edu_df <- edu_formhubObj@data
+edu_schema_df <- edu_formhubObj@schema
+
+good_eats <- formhubRead(good_eats_datafile, good_eats_schemafile)@data
 
 test_that("schemadf is read properly", {
   edu_typeofname <- function(nom) { subset(edu_schema_df, name==nom)$type }
@@ -35,6 +38,7 @@ test_that("schemadf is read properly", {
   
   hlt_typeofname <- function(nom) { subset(hlt_schema_df, name==nom)$type }
   expect_true(hlt_typeofname("not_for_private_1.toilets_available.num_flush_or_pour_flush_piped")=="integer")
+  expect_true(hlt_typeofname("not_for_private_1.power_sources.generator")=="boolean")
 })
 
 # test_that("reCastingRVectors Works as expected", {
@@ -99,7 +103,7 @@ test_that("passing nice extraSchema in works", {
     c("mylga_state", "select one", "State")), stringsAsFactors=F),
                          c("name", "type", "label"))
 
-  edu_df_with_extra <- formhubRead(edu_datafile, edu_schemafile, extraSchema=extraSchema)
+  edu_df_with_extra <- formhubRead(edu_datafile, edu_schemafile, extraSchema=extraSchema)@data
   expect_true(is.factor(edu_df_with_extra$mylga))
   expect_true(is.factor(edu_df_with_extra$mylga_state))
 })
@@ -110,14 +114,14 @@ test_that("passing bad extraSchema in works", {
     c("mylga_state", "select one", "State"))),
                          c("name", "type", "label"))
   
-  edu_df_with_extra <- formhubRead(edu_datafile, edu_schemafile, extraSchema=extraSchema)
+  edu_df_with_extra <- formhubRead(edu_datafile, edu_schemafile, extraSchema=extraSchema)@data
   expect_true(is.factor(edu_df_with_extra$mylga))
   expect_true(is.factor(edu_df_with_extra$mylga_state))
 })
 
 test_that("passing na.strings works", {
   na.strings = c("southeast")
-  edu_df_wo_SE <- formhubRead(edu_datafile, edu_schemafile, na.strings=na.strings)
+  edu_df_wo_SE <- formhubRead(edu_datafile, edu_schemafile, na.strings=na.strings)@data
   expect_equal(levels(edu_df_wo_SE$mylga_zone), c("northwest"))
 })
 
