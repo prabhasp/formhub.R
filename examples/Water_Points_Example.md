@@ -11,8 +11,9 @@ This time, we'll be using a water point dataset from Northern Ghana. I am not at
 ```r
 # Read north ghana water points dataset directly from saved data and form.
 source("../formhub.R")
-waterpoints <- formhubRead("~/Downloads/_08_Water_points_train3_2012_09_06.csv", 
+wp <- formhubRead("~/Downloads/_08_Water_points_train3_2012_09_06.csv", 
     "~/Downloads/_08_Water_points_train3.json")
+waterpoints <- wp@data
 ```
 
 

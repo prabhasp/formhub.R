@@ -9,9 +9,10 @@ Let us illustrate this with a simple example:
 
 
 ```r
-# Download the dataset named good_eats in the account of mberg
 source("../formhub.R")
-good_eats <- formhubDownload("good_eats", "mberg")
+# Download the dataset named good_eats in the account of mberg NOTE: We
+# need to @data to retrieve the dataframe from the return object
+good_eats <- formhubDownload("good_eats", "mberg")@data
 ```
 
 

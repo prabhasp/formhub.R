@@ -8,8 +8,9 @@
 
 <pre><code class="r"># Read north ghana water points dataset directly from saved data and form.
 source(&quot;../formhub.R&quot;)
-waterpoints &lt;- formhubRead(&quot;~/Downloads/_08_Water_points_train3_2012_09_06.csv&quot;, 
+wp &lt;- formhubRead(&quot;~/Downloads/_08_Water_points_train3_2012_09_06.csv&quot;, 
     &quot;~/Downloads/_08_Water_points_train3.json&quot;)
+waterpoints &lt;- wp@data
 </code></pre>
 
 <p>A quick <code>str(waterpoints)</code> can verify that the type conversions have been done properly; output excluded for brevity here.</p>
