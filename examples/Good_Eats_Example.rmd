@@ -1,3 +1,4 @@
+<link href="http://kevinburke.bitbucket.org/markdowncss/markdown.css" rel="stylesheet"></link>
 A simple example using formhub.R -- good eats
 ========================================================
 

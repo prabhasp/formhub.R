@@ -1,15 +1,31 @@
+<p><link href="http://kevinburke.bitbucket.org/markdowncss/markdown.css" rel="stylesheet"></link></p>
+
 <h1>formhub.R</h1>
 
-<p>formhub.R is a library for making reading data form http://formhub.org into R easier.</p>
+<p>formhub.R is a library for making reading data form <a href="http://formhub.org">formhub.org</a> into R easier.</p>
 
-<p>At the moment, it has the following features:
- * One command download of formhub.org data -- both public and private
- * Casting of data to the right type, based on the type of the input field in XLSform
-   * <code>select one</code> fields are converted to factors
-   * <code>integer</code>/<code>decimal</code> converted to numerics
-   * <code>date</code> fields (including <code>today</code>), and <code>datetime</code> fields (including <code>start</code> and <code>end</code>) are converted to lubridate instants [timezone information is discarded at the moment]
-   * TRUE / FALSE fields created out of <code>select multiple</code> options are converted into booleans
- * removeColumns convenience function that removes columns based on matching the title with a regular expression
- * 'extra-schema' over-ride. This helps provide a type to <code>calculate</code> fields if that is desired; automagically calculating the type of a calculate field is not in the short-term feature list</p>
+<h2>Examples</h2>
+
+<ul>
+<li>Quick example -- <a href="examples/Good_Eats_Example.html">Charting good_eats submission over time</a></li>
+<li>Making maps -- <a href="examples/Water_Points_Example.html">Making maps with North Ghana data</a></li>
+</ul>
+
+<h2>Features</h2>
+
+<p>At the moment, it has the following features:</p>
+
+<ul>
+<li>One command download of formhub.org data -- both public and private</li>
+<li>Casting of data to the right type, based on the type of the input field in XLSform
+<ul>
+<li><code>select one</code> fields are converted to factors</li>
+<li><code>integer</code>/<code>decimal</code> converted to numerics</li>
+<li><code>date</code> fields (including <code>today</code>), and <code>datetime</code> fields (including <code>start</code> and <code>end</code>) are converted to <a href="http://cran.r-project.org/package=lubridate">lubridate</a> instants [timezone information is discarded at the moment]</li>
+<li>TRUE / FALSE fields created out of <code>select multiple</code> options are converted into booleans</li>
+</ul></li>
+<li>removeColumns convenience function that removes columns based on matching the title with a regular expression</li>
+<li>'extra-schema' over-ride. This helps provide a type to <code>calculate</code> fields if that is desired; automagically calculating the type of a calculate field is not in the short-term feature list</li>
+</ul>
 
 <p>For planned features, go to the <a href="https://github.com/prabhasp/formhub.R/issues">issues</a> page.</p>

@@ -1,4 +1,5 @@
-Quick maps using formhub.R -- north ghana
+<link href="http://kevinburke.bitbucket.org/markdowncss/markdown.css" rel="stylesheet"></link>
+Making maps using formhub.R
 ========================================================
 
 formhub.R makes is easy to download and work with datasets on formhub.R. In this showcase, I'll show off how formhub.R makes it easy to make printable maps... just like the ones available on formhub.org for you to view.
@@ -30,7 +31,7 @@ qplot(data = waterpoints, x = X_water_point_geocode_longitude, y = X_water_point
 ![plot of chunk map1](figure/map1.png) 
 
 
-In order to get a real map background in there, we'll use the ggmap package, and also look at a property to visualize; lets pick the `water_functional` attribute (corresponding to the question: Is the water source able to provide water right now?)
+In order to get a real map background in there, we'll use the ggmap package, and create a baselayer for our mapping purposes. 
 
 
 
@@ -39,12 +40,23 @@ library(ggmap)
 center_point <- c(lon = mean(waterpoints$X_water_point_geocode_longitude, 
     na.rm = T), lat = mean(waterpoints$X_water_point_geocode_latitude, na.rm = T))
 ngbaselayer <- ggmap(get_map(location = center_point, source = "google", 
-    filename = "maptemp", zoom = 10))
+    filename = "maptemp", zoom = 10), extent = "device") + opts(legend.position = "bottom")
+```
+
+
+
+
+
+Now, we can think about a property to visualize--how about the `water_functional` attribute (which corresponds to the question: Is the water source able to provide water right now?)
+
+
+
+```r
 ngbaselayer + geom_point(data = waterpoints, aes(x = X_water_point_geocode_longitude, 
     y = X_water_point_geocode_latitude, color = water_functioning))
 ```
 
-![plot of chunk map2](figure/map2.png) 
+![plot of chunk basemap](figure/basemap.png) 
 
 
 And here is a hexagonal binning of the counts in this dataset (with points laid over transparently), with two different bin sizes:
@@ -61,6 +73,7 @@ ngbaselayer +
 ![plot of chunk map3](figure/map31.png) 
 
 ```r
+
 ngbaselayer +
   stat_binhex(data=waterpoints, color="grey", bins=10,
          aes(x=X_water_point_geocode_longitude, y=X_water_point_geocode_latitude)) + 
@@ -71,17 +84,20 @@ ngbaselayer +
 ![plot of chunk map3](figure/map32.png) 
 
 
-Unfortunately, I'm not quite sure how we can replicate the formhub.org-style density hexbins, which tell us areas in which a high proportion of existing water points are non-functional. However, we can map where there is a prepondenderence of non-functioning water points within our set:
+Unfortunately, I'm not quite sure how we can replicate the formhub.org-style density hexbins, which tell us areas in which a high proportion of existing water points are non-functional. However, we can map where there is a prepondenderence of non-functioning water points within our set, overlaying all points for contrast:
 
 
 ```r
-ngbaselayer + stat_binhex(data = waterpoints, aes(x = X_water_point_geocode_longitude, 
-    y = X_water_point_geocode_latitude)) + geom_point(data = waterpoints, alpha = 0.7, 
-    aes(x = X_water_point_geocode_longitude, y = X_water_point_geocode_latitude, 
-        color = water_functioning))
+
+only_functioning_points <- subset(waterpoints, water_functioning == 
+    "yes")
+ngbaselayer + stat_binhex(data = only_functioning_points, aes(x = X_water_point_geocode_longitude, 
+    y = X_water_point_geocode_latitude)) + geom_point(data = waterpoints, alpha = 0.3, 
+    color = "orange", aes(x = X_water_point_geocode_longitude, y = X_water_point_geocode_latitude))
 ```
 
 ![plot of chunk map4](figure/map4.png) 
 
 
-Moving on, how about we use a Northern Ghana district shapefile to make a choropleth of where water is functional and not?
+Pretty cool, eh?
+In Making Maps II with formhub.R, we will show how to make choropleth maps using shapefiles downloaded from [gadm](http://gadm.org).
