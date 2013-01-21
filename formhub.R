@@ -104,7 +104,7 @@ recastDataFrameBasedOnSchemaDF = function(df, schemadf) {
     df[colsToReType] <<- colwise(reTypeFunc)(df[colsToReType])
   }
   # lubridate doesn't handle ISO 8601 datetimes yet, so we just chuck the timezone info
-  iso8601DateTimeConvert <- function(x) { ymdThms(str_extract(x, '^[^+]*')) }
+  iso8601DateTimeConvert <- function(x) { ymdThms(str_extract(x, '^[^+Z]*')) }
   
   reTypeColumns(c("integer", "decimal"), as.numeric)
   reTypeColumns(c("boolean"), as.logical)

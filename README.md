@@ -9,6 +9,7 @@ Examples
 
  * Quick example -- [Charting good_eats submission over time](http://prabhasp.github.com/formhub.R/examples/Good_Eats_Example.html)
  * Making maps -- [Making maps with North Ghana data](http://prabhasp.github.com/formhub.R/examples/Water_Points_Example.html)
+ * Quality control -- [How long did it take to process a survey](http://prabhasp.github.com/formhub.R/examples/How_Long_Example.html')
  
 Features
 --------
