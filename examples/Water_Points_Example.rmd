@@ -23,7 +23,7 @@ qplot(data=waterpoints, x=X_water_point_geocode_longitude, y=X_water_point_geoco
 
 In order to get a real map background in there, we'll use the ggmap package, and create a baselayer for our mapping purposes. 
 
-```{r map2, warning=FALSE, message=FALSE, fig.height=5, fig.width=9}
+```{r baselayer, warning=FALSE, message=FALSE, fig.height=5, fig.width=9}
 library(ggmap)
 center_point <- c(lon = mean(waterpoints$X_water_point_geocode_longitude, na.rm=T),
                   lat = mean(waterpoints$X_water_point_geocode_latitude, na.rm=T))
@@ -33,7 +33,7 @@ ngbaselayer <- ggmap(get_map(location=center_point, source="google", filename="m
 
 Now, we can think about a property to visualize--how about the `water_functional` attribute (which corresponds to the question: Is the water source able to provide water right now?)
 
-```{r basemap, warning=FALSE, message=FALSE, fig.height=5, fig.width=9}
+```{r map2, warning=FALSE, message=FALSE, fig.height=5, fig.width=9}
 ngbaselayer + 
   geom_point(data=waterpoints, 
   aes(x=X_water_point_geocode_longitude, y=X_water_point_geocode_latitude, color=water_functioning))

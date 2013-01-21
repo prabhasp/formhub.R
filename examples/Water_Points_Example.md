@@ -56,7 +56,7 @@ ngbaselayer + geom_point(data = waterpoints, aes(x = X_water_point_geocode_longi
     y = X_water_point_geocode_latitude, color = water_functioning))
 ```
 
-![plot of chunk basemap](figure/basemap.png) 
+![plot of chunk map2](figure/map2.png) 
 
 
 And here is a hexagonal binning of the counts in this dataset (with points laid over transparently), with two different bin sizes:
