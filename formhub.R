@@ -74,6 +74,7 @@ schema_to_df = function(schema) {
       if (child[["type"]] == "group") {
         schema_to_df_internal(child, nom)
       } else if (child[["type"]] == "select all that apply") {
+
         options <- child[["children"]]        
         nameprefix <- ifelse(prefix=="", child[["name"]], str_c(prefix, child[["name"]], sep="."))
         names <- paste(nameprefix, sapply(options, function(o) o['name']), sep=".")
