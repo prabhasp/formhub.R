@@ -1,6 +1,3 @@
----
-layout: main
----
 formhub.R
 =========
 
