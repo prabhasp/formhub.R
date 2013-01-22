@@ -2,7 +2,7 @@
 Quality control -- how long did survey authoring take?
 ========================================================
 
-formhub.R makes is easy to download and work with datasets on formhub.R. In this showcase, we will demonstrate how to figure out how long enumerators take to enter survey data, and correlate completion time with enumerator and date of survey. We will be using the excellent [ggplot2](http://ggplot2.org) package for plotting, and an anonymized dataset.
+formhub.R makes is easy to download and work with datasets on [formhub](http://formhub.org). In this showcase, we will demonstrate how to figure out how long enumerators take to enter survey data, and correlate completion time with enumerator and date of survey. 
 
 After reading the dataset, we want to prepare two basic fields, the first one, `completion_time` will denote how long it took someone to fill the survey out. The second will be the enumerator's initial (which in this case is completely identifying, and helps us process multiple spellings).
 
