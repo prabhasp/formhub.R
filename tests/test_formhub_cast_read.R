@@ -88,13 +88,23 @@ test_that("formhubRead converted types properly", {
   # XXX : what should be the behavior?
   # expect_true(is.character(edu_df$respondent_contact)) # type: phone number
   expect_true(is.character(edu_df$photo)) # type: attachment
+  expect_true(is.factor(good_eats$imei))
   
   expect_true(is.instant(edu_df$start)) # type: start
   expect_true(is.instant(edu_df$end)) # type: end 
+  
   # need to test type: datetime
-  is.instant(good_eats$submit_date)
-  is.instant(good_eats$submit_data)
-  is.factor(good_eats$imei)
+  expect_true(is.instant(good_eats$submit_date))
+  expect_true(is.instant(good_eats$submit_data))
+})  
+  
+test_that("formhubRead parses dates in wild formhub data properly", {
+  expect_true(is.instant(recastDataFrameBasedOnSchemaDF(
+      read.csv(textConnection("date\n2012-08-15T00:00:00.000000\n2012-08-15T00:00:00.000000")),
+      data.frame(name=c("date"), type=c("today"), label=c("Today's date:"), stringsAsFactors=F))
+    $date))
+  
+  
 })
 
 test_that("passing nice extraSchema in works", {

@@ -4,8 +4,26 @@ library(plyr)
 library(RCurl)
 library(lubridate)
 
+
 setClass("formhubData", representation(data="data.frame", schema="data.frame"))
 
+#' Get a new dataframe, where the header contains the full questions as opposed to slugs.
+#'
+#' formhub Objects have some data, as well as the schema, which documents how
+#' the data was obtained through a survey. The data, by default, is represented by
+#' slugs, ie, items in the `name` column in the original xfrom. This function
+#' replaces slugs in the header with the actual question text.
+#'
+#' @param formhubDataObj is the formhub data object whose data slot will be renamed
+#' @export
+#' @return a new data frames with the column names renamed from `name`s (slugs) to `label`s(full questions)
+#' @examples
+#' good_eats <- formhubDownload("good_eats", "mberg")
+#' names(good_eats@data) # still slugged names
+#' summary(good_eats@data$rating)
+#' full_header_good_eats <- replaceHeaderNamesWithLabels(good_eats)
+#' names(full_header_good_eats) # not slugged anymore
+#' summary(full_header_good_eats$Rating) # but data is the same
 replaceHeaderNamesWithLabels <- function(formhubDataObj) {
   newNames <- lapply(names(formhubDataObj@data), function(n) {
     trySelectAllReplace <- function(name) {
@@ -18,12 +36,26 @@ replaceHeaderNamesWithLabels <- function(formhubDataObj) {
            trySelectAllReplace(n),
            formhubDataObj@schema$label[[index]])
   })
-  new("formhubData",
-      data = setNames(formhubDataObj@data, newNames),
-      schema = formhubDataObj@schema)
+  setNames(formhubDataObj@data, newNames)
 }
 
-formhubDownload = function(formName, uname, pass=NA) {
+#' Download data from formhub.
+#'
+#' This function downloads a dataset for the given form and username, and produces a 
+#' formhubData Object.
+#'
+#' @param formName formname on formhub.org for which we download the data
+#' @param uname formhub.org username
+#' @param pass formhub.org password, if the data and/or schema is private
+#' @param ... other parameters to pass onto formhubRead
+#' @export
+#' @return formhubDataObj a formhubData Object, with "data" and "schema" slots
+#' @examples
+#' good_eats <- formhubDownload("good_eats", "mberg")
+#' good_eats@data # is a data frame of all the data
+#' good_eats@schema # is the schema for that data, encoded as a dataframe
+#' privateData <- formhubDownload("Private_Data_For_Testing", uname="formhub_r", pass="t3st~p4ss")
+formhubDownload = function(formName, uname, pass=NA, ...) {
   fUrl <- function(formName, uname, schema=F) {
     str_c('http://formhub.org/', uname, '/forms/', formName,
           ifelse(schema,'/form.json', '/data.csv'))
@@ -100,16 +132,19 @@ recastDataFrameBasedOnSchemaDF = function(df, schemadf) {
   # re-type everything in df of type in types with reTypeFunc
   reTypeColumns <- function(types, reTypeFunc) { 
     cols <- c(subset(schemadf, type %in% types)$name)
-    colsToReType <- cols[cols %in% names(df)]
+    colsToReType <- unique(cols[cols %in% names(df)])
     df[colsToReType] <<- colwise(reTypeFunc)(df[colsToReType])
   }
   # lubridate doesn't handle ISO 8601 datetimes yet, so we just chuck the timezone info
-  iso8601DateTimeConvert <- function(x) { ymdThms(str_extract(x, '^[^+Z]*')) }
+  iso8601DateTimeConvert <- function(x) { ymd_hms(str_extract(x, '^[^+Z]*'), quiet=TRUE) }
+  
+  # some formhub dates come in the format 2011-04-24T00:20:00.000000
+  iso8601DateConvert <- function(x) { ymd(str_extract(x, '^[^T]*'), quiet=TRUE) }
   
   reTypeColumns(c("integer", "decimal"), as.numeric)
   reTypeColumns(c("boolean"), as.logical)
   reTypeColumns(c("select one", "imei"), as.factor)
-  reTypeColumns(c("date", "today"), ymd)
+  reTypeColumns(c("date", "today"), iso8601DateConvert)
   reTypeColumns(c("start", "end", "datetime"), iso8601DateTimeConvert)
   df
 }
