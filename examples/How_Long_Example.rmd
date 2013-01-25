@@ -9,9 +9,9 @@ After reading the dataset, we want to prepare two basic fields, the first one, `
 
 ```{r read, warning=FALSE, message=FALSE}
 source("../formhub.R")
-formhubData <- formhubRead("~/Downloads/Some_Data.csv","~/Downloads/Some_Schema.json")
+formhubData <- formhubRead("~/Downloads/Some_Data.csv","~/Downloads/Some_Form.json")
 some_data <- formhubData@data
-some_schema <- formhubData@schema
+some_form <- formhubData@form
 
 # first subtract start time from end time, then, convert that to minutes
 some_data$completion_time <- some_data$end - some_data$start

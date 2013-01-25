@@ -2,7 +2,7 @@ library(testthat)
 
 source("../formhub.R")
 
-test_that("downloading public data (with public schema) works", {
+test_that("downloading public data (with public form) works", {
   good_eats <- formhubDownload("good_eats", uname="mberg")@data
   expect_true("risk_factor" %in% names(good_eats))
   expect_true(nrow(good_eats) > 1)
@@ -25,7 +25,7 @@ test_that("downloading private data works", {
 })
 
 
-test_that("downloading public data (with private schema) falls back gracefully", {
+test_that("downloading public data (with private form) falls back gracefully", {
   data <- formhubDownload("Public_Data_Private_Schema", uname="formhub_r")@data
   expect_true(nrow(data) > 0)
   expect_true(is.instant(data$submit_date))

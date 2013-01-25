@@ -7,22 +7,22 @@ test_dir = ""
 # test_dir("~/Code/formhub.R/tests/")
 
 edu_datafile <- str_c(test_dir, "fixtures/edu1.csv")
-edu_schemafile <- str_c(test_dir, "fixtures/edu1.json")
-hlt_schemafile <- str_c(test_dir, "fixtures/healthschema.json")
+edu_formfile <- str_c(test_dir, "fixtures/edu1.json")
+hlt_formfile <- str_c(test_dir, "fixtures/healthschema.json")
 good_eats_datafile <- str_c(test_dir, "fixtures/good_eats.csv")
-good_eats_schemafile <- str_c(test_dir, "fixtures/good_eats.json")
+good_eats_formfile <- str_c(test_dir, "fixtures/good_eats.json")
 
 edu_rawdf <- read.csv(edu_datafile, na.strings="n/a", stringsAsFactors=FALSE, header=TRUE)
-hlt_schema_df <- schema_to_df(fromJSON(hlt_schemafile))
+hlt_form_df <- form_to_df(fromJSON(hlt_formfile))
 
-edu_formhubObj <- formhubRead(edu_datafile, edu_schemafile)
+edu_formhubObj <- formhubRead(edu_datafile, edu_formfile)
 edu_df <- edu_formhubObj@data
-edu_schema_df <- edu_formhubObj@schema
+edu_form_df <- edu_formhubObj@form
 
-good_eats <- formhubRead(good_eats_datafile, good_eats_schemafile)@data
+good_eats <- formhubRead(good_eats_datafile, good_eats_formfile)@data
 
-test_that("schemadf is read properly", {
-  edu_typeofname <- function(nom) { subset(edu_schema_df, name==nom)$type }
+test_that("formdf is read properly", {
+  edu_typeofname <- function(nom) { subset(edu_form_df, name==nom)$type }
   expect_true(edu_typeofname("start") == "start")
   expect_true(edu_typeofname("km_to_catchment_area") == "integer")
   expect_true(edu_typeofname("num_toilet.num_toilet_boy") == "integer")
@@ -32,11 +32,11 @@ test_that("schemadf is read properly", {
   expect_true(edu_typeofname("respondent_contact") == "string")
   expect_true(edu_typeofname("power_sources.generator") == "boolean")
   
-  expect_true(is.factor(edu_schema_df$type))
-  expect_true(is.character(edu_schema_df$name))
-  expect_true(is.character(edu_schema_df$label))
+  expect_true(is.factor(edu_form_df$type))
+  expect_true(is.character(edu_form_df$name))
+  expect_true(is.character(edu_form_df$label))
   
-  hlt_typeofname <- function(nom) { subset(hlt_schema_df, name==nom)$type }
+  hlt_typeofname <- function(nom) { subset(hlt_form_df, name==nom)$type }
   expect_true(hlt_typeofname("not_for_private_1.toilets_available.num_flush_or_pour_flush_piped")=="integer")
   expect_true(hlt_typeofname("not_for_private_1.power_sources.generator")=="boolean")
 })
@@ -68,7 +68,7 @@ test_that("groups and select multiples convert correctly", {
   expect_true(is.factor(edu_rawdf2$power_sources.generator))
   expect_true(is.factor(edu_rawdf2$power_sources.grid))
   
-  edu_df2 <- recastDataFrameBasedOnSchemaDF(edu_rawdf2, edu_schema_df)
+  edu_df2 <- recastDataFrameBasedOnFormDF(edu_rawdf2, edu_form_df)
   expect_true(is.numeric(edu_df2$num_pry_total_gender.num_pry_female))
   expect_true(is.numeric(edu_df2$num_pry_total_gender.num_pry_male))
   
@@ -88,7 +88,7 @@ test_that("formhubRead converted types properly", {
   # XXX : what should be the behavior?
   # expect_true(is.character(edu_df$respondent_contact)) # type: phone number
   expect_true(is.character(edu_df$photo)) # type: attachment
-  expect_true(is.factor(good_eats$imei))
+  
   
   expect_true(is.instant(edu_df$start)) # type: start
   expect_true(is.instant(edu_df$end)) # type: end 
@@ -96,10 +96,18 @@ test_that("formhubRead converted types properly", {
   # need to test type: datetime
   expect_true(is.instant(good_eats$submit_date))
   expect_true(is.instant(good_eats$submit_data))
+  
+  # miscellaneous values that are converted to factors
+  expect_true(is.factor(good_eats$imei))
+  expect_true(is.factor(edu_df$deviceid))
+  expect_true(is.factor(edu_df$subscriberid))
+  expect_true(is.factor(edu_df$simserial))
+  expect_true(is.factor(edu_df$phonenumber))
+  
 })  
   
 test_that("formhubRead parses dates in wild formhub data properly", {
-  expect_true(is.instant(recastDataFrameBasedOnSchemaDF(
+  expect_true(is.instant(recastDataFrameBasedOnFormDF(
       read.csv(textConnection("date\n2012-08-15T00:00:00.000000\n2012-08-15T00:00:00.000000")),
       data.frame(name=c("date"), type=c("today"), label=c("Today's date:"), stringsAsFactors=F))
     $date))
@@ -107,31 +115,31 @@ test_that("formhubRead parses dates in wild formhub data properly", {
   
 })
 
-test_that("passing nice extraSchema in works", {
-  extraSchema = setNames(data.frame(rbind(
-    c("mylga", "select one", "LGA"), 
-    c("mylga_state", "select one", "State")), stringsAsFactors=F),
-                         c("name", "type", "label"))
-
-  edu_df_with_extra <- formhubRead(edu_datafile, edu_schemafile, extraSchema=extraSchema)@data
-  expect_true(is.factor(edu_df_with_extra$mylga))
-  expect_true(is.factor(edu_df_with_extra$mylga_state))
+test_that("passing nice extraFormDF in works", {
+  extraFormDF = data.frame(name=c("mylga",      "mylga_state", "deviceid"),
+                           type=c("select one", "select one", "integer"),
+                           label=c("LGA",       "STATE",      "Device ID"))
+  
+  edu_df_with_extra <- formhubRead(edu_datafile, edu_formfile, extraFormDF=extraFormDF)
+  expect_true(is.factor(edu_df_with_extra@data$mylga))
+  expect_true(is.factor(edu_df_with_extra@data$mylga_state))
+  expect_true(is.numeric(edu_df_with_extra@data$deviceid))
 })
 
-test_that("passing bad extraSchema in works", {
-  extraSchema = setNames(data.frame(rbind(
+test_that("passing bad extraFormDF in works", {
+  extraFormDF = setNames(data.frame(rbind(
     c("mylga", "select one", "LGA"), 
     c("mylga_state", "select one", "State"))),
                          c("name", "type", "label"))
   
-  edu_df_with_extra <- formhubRead(edu_datafile, edu_schemafile, extraSchema=extraSchema)@data
+  edu_df_with_extra <- formhubRead(edu_datafile, edu_formfile, extraFormDF=extraFormDF)@data
   expect_true(is.factor(edu_df_with_extra$mylga))
   expect_true(is.factor(edu_df_with_extra$mylga_state))
 })
 
 test_that("passing na.strings works", {
   na.strings = c("southeast")
-  edu_df_wo_SE <- formhubRead(edu_datafile, edu_schemafile, na.strings=na.strings)@data
+  edu_df_wo_SE <- formhubRead(edu_datafile, edu_formfile, na.strings=na.strings)@data
   expect_equal(levels(edu_df_wo_SE$mylga_zone), c("northwest"))
 })
 
