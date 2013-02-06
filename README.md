@@ -7,6 +7,7 @@ formhub.R is a library for making reading data form [formhub.org](http://formhub
 Examples
 --------
 
+ * Getting started -- [Basics of formhub.R](http://modilabs.github.com/formhub.R/Basics_of_formhub.R.html)
  * Quick example -- [Charting good_eats submission over time](http://modilabs.github.com/formhub.R/demo/Good_Eats_Example.html)
  * Making maps -- [Making maps with North Ghana data](http://modilabs.github.com/formhub.R/demo/Water_Points_Example.html)
  * Quality control -- [How long did it take to process a survey](http://modilabs.github.com/formhub.R/demo/How_Long_Example.html)
