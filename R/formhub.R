@@ -179,7 +179,7 @@ form_to_df = function(formJSON) {
 #' @return df re-casted data frame.
 #' @examples
 #' 
-#' See examples under formhubRead; this should be used through formhubRead in almost all cases
+#' #See examples under formhubRead; this should be used through formhubRead in almost all cases
 recastDataFrameBasedOnFormDF = function(df, formdf) {
   # do this by type
   #TODO: refactor
@@ -210,8 +210,10 @@ recastDataFrameBasedOnFormDF = function(df, formdf) {
 #' @param columnNameRegExpMatcher pattern(s) to match to columns; matched columns are dropped.
 #' @return a smaller data frame.
 #' @examples
-#' 
-#' 
+#' good_eats_df <- formhubDownload("good_eats", "mberg")@data
+#' names(good_eats_form_df) # note it includes submit_date and submit_data both
+#' names(removeColumns(good_eats_form_df, "submit*")) # both of which are gone now
+#' names(removeColumns(good_eats_form_df, c("submit*", "_gps*")) # you can pass a list of regular expressions
 removeColumns <- function(df, columnNameRegExpMatcher) {
   if (columnNameRegExpMatcher=="" || is.na(columnNameRegExpMatcher)) { 
     df 
