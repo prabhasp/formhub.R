@@ -7,9 +7,9 @@ formhub.R is a library for making reading data form [formhub.org](http://formhub
 Examples
 --------
 
- * Quick example -- [Charting good_eats submission over time](http://prabhasp.github.com/formhub.R/demo/Good_Eats_Example.html)
- * Making maps -- [Making maps with North Ghana data](http://prabhasp.github.com/formhub.R/demo/Water_Points_Example.html)
- * Quality control -- [How long did it take to process a survey](http://prabhasp.github.com/formhub.R/demo/How_Long_Example.html)
+ * Quick example -- [Charting good_eats submission over time](http://modilabs.github.com/formhub.R/demo/Good_Eats_Example.html)
+ * Making maps -- [Making maps with North Ghana data](http://modilabs.github.com/formhub.R/demo/Water_Points_Example.html)
+ * Quality control -- [How long did it take to process a survey](http://modilabs.github.com/formhub.R/demo/How_Long_Example.html)
 
 For most of the examples, I use the wonderful [ggplot2](http://ggplot2.org) library, which is an amazing data visualization worth every minute of your time spent learning it.
  
@@ -27,6 +27,6 @@ At the moment, it has the following features:
  * removeColumns convenience function that removes columns based on matching the title with a regular expression
  * 'extra-schema' over-ride. This helps provide a type to `calculate` fields if that is desired; automagically calculating the type of a calculate field is not in the short-term feature list
 
-For planned features, go to the [issues](https://github.com/prabhasp/formhub.R/issues) page.
+For planned features, go to the [issues](https://github.com/modilabs/formhub.R/issues) page.
 
 
