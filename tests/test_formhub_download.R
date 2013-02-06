@@ -1,6 +1,6 @@
 library(testthat)
 
-source("../formhub.R")
+source("../R/formhub.R")
 
 test_that("downloading public data (with public form) works", {
   good_eats <- formhubDownload("good_eats", uname="mberg")@data

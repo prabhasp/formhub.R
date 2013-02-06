@@ -1,7 +1,7 @@
 library(testthat)
 library(stringr)
 
-source("../formhub.R")
+source("../R/formhub.R")
 test_dir = ""
 # test_dir = "~/Code/formhub.R/tests/"
 # test_dir("~/Code/formhub.R/tests/")
