@@ -6,6 +6,7 @@ library(lubridate)
 
 
 setClass("formhubData", representation(data="data.frame", form="data.frame"))
+as.data.frame.formhubData = function(fD) { fD@data }
 
 #' Get a new dataframe, where the header contains the full questions as opposed to slugs.
 #'
