@@ -16,9 +16,7 @@ The `install_github` line will need to be re-run every time you need to update t
 
 
 ```r
-# library(formhub)
-library(devtools)
-load_all("~/Code/formhub.R/")
+library(formhub)
 ```
 
 

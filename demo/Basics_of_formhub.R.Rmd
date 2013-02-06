@@ -15,9 +15,7 @@ formhub.R makes is easy to download and work with datasets on [formhub](http://f
 The `install_github` line will need to be re-run every time you need to update the package, which will be frequent for now, as the package is in early testing. After installation, it can be loaded like you load any other R package:
 
 ```{r read, warning=FALSE, message=FALSE}
-#library(formhub)
-library(devtools)
-load_all("~/Code/formhub.R/")
+library(formhub)
 ```
 
 Download your first dataset
