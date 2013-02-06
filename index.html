@@ -14,6 +14,21 @@
 
 <p>For most of the examples, I use the wonderful <a href="http://ggplot2.org">ggplot2</a> library, which is an amazing data visualization worth every minute of your time spent learning it.</p>
 
+<h2>Installing formhub.R</h2>
+
+<p>The package for formhub.R in R is simply called <code>formhub</code>. For now, it cannot be installed from CRAN, but using Hadley Wickam's excellent <code>devtools</code> package, you can install directly from github. To install, follow the following directions from your R terminal:</p>
+
+<pre><code>install.packages('devtools') 
+library(devtools)
+install_github("formhub.R", username="modilabs")
+library(formhub)
+</code></pre>
+
+<p>And voila! The <code>formhub</code> package is installed in your R system! You can check by running:</p>
+
+<pre><code>help(formhubDownload)
+</code></pre>
+
 <h2>Features</h2>
 
 <p>At the moment, it has the following features:</p>

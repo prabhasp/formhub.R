@@ -12,6 +12,19 @@ Examples
  * Quality control -- [How long did it take to process a survey](http://modilabs.github.com/formhub.R/demo/How_Long_Example.html)
 
 For most of the examples, I use the wonderful [ggplot2](http://ggplot2.org) library, which is an amazing data visualization worth every minute of your time spent learning it.
+
+Installing formhub.R
+--------------------
+The package for formhub.R in R is simply called `formhub`. For now, it cannot be installed from CRAN, but using Hadley Wickam's excellent `devtools` package, you can install directly from github. To install, follow the following directions from your R terminal:
+
+    install.packages('devtools') 
+    library(devtools)
+    install_github("formhub.R", username="modilabs")
+    library(formhub)
+
+And voila! The `formhub` package is installed in your R system! You can check by running:
+
+    help(formhubDownload)
  
 Features
 --------
