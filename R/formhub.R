@@ -6,6 +6,16 @@ library(lubridate)
 
 
 setClass("formhubData", representation(data="data.frame", form="data.frame"))
+
+#' Get just the data out of a formhub object. as.data.frame(obj) equivalent to obj@data
+#'
+#' @param formhubDataObj is the formhub data object whose data slot will be returned
+#' @export
+#' @return the data inside this formhubData object
+#' @examples
+#' good_eats_data <- as.data.frame(formhubDownload("good_eats", "mberg"))
+#' class(good_eats_data) # is data.frame
+#' head(good_eats_data) # and has all the data
 as.data.frame.formhubData = function(fD) { fD@data }
 
 #' Get a new dataframe, where the header contains the full questions as opposed to slugs.

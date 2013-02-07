@@ -1,3 +1,4 @@
+export(as.data.frame.formhubData)
 export(formhubDownload)
 export(formhubRead)
 export(replaceHeaderNamesWithLabels)
