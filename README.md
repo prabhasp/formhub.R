@@ -12,11 +12,11 @@ Examples
  * Making maps -- [Making maps with North Ghana data](http://modilabs.github.com/formhub.R/demo/Water_Points_Example.html)
  * Quality control -- [How long did it take to process a survey](http://modilabs.github.com/formhub.R/demo/How_Long_Example.html)
 
-For most of the examples, I use the wonderful [ggplot2](http://ggplot2.org) library, which is an amazing data visualization worth every minute of your time spent learning it.
+For most of the examples, I use the [ggplot2](http://ggplot2.org) library, which is an amazing data visualization library worth every minute of your time spent learning it.
 
 Installing formhub.R
 --------------------
-The package for formhub.R in R is simply called `formhub`. For now, it cannot be installed from CRAN, but using Hadley Wickam's excellent `devtools` package, you can install directly from github. To install, follow the following directions from your R terminal:
+The package for formhub.R in R is simply called `formhub`. For now, it cannot be installed from CRAN, but using Hadley Wickam's excellent `devtools` package, you can install it directly from github. To install, run the following commands from your R terminal:
 
     install.packages('devtools') 
     library(devtools)
@@ -39,7 +39,7 @@ At the moment, it has the following features:
    * `date` fields (including `today`), and `datetime` fields (including `start` and `end`) are converted to [lubridate](http://cran.r-project.org/package=lubridate) instants [timezone information is discarded at the moment]
    * TRUE / FALSE fields created out of `select multiple` options are converted into booleans
  * removeColumns convenience function that removes columns based on matching the title with a regular expression
- * 'extra-schema' over-ride. This helps provide a type to `calculate` fields if that is desired; automagically calculating the type of a calculate field is not in the short-term feature list
+ * 'extra-schema' over-ride. 
 
 For planned features, go to the [issues](https://github.com/modilabs/formhub.R/issues) page.
 
