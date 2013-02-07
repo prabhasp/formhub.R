@@ -4,14 +4,13 @@ Making maps using formhub.R
 
 formhub.R makes is easy to download and work with datasets on [formhub](http://formhub.org). In this example, I'll show off how formhub.R makes it easy to make printable maps... similar to the ones available on formhub.org for you to view.
 
-This time, we'll be using a water point dataset from Northern Ghana. I am not at liberty to show you the full dataset, but maps aren't a problem. In fact, that gives me an excuse to demonstrate how formhub.R can import datasets from files already downloaded onto your computer. The inputs required are two files, the `csv` file that makes up your data and the `form.json` file, which is a convenient representation of the XLSform used to collect data in the first place.
+This time, we'll be using a water point dataset. I am not at liberty to show you the full dataset, but maps aren't a problem. Plus, that gives me an excuse to demonstrate how formhub.R can import datasets from a file. The inputs required are two files, the `csv` file that makes up your data and the `form.json` file, which is a convenient representation of the XLSform used to collect data in the first place.
 
 ```{r read, warning=FALSE, message=FALSE}
-# Read north ghana water points dataset directly from saved data and form.
-source("../formhub.R")
-wp <- formhubRead("~/Downloads/_08_Water_points_train3_2012_09_06.csv",
-                           "~/Downloads/_08_Water_points_train3.json")
-waterpoints <- wp@data
+# Read water points dataset directly from saved data and form.
+library("formhub")
+waterpoints <- as.data.frame(formhubRead("~/Downloads/_08_Water_points_train3_2012_09_06.csv",
+                                         "~/Downloads/_08_Water_points_train3.json")
 ```
 
 A quick `str(waterpoints)` can verify that the type conversions have been done properly; output excluded for brevity here.
