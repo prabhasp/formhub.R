@@ -36,14 +36,16 @@ str(good_eats)
 
 R tell us it something like `Formal class 'formhubData' [package ".GlobalEnv"] with 2 slots`. What this means is that this is a `formhubData` S4 object, and it contains two "slots", `data` and `form`. Basically, a `formhubData` object has both the dataset that you download from formhub (using the csv export), and a reduced representation of your XLSform. The `form` gives us information about the exact question that was asked, and the type of the question asked (was it `text` or `select one`? or was it a `date`?). This lets the formhub.R library change the types of the values to make them right, which is basically the power of this package.
 
-To get just the data we need, which is what we usually need, we can use the `as.data.frame` method, or access the slot `data` directly.
+To get just the data we need, we can use the `as.data.frame` method, or access the slot `data` directly.
 
 ```{r  warning=FALSE, message=FALSE, fig.height=5, fig.width=7}
 class(good_eats)
 class(as.data.frame(good_eats))
 class(good_eats@data)
 
+# the following are equivalent
 good_eats_data <- as.data.frame(good_eats)
+good_eats_data <- good_eats@data
 ```
 
 
