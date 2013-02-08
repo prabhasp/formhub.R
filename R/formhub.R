@@ -202,7 +202,7 @@ recastDataFrameBasedOnFormDF = function(df, formdf) {
     df[colsToReType] <<- colwise(reTypeFunc)(df[colsToReType])
   }
   # lubridate doesn't handle ISO 8601 datetimes yet, so we just chuck the timezone info
-  iso8601DateTimeConvert <- function(x) { ymd_hms(str_extract(x, '^[^+Z]*T[^+Z-]*')) }
+  iso8601DateTimeConvert <- function(x) { ymd_hms(str_extract(x, '^[^+Z]*(T| )[^+Z-]*')) }
   
   # some formhub dates come in the format 2011-04-24T00:20:00.000000
   iso8601DateConvert <- function(x) { ymd(str_extract(x, '^[^T]*')) }

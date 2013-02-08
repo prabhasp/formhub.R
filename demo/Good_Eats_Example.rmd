@@ -7,9 +7,8 @@ formhub.R makes is easy to download and work with datasets on [formhub](http://f
 Let us illustrate this with a simple example:
 
 ```{r read, warning=FALSE, message=FALSE}
-source("../formhub.R")
+library(formhub)
 # Download the dataset named good_eats in the account of mberg
-# NOTE: We need to @data to retrieve the dataframe from the return object
 good_eats <- formhubDownload("good_eats", "mberg")@data
 ```
 

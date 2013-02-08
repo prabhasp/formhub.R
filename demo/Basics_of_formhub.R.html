@@ -237,7 +237,7 @@ hljs.initHighlightingOnLoad();
 
 <p>R tell us it something like <code>Formal class &#39;formhubData&#39; [package &quot;.GlobalEnv&quot;] with 2 slots</code>. What this means is that this is a <code>formhubData</code> S4 object, and it contains two &ldquo;slots&rdquo;, <code>data</code> and <code>form</code>. Basically, a <code>formhubData</code> object has both the dataset that you download from formhub (using the csv export), and a reduced representation of your XLSform. The <code>form</code> gives us information about the exact question that was asked, and the type of the question asked (was it <code>text</code> or <code>select one</code>? or was it a <code>date</code>?). This lets the formhub.R library change the types of the values to make them right, which is basically the power of this package.</p>
 
-<p>To get just the data we need, which is what we usually need, we can use the <code>as.data.frame</code> method, or access the slot <code>data</code> directly.</p>
+<p>To get just the data we need, we can use the <code>as.data.frame</code> method, or access the slot <code>data</code> directly.</p>
 
 <pre><code class="r">class(good_eats)
 </code></pre>
@@ -260,7 +260,9 @@ hljs.initHighlightingOnLoad();
 </code></pre>
 
 <pre><code class="r">
+# the following are equivalent
 good_eats_data &lt;- as.data.frame(good_eats)
+good_eats_data &lt;- good_eats@data
 </code></pre>
 
 <h2>What formhub.R does for you &ndash; type conversions</h2>

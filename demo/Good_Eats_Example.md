@@ -7,19 +7,14 @@ formhub.R makes is easy to download and work with datasets on [formhub](http://f
 Let us illustrate this with a simple example:
 
 
-
 ```r
-source("../formhub.R")
-# Download the dataset named good_eats in the account of mberg NOTE: We
-# need to @data to retrieve the dataframe from the return object
+library(formhub)
+# Download the dataset named good_eats in the account of mberg
 good_eats <- formhubDownload("good_eats", "mberg")@data
 ```
 
 
-
-
 The downloaded data has its fields converted to the right types, something we'll look at in depth later. Before we do that, lets present a quick example of the power of these conversions by looking at dates. Can we look at how much data mberg has been submitting over time?
-
 
 
 ```r
@@ -31,7 +26,6 @@ qplot(data = good_eats, x = submit_date) + ylab("Submission Count")
 
 
 How about riskiness of the food he is trying and reporting about... has that changed over time?
-
 
 ```r
 qplot(data = good_eats, x = submit_date, fill = risk_factor)

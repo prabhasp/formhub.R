@@ -9,7 +9,7 @@ After reading the dataset, we want to prepare two basic fields, the first one, `
 
 
 ```r
-source("../formhub.R")
+library(formhub)
 formhubData <- formhubRead("~/Downloads/Some_Data.csv", "~/Downloads/Some_Form.json")
 some_data <- formhubData@data
 some_form <- formhubData@form

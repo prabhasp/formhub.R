@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <!-- saved from url=(0014)about:internet -->
 <html>
 <head>
@@ -186,7 +185,7 @@ hljs.initHighlightingOnLoad();
 
 <p>After reading the dataset, we want to prepare two basic fields, the first one, <code>completion_time</code> will denote how long it took someone to fill the survey out. The second will be the enumerator&#39;s initial (which in this case is completely identifying, and helps us process multiple spellings).</p>
 
-<pre><code class="r">source(&quot;../formhub.R&quot;)
+<pre><code class="r">library(formhub)
 formhubData &lt;- formhubRead(&quot;~/Downloads/Some_Data.csv&quot;, &quot;~/Downloads/Some_Form.json&quot;)
 some_data &lt;- formhubData@data
 some_form &lt;- formhubData@form
