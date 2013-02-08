@@ -34,7 +34,7 @@ Question: what kind of beast did we just download?
 str(good_eats)
 ```
 
-R tell us it something like `Formal class 'formhubData' [package ".GlobalEnv"] with 2 slots`. What this means is that this is a `formhubData` S4 object, and it contains two "slots", `data` and `form`. Basically, a `formhubData` object has both the dataset that you download from formhub (using the csv export), and a reduced representation of your XLSform. The `form` gives us information about the exact question that was asked, and the type of the question asked (was it `text` or `select one`? or was it a `date`?). This lets the formhub.R library change the types of the values to make them right, which is basically the power of this package.
+R tells us something like `Formal class 'formhubData' [package ".GlobalEnv"] with 2 slots`. What this means is that this is a `formhubData` S4 object, and it contains two "slots", `data` and `form`. Basically, a `formhubData` object has both the dataset that you download from formhub (using the csv export), and a reduced representation of your XLSform. The `form` gives us information about the exact question that was asked, and the type of the question asked (was it `text` or `select one`? or was it a `date`?). This lets the formhub.R library change the types of the values to make them right, which is basically the power of this package.
 
 To get just the data we need, we can use the `as.data.frame` method, or access the slot `data` directly.
 
