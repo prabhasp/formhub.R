@@ -4,11 +4,12 @@ Making maps using formhub.R
 
 formhub.R makes is easy to download and work with datasets on [formhub](http://formhub.org). In this example, I'll show off how formhub.R makes it easy to make printable maps... similar to the ones available on formhub.org for you to view.
 
-This time, we'll be using a water point dataset from Northern Ghana. I am not at liberty to show you the full dataset, but maps aren't a problem. In fact, that gives me an excuse to demonstrate how formhub.R can import datasets from files already downloaded onto your computer. The inputs required are two files, the `csv` file that makes up your data and the `form.json` file, which is a convenient representation of the XLSform used to collect data in the first place.
+This time, we'll be using a water point dataset. I am not at liberty to show you the full dataset, but maps aren't a problem. Plus, that gives me an excuse to demonstrate how formhub.R can import datasets from a file. The inputs required are two files, the `csv` file that makes up your data and the `form.json` file, which is a convenient representation of the XLSform used to collect data in the first place.
 
 
 ```r
-library(formhub)
+# Read water points dataset directly from saved data and form.
+library("formhub")
 waterpoints <- as.data.frame(formhubRead("~/Downloads/_08_Water_points_train3_2012_09_06.csv", 
     "~/Downloads/_08_Water_points_train3.json"))
 ```
@@ -31,21 +32,10 @@ In order to get a real map background in there, we'll use the ggmap package, and
 
 ```r
 library(ggmap)
-```
-
-```
-## Error: there is no package called 'ggmap'
-```
-
-```r
 center_point <- c(lon = mean(waterpoints$X_water_point_geocode_longitude, na.rm = T), 
     lat = mean(waterpoints$X_water_point_geocode_latitude, na.rm = T))
 ngbaselayer <- ggmap(get_map(location = center_point, source = "google", filename = "maptemp", 
     zoom = 10), extent = "device") + opts(legend.position = "bottom")
-```
-
-```
-## Error: could not find function "ggmap"
 ```
 
 
@@ -58,9 +48,7 @@ ngbaselayer + geom_point(data = waterpoints, aes(x = X_water_point_geocode_longi
     y = X_water_point_geocode_latitude, color = water_functioning))
 ```
 
-```
-## Error: object 'ngbaselayer' not found
-```
+![plot of chunk map2](figure/map2.png) 
 
 
 And here is a hexagonal binning of the counts in this dataset (with points laid over transparently), with two different bin sizes:
@@ -73,9 +61,7 @@ ngbaselayer +
          aes(x=X_water_point_geocode_longitude, y=X_water_point_geocode_latitude))
 ```
 
-```
-## Error: object 'ngbaselayer' not found
-```
+![plot of chunk map3](figure/map31.png) 
 
 ```r
 
@@ -86,9 +72,7 @@ ngbaselayer +
          aes(x=X_water_point_geocode_longitude, y=X_water_point_geocode_latitude))
 ```
 
-```
-## Error: object 'ngbaselayer' not found
-```
+![plot of chunk map3](figure/map32.png) 
 
 
 Unfortunately, I'm not quite sure how we can replicate the formhub.org-style density hexbins, which tell us areas in which a high proportion of existing water points are non-functional. However, we can map where there is a preponderence of non-functioning water points within our set, overlaying all points for contrast:
@@ -101,9 +85,7 @@ ngbaselayer + stat_binhex(data = only_functioning_points, aes(x = X_water_point_
     color = "orange", aes(x = X_water_point_geocode_longitude, y = X_water_point_geocode_latitude))
 ```
 
-```
-## Error: object 'ngbaselayer' not found
-```
+![plot of chunk map4](figure/map4.png) 
 
 
 Pretty cool, eh?
