@@ -17,6 +17,7 @@ A quick `str(waterpoints)` can verify that the type conversions have been done p
 
 Lets get to maps! A quick one just to help us get the lay of the land (longitude / latitudes are just x / y co-ordinates after all).
 ```{r map1, warning=FALSE, message=FALSE, fig.height=5, fig.width=9}
+# install.packages(c("ggmap","ggplot2")) if you don't have ggmap or gplot2 installed yet
 library(ggplot2)
 qplot(data=waterpoints, x=X_water_point_geocode_longitude, y=X_water_point_geocode_latitude)
 ```

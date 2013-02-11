@@ -196,7 +196,9 @@ waterpoints &lt;- as.data.frame(formhubRead(&quot;~/Downloads/_08_Water_points_t
 
 <p>Lets get to maps! A quick one just to help us get the lay of the land (longitude / latitudes are just x / y co-ordinates after all).</p>
 
-<pre><code class="r">library(ggplot2)
+<pre><code class="r"># install.packages(c(&#39;ggmap&#39;,&#39;ggplot2&#39;)) if you don&#39;t have ggmap or gplot2
+# installed yet
+library(ggplot2)
 qplot(data = waterpoints, x = X_water_point_geocode_longitude, y = X_water_point_geocode_latitude)
 </code></pre>
 

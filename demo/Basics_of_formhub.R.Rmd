@@ -71,6 +71,7 @@ str(good_eats2)
 
 Everything is a factor! Why is that bad? Well, see the plot below for yourself:
 ```{r plot1, warning=FALSE, message=FALSE, fig.height=5, fig.width=7}
+# install.packages("ggplot2") if you don't have ggplot2 installed yet
 library(ggplot2)
 qplot(data=good_eats2, x=amount) # from data read in without formhub.R
 qplot(data=good_eats_data, x=amount) # from data read in using formhub.R

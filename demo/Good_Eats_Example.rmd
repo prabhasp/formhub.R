@@ -15,6 +15,7 @@ good_eats_data <- as.data.frame(formhubDownload("good_eats", "mberg"))
 The downloaded data has its fields converted to the right types, something we'll look at in depth later. Before we do that, lets present a quick example of the power of these conversions by looking at dates. Can we look at how much data mberg has been submitting over time?
 
 ```{r plot1, warning=FALSE, message=FALSE, fig.height=5, fig.width=7}
+# install.packages("ggplot2") if you don't have ggplot2 installed yet
 library(ggplot2)
 qplot(data=good_eats_data, x=submit_date) + ylab("Submission Count")
 ```

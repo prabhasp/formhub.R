@@ -18,6 +18,7 @@ The downloaded data has its fields converted to the right types, something we'll
 
 
 ```r
+# install.packages('ggplot2') if you don't have ggplot2 installed yet
 library(ggplot2)
 qplot(data = good_eats_data, x = submit_date) + ylab("Submission Count")
 ```

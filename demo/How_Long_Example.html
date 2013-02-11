@@ -194,6 +194,8 @@ some_data &lt;- as.data.frame(formhubData)
 some_data$completion_time &lt;- some_data$end - some_data$start
 some_data$completion_time &lt;- some_data$completion_time/eminutes(1)
 
+# install.packages(c(&#39;stringr&#39;,&#39;ggplot2&#39;)) if you don&#39;t have ggplot2 or
+# stringr installed yet
 library(stringr)
 some_data$enumerator_initial &lt;- factor(toupper(str_extract(some_data$research_asst_name, 
     &quot;[a-zA-Z]&quot;)))

@@ -16,6 +16,7 @@ some_data <- as.data.frame(formhubData)
 some_data$completion_time <- some_data$end - some_data$start
 some_data$completion_time <- some_data$completion_time / eminutes(1)
 
+# install.packages(c("stringr","ggplot2")) if you don't have ggplot2 or stringr installed yet
 library(stringr)
 some_data$enumerator_initial <- factor(toupper(str_extract(some_data$research_asst_name, "[a-zA-Z]")))
 ```
