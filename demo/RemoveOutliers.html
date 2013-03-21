@@ -268,7 +268,7 @@ qplot(data = my_data, x = num_students_total_gender.num_students_female) + ylab(
     which(my_data$num_students_total_gender.num_students_female &gt; 1000), NA)
 </code></pre>
 
-<p>Finally, instead of of changing outliers to NA, we could make them equal to a maximal number. To do this, as show you a clear results, we&#39;ll take all observations with more than 500 female students, and cap them at 500.</p>
+<p>Finally, instead of of changing outliers to NA, we could make them equal to a maximal number. To do this, and show you a clear results, we&#39;ll take all observations with more than 500 female students, and cap them at 500.</p>
 
 <pre><code class="r">outlierReplace(my_data, &quot;num_students_total_gender.num_students_female&quot;, which(my_data$num_students_total_gender.num_students_female &gt; 
     500), 500)
@@ -288,8 +288,6 @@ my_data &lt;- as.data.frame(formhubData)
 outlierReplace(my_data, c(&quot;num_students_total_gender.num_students_female&quot;, &quot;num_students_total_gender.num_students_total&quot;), 
     which(my_data$num_students_total_gender.num_students_female &gt; 1000, NA))
 </code></pre>
-
-<p>qplot(my_data$num_students_total_gender.num_students_female) + xlim(c(990,1000))</p>
 
 <h2>Saving your dataset</h2>
 

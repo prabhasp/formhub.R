@@ -109,7 +109,7 @@ outlierReplace(my_data, c("num_students_total_gender.num_students_female", "num_
 ```
 
 
-Finally, instead of of changing outliers to NA, we could make them equal to a maximal number. To do this, as show you a clear results, we'll take all observations with more than 500 female students, and cap them at 500.
+Finally, instead of of changing outliers to NA, we could make them equal to a maximal number. To do this, and show you a clear results, we'll take all observations with more than 500 female students, and cap them at 500.
 
 
 ```r
@@ -137,9 +137,6 @@ outlierReplace(my_data, c("num_students_total_gender.num_students_female", "num_
 ```
 
 
-qplot(my_data$num_students_total_gender.num_students_female) + xlim(c(990,1000))
-
-
 
 Saving your dataset
 -----------------------
@@ -149,5 +146,3 @@ Don't forget to save your new data set!
 write.csv(my_data, "~/Desktop/my_data_OutlierCleaned")
 ```
 
-  
-  
