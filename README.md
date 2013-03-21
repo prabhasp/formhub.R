@@ -11,7 +11,7 @@ Examples
  * Quick example -- [Charting good_eats submission over time](http://modilabs.github.com/formhub.R/demo/Good_Eats_Example.html)
  * Making maps -- [Making maps with North Ghana data](http://modilabs.github.com/formhub.R/demo/Water_Points_Example.html)
  * Quality control -- [How long did it take to process a survey](http://modilabs.github.com/formhub.R/demo/How_Long_Example.html)
- * Quality control II -- [A Basic tutorial on removing outliers from your data](http://modilabs.github.com/formhub.R/RemoveOutliers.html)
+ * Quality control II -- [A Basic tutorial on removing outliers from your data](http://modilabs.github.com/formhub.R/demo/RemoveOutliers.html)
 
 For most of the examples, I use the [ggplot2](http://ggplot2.org) library, which is an amazing data visualization library worth every minute of your time spent learning it.
 
