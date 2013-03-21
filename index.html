@@ -11,13 +11,14 @@
 <li>Quick example -- <a href="http://modilabs.github.com/formhub.R/demo/Good_Eats_Example.html">Charting good_eats submission over time</a></li>
 <li>Making maps -- <a href="http://modilabs.github.com/formhub.R/demo/Water_Points_Example.html">Making maps with North Ghana data</a></li>
 <li>Quality control -- <a href="http://modilabs.github.com/formhub.R/demo/How_Long_Example.html">How long did it take to process a survey</a></li>
+<li>Quality control II -- <a href="http://modilabs.github.com/formhub.R/RemoveOutliers.html">A Basic tutorial on removing outliers from your data</a></li>
 </ul>
 
-<p>For most of the examples, I use the wonderful <a href="http://ggplot2.org">ggplot2</a> library, which is an amazing data visualization worth every minute of your time spent learning it.</p>
+<p>For most of the examples, I use the <a href="http://ggplot2.org">ggplot2</a> library, which is an amazing data visualization library worth every minute of your time spent learning it.</p>
 
 <h2>Installing formhub.R</h2>
 
-<p>The package for formhub.R in R is simply called <code>formhub</code>. For now, it cannot be installed from CRAN, but using Hadley Wickam's excellent <code>devtools</code> package, you can install directly from github. To install, follow the following directions from your R terminal:</p>
+<p>The package for formhub.R in R is simply called <code>formhub</code>. For now, it cannot be installed from CRAN, but using Hadley Wickam's excellent <code>devtools</code> package, you can install it directly from github. To install, run the following commands from your R terminal:</p>
 
 <pre><code>install.packages('devtools') 
 library(devtools)
@@ -44,7 +45,7 @@ library(formhub)
 <li>TRUE / FALSE fields created out of <code>select multiple</code> options are converted into booleans</li>
 </ul></li>
 <li>removeColumns convenience function that removes columns based on matching the title with a regular expression</li>
-<li>'extra-schema' over-ride. This helps provide a type to <code>calculate</code> fields if that is desired; automagically calculating the type of a calculate field is not in the short-term feature list</li>
+<li>'extra-schema' over-ride. </li>
 </ul>
 
 <p>For planned features, go to the <a href="https://github.com/modilabs/formhub.R/issues">issues</a> page.</p>
