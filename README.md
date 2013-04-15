@@ -34,7 +34,7 @@ Features
 At the moment, it has the following features:
 
  * One command download of formhub.org data -- both public and private
- * Casting of data to the right type, based on the type of the input field in XLSform
+ * (Automatic) casting of data to the right type, based on the type of the input field in XLSform
    * `select one` fields are converted to factors
    * `integer`/`decimal` converted to numerics
    * `date` fields (including `today`), and `datetime` fields (including `start` and `end`) are converted to [lubridate](http://cran.r-project.org/package=lubridate) instants [timezone information is discarded at the moment]
