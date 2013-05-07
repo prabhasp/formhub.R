@@ -7,15 +7,17 @@ library(lubridate)
 
 setClass("formhubData", representation("data.frame", form="data.frame"), contains="data.frame")
 
-#' Get just the data out of a formhub object. as.data.frame(obj) equivalent to obj@.Data
+#' Make the formhubData object into a pure data.frame.
 #'
-#' @param formhubDataObj is the formhub data object whose data slot will be returned
+#' @param formhubDataObj is the formhub data object whose internal data will be returned
 #' @export
-#' @return the data inside this formhubData object
+#' @return just the data from this formhubData object
 #' @examples
-#' good_eats_data <- as.data.frame(formhubDownload("good_eats", "mberg"))
-#' class(good_eats_data) # is data.frame
-#' head(good_eats_data) # and has all the data
+#' good_eats <- formhubDownload("good_eats", "mberg")
+#' good_eats_df <- as.data.frame(good_eats)
+#' class(good_eats)      # is a formhubData object
+#' class(good_eats_df) # is data.frame
+#' head(good_eats_df) # and has all the data
 as.data.frame.formhubData = function(fD) { fD@.Data }
 
 #' Get a new dataframe, where the header contains the full questions as opposed to slugs.
@@ -106,16 +108,16 @@ formhubDownload = function(formName, uname, pass=NA, ...) {
 #' @examples
 #' # will need to download data.csv and form.json for a specific form on formhub, for below, download
 #' http://formhub.org/mberg/forms/good_eats/data.csv http://formhub.org/mberg/forms/good_eats/form.json
-#' good_eats <- formhubRead("~/Downloads/good_eats_2013_01_24.csv", "~/Downloads/good_eats.json")
+#' good_eats <- formhubRead("~/Downloads/good_eats_2013_05_05.csv", "~/Downloads/good_eats.json")
 #' head(good_eats) # is a data frame of all the data
-#' good_eatsX <- formhubRead("~/Downloads/good_eats_2013_01_24.csv", "~/Downloads/good_eats.json",
+#' good_eatsX <- formhubRead("~/Downloads/good_eats_2013_05_05.csv", "~/Downloads/good_eats.json",
 #'              extraFormDF=data.frame(name="imei", type="integer", label="IMEI"))
 #' good_eatsX@form # note that imei is now slated as type "integer" instead of type "imei"
-#' str(good_eatsX) # also notice that it is numeric instead of a factor
-#' good_eatsWO <- formhubRead("~/Downloads/good_eats_2013_01_24.csv", "~/Downloads/good_eats.json",
-#'              dropCols="submit*"))
+#' str(good_eatsX$imei) # also notice that it is numeric instead of a factor
+#' good_eatsWO <- formhubRead("~/Downloads/good_eats_2013_05_05.csv", "~/Downloads/good_eats.json",
+#'              dropCols="submit*")
 #' names(good_eatsWO) # notice how submit_date and submit_date are no longer there
-#' good_eatsNA <- formhubRead("~/Downloads/good_eats_2013_01_24.csv", "~/Downloads/good_eats.json",
+#' good_eatsNA <- formhubRead("~/Downloads/good_eats_2013_05_05.csv", "~/Downloads/good_eats.json",
 #'              na.strings=c("999"))
 #' good_eatsNA$amount # notice that the value that was 999 is now missing. This is helpful when using values such
 #'                    # as 999 to indicate no data

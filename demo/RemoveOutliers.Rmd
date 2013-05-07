@@ -8,8 +8,7 @@ Begin with reading in your data set... we'll use an example data set about schoo
   
 ```{r read, warning=FALSE, message=FALSE}
 library(formhub)
-formhubData <- formhubRead("~/Downloads/MyDataSet.csv", "~/Downloads/MyForm.json")
-my_data <- as.data.frame(formhubData)
+my_data <- formhubRead("~/Downloads/MyDataSet.csv", "~/Downloads/MyForm.json")
 ```
 
 followed by selecting a variable that you want to do outlier work on. Let's look at the total amount of female pupils per school for this particular data set, labeled as `num_students_total_gender.num_students_female`.  
@@ -36,15 +35,14 @@ qplot(data = my_data, x = num_students_total_gender.num_students_female) + ylab(
 
 Oh, looks like the spike is of the value "999", which (in its negative version) is often used as a "Do Not Know" type of value in surveys. R lets us deal with individual vlaues like this by specifying an `na.strings` parameter when reading in csvs; this is exposed in the formhubRead function. So we can get rid of this value by re-reading our dataset while providing the na.strings parameter:
 ```{r warning=FALSE, message=FALSE, fig.height=5, fig.width=9}
-formhubData <- formhubRead("~/Downloads/MyDataSet.csv", "~/Downloads/MyForm.json", na.strings=c("999"))
-my_data <- as.data.frame(formhubData)
+my_data <- formhubRead("~/Downloads/MyDataSet.csv", "~/Downloads/MyForm.json", na.strings=c("999"))
 qplot(data = my_data, x = num_students_total_gender.num_students_female) + ylab("Number of Schools") + xlim(c(0,1500))
 ```
-Phew, no weird spike near 1000!
+Phew, no weird spike near 1000! If you are using values such as "-999", "999" or something else for your "NA" values, it is good practice to include them in your na.strings when you call `formhubRead` or `formhubDownload`.
 
 Round 2: outlier cut-offs
 ----------------
-However, our super-high outlier is still present at the dataset. At this zoom level, we that the vast majority of schools have less than 500 female pupils. For the sake of crudely setting our outlier paramaters, let's say that any facility reporting to have over 1000 female pupils will be counted as an outlier. The simple way to take this outlier out in R would be say something like `my_data$num_students_total_gender.num_students_female <- ifelse(mydata$num_students_total_gender.num_students_female > 1000, NA, my_data$num_students_total_gender.num_students_female)`. However, since besides being verbose, this method is also quite slow, we have written the following `outlierReplace` function. It take a dataframe, a vector of columns (or a single column), a vector of rows (or a single row), and the new value to set to it (which we'll default to `NA`). This function makes it easy to write outlier-replacement commands, which you'll see below. You should feel free to copy this into your R scripts to do outlier replacements yourselves, but do note that the `outlierReplace` function will replace data in your dataframe directly.
+However, our super-high outlier is still present at the dataset. At this zoom level, we that the vast majority of schools have less than 500 female pupils. For the sake of crudely setting our outlier paramaters, let's say that any facility reporting to have over 1000 female pupils will be counted as an outlier. The simple way to take this outlier out in R would be say something like `my_data$num_students_total_gender.num_students_female <- ifelse(mydata$num_students_total_gender.num_students_female > 1000, NA, my_data$num_students_total_gender.num_students_female)`. However, since besides being verbose, this method is also quite slow, we have written the following `outlierReplace` function. It takes a dataframe, a vector of columns (or a single column), a vector of rows (or a single row), and the new value to set to it (which we'll default to `NA`). This function makes it easy to write outlier-replacement commands, which you'll see below. You should feel free to copy this into your R scripts to do outlier replacements yourselves, but do note that the `outlierReplace` function will replace data in your dataframe directly.
 
 
 ```{r warning=FALSE, message=FALSE}
@@ -82,22 +80,28 @@ qplot(data = my_data, x = num_students_total_gender.num_students_female) + ylab(
 Note that the data has a much narrower range, and a spike at 500 now.
 
 
-Caveat: don't replace data; undoing may require re-tracing steps
-----------------------------------------------------------------
+Caveat: replace data with extreme care
+--------------------------------------
 
-Note that the `outlierReplace` function above actually replaces your dataset. Our cap of 500 now is built into the dataset. Thankfully, however, this isn't saved into our data. We can just re-read our dataset, re-trace our steps upto right before capping things at 500 to get a good dataset back.
+Okay, so that cap of 500 was just a quick demo, lets undo that. But how? We can't simply replace the value with 500 with somethine else, because it could have been anything 500 or above. Replacing data is hard to undo easily, so be  careful with functions like `outlierReplace`! In order to undo, we will have to re-read our dataset, and re-perform all the actions before the replace. Thankfully, however, we haven't saved our data, and there is only one thing we did before the replace, which is easy to re-create:
 
 ```{r warning=FALSE, message=FALSE}
-formhubData <- formhubRead("~/Downloads/MyDataSet.csv", "~/Downloads/MyForm.json") # actually, this step isn't strictly necessary; as formhubData has never been replaced
-my_data <- as.data.frame(formhubData)
-outlierReplace(my_data, c('num_students_total_gender.num_students_female', 'num_students_total_gender.num_students_total'),
-               which(my_data$num_students_total_gender.num_students_female > 1000, NA ))
+my_data <- formhubRead("~/Downloads/MyDataSet.csv", "~/Downloads/MyForm.json") 
+outlierReplace(my_data, 
+               c('num_students_total_gender.num_students_female', 'num_students_total_gender.num_students_total'),
+               which(my_data$num_students_total_gender.num_students_female > 1000,
+               NA ))
 ```
 
 
 Saving your dataset
 -----------------------
 Don't forget to save your new data set!
-```{r  warning=FALSE, message=FALSE, fig.height=5, fig.width=7}
-  write.csv(my_data, "~/Desktop/my_data_OutlierCleaned")
+```{r message=FALSE, fig.height=5, fig.width=7}
+  write.csv(my_data, "~/Desktop/my_data_OutlierCleaned.csv")
+```  
+Note the warning. my_data is actually a complex object that knows about your xlsform, which is why R is complaining; this save loses information derived from the XLSform! A non-lossy `formhubSave` is an upcoming feature; until then, you can explicitly convert my_data to a dataframe if you don't want to see the warning:
+
+```{r message=FALSE, fig.height=5, fig.width=7}
+  write.csv(as.data.frame(my_data), "~/Desktop/my_data_OutlierCleaned.csv")
 ```  
