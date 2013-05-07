@@ -9,7 +9,7 @@ Let us illustrate this with a simple example:
 ```{r read, warning=FALSE, message=FALSE}
 library(formhub)
 # Download the dataset named good_eats in the account of mberg
-good_eats_data <- as.data.frame(formhubDownload("good_eats", "mberg"))
+good_eats_data <- formhubDownload("good_eats", "mberg")
 ```
 
 The downloaded data has its fields converted to the right types, something we'll look at in depth later. Before we do that, lets present a quick example of the power of these conversions by looking at dates. Can we look at how much data mberg has been submitting over time?
