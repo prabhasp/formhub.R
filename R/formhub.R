@@ -18,6 +18,33 @@ setClass("formhubData", representation(data="data.frame", form="data.frame"))
 #' head(good_eats_data) # and has all the data
 as.data.frame.formhubData = function(fD) { fD@data }
 
+#' Produce a SpatialPointsDataFrame if data has a column of type `gps` or `geopoint`.
+#' Otherwise, return NA.
+#'
+#' @param the formhub object which will be possibly co-erced to a SpatialPointsDataFrame object.
+#' @export
+#' @return A SpatialPointsDataFrame representation of this formhub Object
+#' @examples
+#' good_eats_data <- as.data.frame(formhubDownload("good_eats", "mberg"))
+#' ge_spdf <- as.SpatialPointsDataFrame(good_eats_data)
+#' class(ge_spdf) # "SpatialPointsDataFrame"
+as.SpatialPointsDataFrame <- function(formhubObj) {
+  gpsfields = subset(formhubObj@form, type %in% c("gps", "geopoint"))$name
+  gpsfields = gpsfields[which(gpsfields %in% names(as.data.frame(formhubObj)))]
+  if(length(gpsfields) == 0) NA
+  else {
+    #TODO: deal with multiple gps questions?
+    gpses <- as.data.frame(formhubObj)[,gpsfields[1]]
+    dropRows <- gpses=="NA"
+    if(any(dropRows)) {    
+      warning(paste("formhub.R: Dropping",table(dropRows)['TRUE'],"rows because GPS not present."))
+      gpses <- gpses[!dropRows]
+    }
+    gpses_split <- apply(str_split_fixed(gpses, " ", 3)[,1:2], 2, FUN=as.numeric)
+    SpatialPointsDataFrame(gpses_split, as.data.frame(formhubObj)[!dropRows,])
+  }
+}
+
 #' Get a new dataframe, where the header contains the full questions as opposed to slugs.
 #'
 #' formhub Objects have some data, as well as the form, which documents how
@@ -233,3 +260,5 @@ removeColumns <- function(df, columnNameRegExpMatcher) {
     df[,-which(str_detect(names(df), orMatcher))]
   }
 }
+
+
