@@ -142,7 +142,26 @@ Saving your dataset
 -----------------------
 Don't forget to save your new data set!
 
+
 ```r
 write.csv(my_data, "~/Desktop/my_data_OutlierCleaned")
+```
+
+
+There are two ways to do the save. If you want all the form information preserved (and maybe the ability to run functions like `replaceHeaderNamesWithLabels` in the future, you can save the formhubData object as is, in an `.Rdata` file. Only R will be able to read this file. If you need a widely usable file, then use `as.data.frame`, and save the data frame, for example as a csv.
+
+Option 1:
+
+```r
+save(my_data, file = "~/Desktop/MyFormhubData.Rdata")
+# if you do load(file='~/Desktop/MyFormhubData.Rdata') later, my_data will
+# be loaded in to your workspace
+```
+
+
+Option 2:
+
+```r
+write.csv(as.data.frame(my_data), file = "~/Desktop/MyFormhubData.csv")
 ```
 
