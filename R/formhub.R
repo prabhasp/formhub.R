@@ -7,19 +7,6 @@ library(lubridate)
 
 setClass("formhubData", representation("data.frame", form="data.frame"), contains="data.frame")
 
-#' Make the formhubData object into a pure data.frame.
-#'
-#' @param formhubDataObj is the formhub data object whose internal data will be returned
-#' @export
-#' @return just the data from this formhubData object
-#' @examples
-#' good_eats <- formhubDownload("good_eats", "mberg")
-#' good_eats_df <- as.data.frame(good_eats)
-#' class(good_eats)      # is a formhubData object
-#' class(good_eats_df) # is data.frame
-#' head(good_eats_df) # and has all the data
-as.data.frame.formhubData = function(fD) { data.frame(fD) }
-
 #' Get a new dataframe, where the header contains the full questions as opposed to slugs.
 #'
 #' formhub Objects have some data, as well as the form, which documents how
