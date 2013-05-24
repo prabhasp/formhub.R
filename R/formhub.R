@@ -18,7 +18,7 @@ setClass("formhubData", representation("data.frame", form="data.frame"), contain
 #' class(good_eats)      # is a formhubData object
 #' class(good_eats_df) # is data.frame
 #' head(good_eats_df) # and has all the data
-as.data.frame.formhubData = function(fD) { fD@.Data }
+as.data.frame.formhubData = function(fD) { data.frame(fD) }
 
 #' Get a new dataframe, where the header contains the full questions as opposed to slugs.
 #'
