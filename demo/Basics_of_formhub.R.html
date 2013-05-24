@@ -242,11 +242,11 @@ hljs.initHighlightingOnLoad();
 ##   ..@ .S3Class : chr &quot;data.frame&quot;
 </code></pre>
 
-<p>R tells us something like <code>&#39;data.frame&#39;:  78 obs. of  19 variables:</code> as well as <code>Formal class &#39;formhubData&#39; [package &quot;.GlobalEnv&quot;] with 5 slots</code>. What this means is that formhubData objects can be dealt with as data frames (which makes them very convenient!) and well as &ldquo;objects&rdquo; with more properties (such as <code>form</code>, which is derived from your XLSform). The <code>form</code> gives formhub.R information about the exact question that was asked, and the type of the question asked (was it <code>text</code> or <code>select one</code>? or was it a <code>date</code>?), which lets the library change the types of the values to make them right, which is basically the power of this package.</p>
+<p>R tells us something like <code>&#39;data.frame&#39;:  78 obs. of  19 variables:</code> as well as <code>Formal class &#39;formhubData&#39; [package &quot;.GlobalEnv&quot;] with 5 slots</code>. What this means is that formhubData objects can be dealt with data.frames (which makes them very convenient!) and well as &ldquo;objects&rdquo; with more properties (such as <code>form</code>, which is derived from your XLSform). The <code>form</code> gives formhub.R information about the exact question that was asked, and the type of the question asked (was it <code>text</code> or <code>select one</code>? or was it a <code>date</code>?), which lets the library change the types of the values to make them right, which is basically the power of this package.</p>
 
-<p>For simplicity, if you want just a data frame and not this complicated formhubData object, you can always use the <code>as.data.frame</code> method.</p>
+<p>For simplicity, if you want just a data frame and not this complicated formhubData object, you can always use the <code>data.frame</code> method.</p>
 
-<pre><code class="r">good_eats_pure_data_frame &lt;- as.data.frame(good_eats)
+<pre><code class="r">good_eats_pure_data_frame &lt;- data.frame(good_eats)
 </code></pre>
 
 <h2>What formhub.R does for you &ndash; type conversions</h2>
@@ -254,7 +254,7 @@ hljs.initHighlightingOnLoad();
 <p>So the part where R downloaded your data for you was pretty cool. But there is more to the <code>formhubDownload</code> function than just downloading. In the background, the types of each of the columns is converted according to how the data was collected.</p>
 
 <pre><code class="r"># lets inspect the types of the first 10 columns of our downloaded data
-str(as.data.frame(good_eats)[1:10])
+str(data.frame(good_eats)[1:10])
 </code></pre>
 
 <pre><code>## List of 10

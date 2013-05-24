@@ -11,7 +11,7 @@ After reading the dataset, we want to prepare two basic fields, the first one, `
 ```r
 library(formhub)
 formhubData <- formhubRead("~/Downloads/Some_Data.csv", "~/Downloads/Some_Form.json")
-some_data <- as.data.frame(formhubData)
+some_data <- data.frame(formhubData)
 
 # first subtract start time from end time, then, convert that to minutes
 some_data$completion_time <- some_data$end - some_data$start

@@ -72,13 +72,13 @@ str(good_eats)
 ```
 
 
-R tells us something like `'data.frame':  78 obs. of  19 variables:` as well as `Formal class 'formhubData' [package ".GlobalEnv"] with 5 slots`. What this means is that formhubData objects can be dealt with as data frames (which makes them very convenient!) and well as "objects" with more properties (such as `form`, which is derived from your XLSform). The `form` gives formhub.R information about the exact question that was asked, and the type of the question asked (was it `text` or `select one`? or was it a `date`?), which lets the library change the types of the values to make them right, which is basically the power of this package.
+R tells us something like `'data.frame':  78 obs. of  19 variables:` as well as `Formal class 'formhubData' [package ".GlobalEnv"] with 5 slots`. What this means is that formhubData objects can be dealt with data.frames (which makes them very convenient!) and well as "objects" with more properties (such as `form`, which is derived from your XLSform). The `form` gives formhub.R information about the exact question that was asked, and the type of the question asked (was it `text` or `select one`? or was it a `date`?), which lets the library change the types of the values to make them right, which is basically the power of this package.
 
-For simplicity, if you want just a data frame and not this complicated formhubData object, you can always use the `as.data.frame` method.
+For simplicity, if you want just a data frame and not this complicated formhubData object, you can always use the `data.frame` method.
 
 
 ```r
-good_eats_pure_data_frame <- as.data.frame(good_eats)
+good_eats_pure_data_frame <- data.frame(good_eats)
 ```
 
 
@@ -90,7 +90,7 @@ So the part where R downloaded your data for you was pretty cool. But there is m
 
 ```r
 # lets inspect the types of the first 10 columns of our downloaded data
-str(as.data.frame(good_eats)[1:10])
+str(data.frame(good_eats)[1:10])
 ```
 
 ```

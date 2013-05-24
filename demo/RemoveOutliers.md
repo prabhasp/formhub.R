@@ -155,7 +155,7 @@ write.csv(my_data, "~/Desktop/my_data_OutlierCleaned")
 ```
 
 
-There are two ways to do the save. If you want all the form information preserved (and maybe the ability to run functions like `replaceHeaderNamesWithLabels` in the future, you can save the formhubData object as is, in an `.Rdata` file. Only R will be able to read this file. If you need a widely usable file, then use `as.data.frame`, and save the data frame, for example as a csv.
+There are two ways to do the save. If you want all the form information preserved (and maybe the ability to run functions like `replaceHeaderNamesWithLabels` in the future, you can save the formhubData object as is, in an `.Rdata` file. Only R will be able to read this file. If you need a widely usable file, then use `data.frame`, and save the data frame, for example as a csv.
 
 Option 1:
 
@@ -169,6 +169,6 @@ save(my_data, file = "~/Desktop/MyFormhubData.Rdata")
 Option 2:
 
 ```r
-write.csv(as.data.frame(my_data), file = "~/Desktop/MyFormhubData.csv")
+write.csv(data.frame(my_data), file = "~/Desktop/MyFormhubData.csv")
 ```
 

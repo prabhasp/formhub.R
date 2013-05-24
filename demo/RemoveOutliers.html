@@ -300,7 +300,7 @@ outlierReplace(my_data, c(&quot;num_students_total_gender.num_students_female&qu
 <pre><code>## Error: unused argument(s) (optional = TRUE)
 </code></pre>
 
-<p>There are two ways to do the save. If you want all the form information preserved (and maybe the ability to run functions like <code>replaceHeaderNamesWithLabels</code> in the future, you can save the formhubData object as is, in an <code>.Rdata</code> file. Only R will be able to read this file. If you need a widely usable file, then use <code>as.data.frame</code>, and save the data frame, for example as a csv.</p>
+<p>There are two ways to do the save. If you want all the form information preserved (and maybe the ability to run functions like <code>replaceHeaderNamesWithLabels</code> in the future, you can save the formhubData object as is, in an <code>.Rdata</code> file. Only R will be able to read this file. If you need a widely usable file, then use <code>data.frame</code>, and save the data frame, for example as a csv.</p>
 
 <p>Option 1:</p>
 
@@ -311,7 +311,7 @@ outlierReplace(my_data, c(&quot;num_students_total_gender.num_students_female&qu
 
 <p>Option 2:</p>
 
-<pre><code class="r">write.csv(as.data.frame(my_data), file = &quot;~/Desktop/MyFormhubData.csv&quot;)
+<pre><code class="r">write.csv(data.frame(my_data), file = &quot;~/Desktop/MyFormhubData.csv&quot;)
 </code></pre>
 
 </body>

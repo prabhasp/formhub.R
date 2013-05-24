@@ -10,7 +10,7 @@ This time, we'll be using a water point dataset. I am not at liberty to show you
 ```r
 # Read water points dataset directly from saved data and form.
 library("formhub")
-waterpoints <- as.data.frame(formhubRead("~/Downloads/_08_Water_points_train3_2012_09_06.csv", 
+waterpoints <- data.frame(formhubRead("~/Downloads/_08_Water_points_train3_2012_09_06.csv", 
     "~/Downloads/_08_Water_points_train3.json"))
 ```
 
