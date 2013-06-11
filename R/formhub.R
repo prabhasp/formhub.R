@@ -5,18 +5,7 @@ library(RCurl)
 library(lubridate)
 
 
-setClass("formhubData", representation(data="data.frame", form="data.frame"))
-
-#' Get just the data out of a formhub object. as.data.frame(obj) equivalent to obj@data
-#'
-#' @param formhubDataObj is the formhub data object whose data slot will be returned
-#' @export
-#' @return the data inside this formhubData object
-#' @examples
-#' good_eats_data <- as.data.frame(formhubDownload("good_eats", "mberg"))
-#' class(good_eats_data) # is data.frame
-#' head(good_eats_data) # and has all the data
-as.data.frame.formhubData = function(fD) { fD@data }
+setClass("formhubData", representation("data.frame", form="data.frame"), contains="data.frame")
 
 #' Produce a SpatialPointsDataFrame if data has a column of type `gps` or `geopoint`.
 #' Otherwise, return NA.
@@ -57,13 +46,13 @@ as.SpatialPointsDataFrame <- function(formhubObj) {
 #' @return a new data frames with the column names renamed from `name`s (slugs) to `label`s(full questions)
 #' @examples
 #' good_eats <- formhubDownload("good_eats", "mberg")
-#' names(good_eats@data) # still slugged names
-#' summary(good_eats@data$rating)
+#' names(good_eats) # still slugged names
+#' summary(good_eats$rating)
 #' full_header_good_eats <- replaceHeaderNamesWithLabels(good_eats)
 #' names(full_header_good_eats) # not slugged anymore
 #' summary(full_header_good_eats$Rating) # but data is the same
 replaceHeaderNamesWithLabels <- function(formhubDataObj) {
-  newNames <- lapply(names(formhubDataObj@data), function(n) {
+  newNames <- lapply(names(formhubDataObj), function(n) {
     trySelectAllReplace <- function(name) {
       index <- which(formhubDataObj@form$name==n)
     }
@@ -74,7 +63,7 @@ replaceHeaderNamesWithLabels <- function(formhubDataObj) {
            trySelectAllReplace(n),
            formhubDataObj@form$label[[index]])
   })
-  setNames(formhubDataObj@data, newNames)
+  setNames(formhubDataObj, newNames)
 }
 
 #' Download data from formhub.
@@ -90,7 +79,7 @@ replaceHeaderNamesWithLabels <- function(formhubDataObj) {
 #' @return formhubDataObj a formhubData Object, with "data" and "form" slots
 #' @examples
 #' good_eats <- formhubDownload("good_eats", "mberg")
-#' good_eats@data # is a data frame of all the data
+#' good_eats # is a data frame of all the data
 #' good_eats@form # is the form for that data, encoded as a dataframe
 #' privateData <- formhubDownload("Private_Data_For_Testing", uname="formhub_r", pass="t3st~p4ss")
 formhubDownload = function(formName, uname, pass=NA, ...) {
@@ -133,16 +122,16 @@ formhubDownload = function(formName, uname, pass=NA, ...) {
 #' @examples
 #' # will need to download data.csv and form.json for a specific form on formhub, for below, download
 #' http://formhub.org/mberg/forms/good_eats/data.csv http://formhub.org/mberg/forms/good_eats/form.json
-#' good_eats <- formhubRead("~/Downloads/good_eats_2013_01_24.csv", "~/Downloads/good_eats.json")
-#' head(good_eats@data) # is a data frame of all the data
-#' good_eatsX <- formhubRead("~/Downloads/good_eats_2013_01_24.csv", "~/Downloads/good_eats.json",
+#' good_eats <- formhubRead("~/Downloads/good_eats_2013_05_05.csv", "~/Downloads/good_eats.json")
+#' head(good_eats) # is a data frame of all the data
+#' good_eatsX <- formhubRead("~/Downloads/good_eats_2013_05_05.csv", "~/Downloads/good_eats.json",
 #'              extraFormDF=data.frame(name="imei", type="integer", label="IMEI"))
 #' good_eatsX@form # note that imei is now slated as type "integer" instead of type "imei"
-#' str(good_eatsX@data) # also notice that it is numeric instead of a factor
-#' good_eatsWO <- formhubRead("~/Downloads/good_eats_2013_01_24.csv", "~/Downloads/good_eats.json",
-#'              dropCols="submit*"))
+#' str(good_eatsX$imei) # also notice that it is numeric instead of a factor
+#' good_eatsWO <- formhubRead("~/Downloads/good_eats_2013_05_05.csv", "~/Downloads/good_eats.json",
+#'              dropCols="submit*")
 #' names(good_eatsWO) # notice how submit_date and submit_date are no longer there
-#' good_eatsNA <- formhubRead("~/Downloads/good_eats_2013_01_24.csv", "~/Downloads/good_eats.json",
+#' good_eatsNA <- formhubRead("~/Downloads/good_eats_2013_05_05.csv", "~/Downloads/good_eats.json",
 #'              na.strings=c("999"))
 #' good_eatsNA$amount # notice that the value that was 999 is now missing. This is helpful when using values such
 #'                    # as 999 to indicate no data
@@ -173,7 +162,7 @@ formhubCast  = function(dataDF, formDF, extraFormDF=data.frame(), dropCols="") {
   formDF <- rbind(extraFormDF, formDF)
   formDF <- formDF[!duplicated(formDF$name),]
   
-  new("formhubData", data=recastDataFrameBasedOnFormDF(dataDF, formDF),
+  new("formhubData", recastDataFrameBasedOnFormDF(dataDF, formDF),
                      form=formDF)
 }
 
@@ -248,7 +237,7 @@ recastDataFrameBasedOnFormDF = function(df, formdf) {
 #' @param columnNameRegExpMatcher pattern(s) to match to columns; matched columns are dropped.
 #' @return a smaller data frame.
 #' @examples
-#' good_eats_df <- formhubDownload("good_eats", "mberg")@data
+#' good_eats_df <- formhubDownload("good_eats", "mberg")
 #' names(good_eats_form_df) # note it includes submit_date and submit_data both
 #' names(removeColumns(good_eats_form_df, "submit*")) # both of which are gone now
 #' names(removeColumns(good_eats_form_df, c("submit*", "_gps*")) # you can pass a list of regular expressions

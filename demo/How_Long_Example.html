@@ -188,7 +188,7 @@ hljs.initHighlightingOnLoad();
 
 <pre><code class="r">library(formhub)
 formhubData &lt;- formhubRead(&quot;~/Downloads/Some_Data.csv&quot;, &quot;~/Downloads/Some_Form.json&quot;)
-some_data &lt;- as.data.frame(formhubData)
+some_data &lt;- data.frame(formhubData)
 
 # first subtract start time from end time, then, convert that to minutes
 some_data$completion_time &lt;- some_data$end - some_data$start

@@ -10,7 +10,7 @@ Let us illustrate this with a simple example:
 ```r
 library(formhub)
 # Download the dataset named good_eats in the account of mberg
-good_eats_data <- as.data.frame(formhubDownload("good_eats", "mberg"))
+good_eats_data <- formhubDownload("good_eats", "mberg")
 ```
 
 

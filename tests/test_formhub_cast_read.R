@@ -15,10 +15,10 @@ edu_rawdf <- read.csv(edu_datafile, na.strings="n/a", stringsAsFactors=FALSE, he
 hlt_form_df <- form_to_df(fromJSON(hlt_formfile))
 
 edu_formhubObj <- formhubRead(edu_datafile, edu_formfile)
-edu_df <- edu_formhubObj@data
+edu_df <- edu_formhubObj
 edu_form_df <- edu_formhubObj@form
 
-good_eats <- formhubRead(good_eats_datafile, good_eats_formfile)@data
+good_eats <- formhubRead(good_eats_datafile, good_eats_formfile)
 
 test_that("formdf is read properly", {
   edu_typeofname <- function(nom) { subset(edu_form_df, name==nom)$type }
@@ -120,9 +120,9 @@ test_that("passing nice extraFormDF in works", {
                            label=c("LGA",       "STATE",      "Device ID"))
   
   edu_df_with_extra <- formhubRead(edu_datafile, edu_formfile, extraFormDF=extraFormDF)
-  expect_true(is.factor(edu_df_with_extra@data$mylga))
-  expect_true(is.factor(edu_df_with_extra@data$mylga_state))
-  expect_true(is.numeric(edu_df_with_extra@data$deviceid))
+  expect_true(is.factor(edu_df_with_extra$mylga))
+  expect_true(is.factor(edu_df_with_extra$mylga_state))
+  expect_true(is.numeric(edu_df_with_extra$deviceid))
 })
 
 test_that("passing bad extraFormDF in works", {
@@ -131,14 +131,14 @@ test_that("passing bad extraFormDF in works", {
     c("mylga_state", "select one", "State"))),
                          c("name", "type", "label"))
   
-  edu_df_with_extra <- formhubRead(edu_datafile, edu_formfile, extraFormDF=extraFormDF)@data
+  edu_df_with_extra <- formhubRead(edu_datafile, edu_formfile, extraFormDF=extraFormDF)
   expect_true(is.factor(edu_df_with_extra$mylga))
   expect_true(is.factor(edu_df_with_extra$mylga_state))
 })
 
 test_that("passing na.strings works", {
   na.strings = c("southeast")
-  edu_df_wo_SE <- formhubRead(edu_datafile, edu_formfile, na.strings=na.strings)@data
+  edu_df_wo_SE <- formhubRead(edu_datafile, edu_formfile, na.strings=na.strings)
   expect_equal(levels(edu_df_wo_SE$mylga_zone), c("northwest"))
 })
 
