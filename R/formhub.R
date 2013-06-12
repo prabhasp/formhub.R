@@ -19,18 +19,19 @@ setClass("formhubData", representation("data.frame", form="data.frame"), contain
 #' class(ge_spdf) # "SpatialPointsDataFrame"
 as.SpatialPointsDataFrame <- function(formhubObj) {
   gpsfields = subset(formhubObj@form, type %in% c("gps", "geopoint"))$name
-  gpsfields = gpsfields[which(gpsfields %in% names(as.data.frame(formhubObj)))]
+  gpsfields = gpsfields[which(gpsfields %in% names(data.frame(formhubObj)))]
   if(length(gpsfields) == 0) NA
   else {
     #TODO: deal with multiple gps questions?
-    gpses <- as.data.frame(formhubObj)[,gpsfields[1]]
-    dropRows <- gpses=="NA"
+    gpses <- data.frame(formhubObj)[,gpsfields[1]]
+    dropRows <- gpses=="NA" | is.na(gpses)
     if(any(dropRows)) {    
       warning(paste("formhub.R: Dropping",table(dropRows)['TRUE'],"rows because GPS not present."))
       gpses <- gpses[!dropRows]
     }
-    gpses_split <- apply(str_split_fixed(gpses, " ", 3)[,1:2], 2, FUN=as.numeric)
-    SpatialPointsDataFrame(gpses_split, as.data.frame(formhubObj)[!dropRows,])
+    gpses_split <- apply(str_split_fixed(gpses, " ", 3)[,c(2,1)], 2, FUN=as.numeric)
+    SpatialPointsDataFrame(gpses_split, data.frame(formhubObj)[!dropRows,],
+                           proj4string=CRS("+proj=longlat +datum=WGS84 +ellps=WGS84"))
   }
 }
 
