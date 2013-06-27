@@ -136,10 +136,12 @@ formhubDownload = function(formName, uname, pass=NA, ...) {
 #'              na.strings=c("999"))
 #' good_eatsNA$amount # notice that the value that was 999 is now missing. This is helpful when using values such
 #'                    # as 999 to indicate no data
-formhubRead  = function(csvfilename, jsonfilename, extraFormDF=data.frame(), dropCols="", na.strings=c("n/a")) {
+formhubRead  = function(csvfilename, jsonfilename, extraFormDF=data.frame(), dropCols="", na.strings=c("n/a"),
+                        convert.dates=TRUE) {
   dataframe <- read.csv(csvfilename, stringsAsFactors=FALSE, header=TRUE, na.strings=na.strings)
   
-  formhubCast(dataframe, form_to_df(fromJSON(jsonfilename)), extraFormDF=extraFormDF, dropCols=dropCols)
+  formhubCast(dataframe, form_to_df(fromJSON(jsonfilename)), extraFormDF=extraFormDF, dropCols=dropCols,
+              convert.dates=convert.dates)
 }
 
 #' Casts a dataframe to the right types based on a form-dataframe.
@@ -156,14 +158,14 @@ formhubRead  = function(csvfilename, jsonfilename, extraFormDF=data.frame(), dro
 #' @examples
 #' 
 #' See examples under formhubRead; this should be used through formhubRead in almost all cases
-formhubCast  = function(dataDF, formDF, extraFormDF=data.frame(), dropCols="") {
+formhubCast  = function(dataDF, formDF, extraFormDF=data.frame(), dropCols="", convert.dates=TRUE) {
   dataDF <- removeColumns(dataDF, dropCols)
 
   extraFormDF <- colwise(as.character)(extraFormDF)
-  formDF <- rbind(extraFormDF, formDF)
+  formDF <- rbind.fill(extraFormDF, formDF)
   formDF <- formDF[!duplicated(formDF$name),]
   
-  new("formhubData", recastDataFrameBasedOnFormDF(dataDF, formDF),
+  new("formhubData", recastDataFrameBasedOnFormDF(dataDF, formDF, convert.dates=convert.dates),
                      form=formDF)
 }
 
@@ -187,9 +189,13 @@ form_to_df = function(formJSON) {
         names <- paste(nameprefix, sapply(options, function(o) o['name']), sep=".")
         
         labels <- sapply(options, function(o) { paste( child[["label"]], o['label'], sep=" >> ")})
-        data.frame(name=names, label=labels, type="boolean", stringsAsFactors=F)
+        data.frame(name=names, label=labels, type="boolean", options=NA, stringsAsFactors=F)
+      } else if (child[["type"]] == "select one") {
+        data.frame(name=nom, type=child[["type"]], options=toJSON(child$children),
+                   label=if("label" %in% names(child)) {child[["label"]]} else {child[["name"]]},
+                   stringsAsFactors=F)
       } else {
-        data.frame(name=nom, type=child[["type"]], 
+        data.frame(name=nom, type=child[["type"]], options=NA,
                    label=if("label" %in% names(child)) {child[["label"]]} else {child[["name"]]},
                    stringsAsFactors=F)
       }
@@ -208,7 +214,7 @@ form_to_df = function(formJSON) {
 #' @examples
 #' 
 #' #See examples under formhubRead; this should be used through formhubRead in almost all cases
-recastDataFrameBasedOnFormDF = function(df, formdf) {
+recastDataFrameBasedOnFormDF = function(df, formdf, convert.dates=TRUE, convertYesNoToBool=FALSE) {
   # do this by type
   #TODO: refactor
   stopifnot(is.character(formdf$name))
@@ -227,8 +233,15 @@ recastDataFrameBasedOnFormDF = function(df, formdf) {
   reTypeColumns(c("integer", "decimal"), as.numeric)
   reTypeColumns(c("boolean"), as.logical)
   reTypeColumns(c("select one", "imei", "subscriberid", "simserial", "deviceid", "phonenumber"), as.factor)
-  reTypeColumns(c("date", "today"), iso8601DateConvert)
-  reTypeColumns(c("start", "end", "datetime"), iso8601DateTimeConvert)
+  if(convert.dates) {
+    reTypeColumns(c("date", "today"), iso8601DateConvert)
+    reTypeColumns(c("start", "end", "datetime"), iso8601DateTimeConvert)
+  }
+  if(convertYesNoToBool) {
+    selectones <- formdf[!is.na(formdf$options),]$options
+    #TODO
+    #browser()
+  }
   df
 }
 

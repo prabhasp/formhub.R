@@ -20,6 +20,13 @@ edu_form_df <- edu_formhubObj@form
 
 good_eats <- formhubRead(good_eats_datafile, good_eats_formfile)
 
+test_that("convert.dates works", {
+  expect_that(ef <- formhubRead(edu_datafile, edu_formfile),shows_message())
+  expect_true(is.instant(ef$start))
+  ef <- formhubRead(edu_datafile, edu_formfile, convert.dates=F)
+  expect_false(is.instant(ef$start))
+})
+
 test_that("formdf is read properly", {
   edu_typeofname <- function(nom) { subset(edu_form_df, name==nom)$type }
   expect_true(edu_typeofname("start") == "start")
