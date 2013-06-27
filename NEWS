@@ -1,5 +1,9 @@
 formhub.R News
 
+Changes in formhub.R 0.0.3.2 (June 28, 2013):
+
+ * suppressing warnings when doing type conversion according to formhub types
+
 Changes in formhub.R 0.0.3.1 (May 24, 2013):
 
  * `formhubData`, the class of objects that formhub* functions return, is now inherited from data.frame, and the @data property has been removed. What this means is that you can do ordinary data.frame operations (example: `head`, `names`, `nrow`) on formhubData objects, which makes usage more convenient.
