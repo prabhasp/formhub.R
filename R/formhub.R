@@ -3,9 +3,38 @@ library(stringr)
 library(plyr)
 library(RCurl)
 library(lubridate)
+library(sp)
 
 
 setClass("formhubData", representation("data.frame", form="data.frame"), contains="data.frame")
+
+#' Produce a SpatialPointsDataFrame if data has a column of type `gps` or `geopoint`.
+#' Otherwise, return NA.
+#'
+#' @param the formhub object which will be possibly co-erced to a SpatialPointsDataFrame object.
+#' @export
+#' @return A SpatialPointsDataFrame representation of this formhub Object
+#' @examples
+#' good_eats_data <- as.data.frame(formhubDownload("good_eats", "mberg"))
+#' ge_spdf <- as.SpatialPointsDataFrame(good_eats_data)
+#' class(ge_spdf) # "SpatialPointsDataFrame"
+as.SpatialPointsDataFrame <- function(formhubObj) {
+  gpsfields = subset(formhubObj@form, type %in% c("gps", "geopoint"))$name
+  gpsfields = gpsfields[which(gpsfields %in% names(data.frame(formhubObj)))]
+  if(length(gpsfields) == 0) NA
+  else {
+    #TODO: deal with multiple gps questions?
+    gpses <- data.frame(formhubObj)[,gpsfields[1]]
+    dropRows <- gpses=="NA" | is.na(gpses)
+    if(any(dropRows)) {    
+      warning(paste("formhub.R: Dropping",table(dropRows)['TRUE'],"rows because GPS not present."))
+      gpses <- gpses[!dropRows]
+    }
+    gpses_split <- apply(str_split_fixed(gpses, " ", 3)[,c(2,1)], 2, FUN=as.numeric)
+    SpatialPointsDataFrame(gpses_split, data.frame(formhubObj)[!dropRows,],
+                           proj4string=CRS("+proj=longlat +datum=WGS84 +ellps=WGS84"))
+  }
+}
 
 #' Get a new dataframe, where the header contains the full questions as opposed to slugs.
 #'
@@ -108,10 +137,12 @@ formhubDownload = function(formName, uname, pass=NA, ...) {
 #'              na.strings=c("999"))
 #' good_eatsNA$amount # notice that the value that was 999 is now missing. This is helpful when using values such
 #'                    # as 999 to indicate no data
-formhubRead  = function(csvfilename, jsonfilename, extraFormDF=data.frame(), dropCols="", na.strings=c("n/a")) {
+formhubRead  = function(csvfilename, jsonfilename, extraFormDF=data.frame(), dropCols="", na.strings=c("n/a"),
+                        convert.dates=TRUE) {
   dataframe <- read.csv(csvfilename, stringsAsFactors=FALSE, header=TRUE, na.strings=na.strings)
   
-  formhubCast(dataframe, form_to_df(fromJSON(jsonfilename)), extraFormDF=extraFormDF, dropCols=dropCols)
+  formhubCast(dataframe, form_to_df(fromJSON(jsonfilename)), extraFormDF=extraFormDF, dropCols=dropCols,
+              convert.dates=convert.dates)
 }
 
 #' Casts a dataframe to the right types based on a form-dataframe.
@@ -128,14 +159,14 @@ formhubRead  = function(csvfilename, jsonfilename, extraFormDF=data.frame(), dro
 #' @examples
 #' 
 #' See examples under formhubRead; this should be used through formhubRead in almost all cases
-formhubCast  = function(dataDF, formDF, extraFormDF=data.frame(), dropCols="") {
+formhubCast  = function(dataDF, formDF, extraFormDF=data.frame(), dropCols="", convert.dates=TRUE) {
   dataDF <- removeColumns(dataDF, dropCols)
 
   extraFormDF <- colwise(as.character)(extraFormDF)
-  formDF <- rbind(extraFormDF, formDF)
+  formDF <- rbind.fill(extraFormDF, formDF)
   formDF <- formDF[!duplicated(formDF$name),]
   
-  new("formhubData", recastDataFrameBasedOnFormDF(dataDF, formDF),
+  new("formhubData", recastDataFrameBasedOnFormDF(dataDF, formDF, convert.dates=convert.dates),
                      form=formDF)
 }
 
@@ -159,9 +190,13 @@ form_to_df = function(formJSON) {
         names <- paste(nameprefix, sapply(options, function(o) o['name']), sep=".")
         
         labels <- sapply(options, function(o) { paste( child[["label"]], o['label'], sep=" >> ")})
-        data.frame(name=names, label=labels, type="boolean", stringsAsFactors=F)
+        data.frame(name=names, label=labels, type="boolean", options=NA, stringsAsFactors=F)
+      } else if (child[["type"]] == "select one") {
+        data.frame(name=nom, type=child[["type"]], options=toJSON(child$children),
+                   label=if("label" %in% names(child)) {child[["label"]]} else {child[["name"]]},
+                   stringsAsFactors=F)
       } else {
-        data.frame(name=nom, type=child[["type"]], 
+        data.frame(name=nom, type=child[["type"]], options=NA,
                    label=if("label" %in% names(child)) {child[["label"]]} else {child[["name"]]},
                    stringsAsFactors=F)
       }
@@ -180,7 +215,7 @@ form_to_df = function(formJSON) {
 #' @examples
 #' 
 #' #See examples under formhubRead; this should be used through formhubRead in almost all cases
-recastDataFrameBasedOnFormDF = function(df, formdf) {
+recastDataFrameBasedOnFormDF = function(df, formdf, convert.dates=TRUE) {
   # do this by type
   #TODO: refactor
   stopifnot(is.character(formdf$name))
@@ -201,8 +236,10 @@ recastDataFrameBasedOnFormDF = function(df, formdf) {
   reTypeColumns(c("integer", "decimal"), as.numeric)
   reTypeColumns(c("boolean"), as.logical)
   reTypeColumns(c("select one", "imei", "subscriberid", "simserial", "deviceid", "phonenumber"), as.factor)
-  reTypeColumns(c("date", "today"), iso8601DateConvert)
-  reTypeColumns(c("start", "end", "datetime"), iso8601DateTimeConvert)
+  if(convert.dates) {
+    reTypeColumns(c("date", "today"), iso8601DateConvert)
+    reTypeColumns(c("start", "end", "datetime"), iso8601DateTimeConvert)
+  }
   df
 }
 
@@ -224,3 +261,5 @@ removeColumns <- function(df, columnNameRegExpMatcher) {
     df[,-which(str_detect(names(df), orMatcher))]
   }
 }
+
+
