@@ -54,16 +54,13 @@ as.SpatialPointsDataFrame <- function(formhubObj) {
 #' names(full_header_good_eats) # not slugged anymore
 #' summary(full_header_good_eats$Rating) # but data is the same
 replaceHeaderNamesWithLabels <- function(formhubDataObj) {
-  newNames <- lapply(names(formhubDataObj), function(n) {
-    trySelectAllReplace <- function(name) {
-      index <- which(formhubDataObj@form$name==n)
+  newNames <- lapply(names(formhubDataObj), function(nm) {
+    index <- which(formhubDataObj@form$name==nm)
+    if(length(index) > 0) {
+       formhubDataObj@form$label[[index]]
+    } else {
+      nm
     }
-    
-    index <- which(formhubDataObj@form$name==n)
-    ifelse(length(index) == 0,
-           # maybe its a select-all
-           trySelectAllReplace(n),
-           formhubDataObj@form$label[[index]])
   })
   setNames(formhubDataObj, newNames)
 }
