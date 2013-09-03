@@ -3,6 +3,7 @@ library(stringr)
 library(plyr)
 library(RCurl)
 library(lubridate)
+library(sp)
 
 
 setClass("formhubData", representation("data.frame", form="data.frame"), contains="data.frame")
@@ -214,7 +215,7 @@ form_to_df = function(formJSON) {
 #' @examples
 #' 
 #' #See examples under formhubRead; this should be used through formhubRead in almost all cases
-recastDataFrameBasedOnFormDF = function(df, formdf, convert.dates=TRUE, convertYesNoToBool=FALSE) {
+recastDataFrameBasedOnFormDF = function(df, formdf, convert.dates=TRUE) {
   # do this by type
   #TODO: refactor
   stopifnot(is.character(formdf$name))
@@ -236,11 +237,6 @@ recastDataFrameBasedOnFormDF = function(df, formdf, convert.dates=TRUE, convertY
   if(convert.dates) {
     reTypeColumns(c("date", "today"), iso8601DateConvert)
     reTypeColumns(c("start", "end", "datetime"), iso8601DateTimeConvert)
-  }
-  if(convertYesNoToBool) {
-    selectones <- formdf[!is.na(formdf$options),]$options
-    #TODO
-    #browser()
   }
   df
 }
