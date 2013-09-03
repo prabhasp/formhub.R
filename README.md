@@ -12,6 +12,7 @@ Examples
  * Making maps -- [Making maps with North Ghana data](http://modilabs.github.com/formhub.R/demo/Water_Points_Example.html)
  * Quality control -- [How long did it take to process a survey](http://modilabs.github.com/formhub.R/demo/How_Long_Example.html)
  * Quality control II -- [A basic tutorial on removing outliers from your data](http://modilabs.github.com/formhub.R/demo/RemoveOutliers.html)
+ * Making Readable Data -- [Replacing "slugs" in data output with survey text](http://modilabs.github.io/formhub.R/demo/ReadableData.html)
 
 For most of the examples, I use the [ggplot2](http://ggplot2.org) library, which is an amazing data visualization library worth every minute of your time spent learning it.
 
