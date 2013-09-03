@@ -65,6 +65,40 @@ replaceHeaderNamesWithLabels <- function(formhubDataObj) {
   setNames(formhubDataObj, newNames)
 }
 
+#' Get a new dataframe, where all 'name's are replaced with full labels.
+#'
+#' formhub Objects have some data, as well as the form, which documents how
+#' the data was obtained through a survey. The data, by default, is represented by
+#' slugs, ie, items in the `name` column in the original xfrom. This function
+#' replaces slugs in the header with actual question text, and replaces slugs in
+#' select one options with the actual resposne text.
+#'
+#' @param formhubDataObj is the formhub data object whose data slot will be renamed
+#' @export
+#' @return a new data frames with the column names, as well as factor values, renamed from `name`s (slugs) to `label`s(full questions)
+#' @examples
+#' good_eats <- formhubDownload("good_eats", "mberg")
+#' names(good_eats) # still slugged names
+#' summary(good_eats$rating)
+#' good_eats_readable <- replaceHeaderNamesWithLabels(good_eats)
+#' names(good_eats_readable) # not slugged anymore
+#' summary(good_eats_readable$`Risk Factor`) # not slugged anymore.
+replaceAllNamesWithLabels <- function(formhubDataObj) {
+  data <- data.frame(formhubDataObj)
+  form <- formhubDataObj@form
+  row.names(form) <- form$name
+  
+  l_ply(form[form$type == 'select one',]$name, function(ln) {
+    print(ln)
+    ol <- fromJSON(form[ln,'options'])
+    old <- ldply(ol, rbind)
+    row.names(old) <- old$name
+    levels(data[,ln]) <<- recodeVar(levels(data[,ln]), 
+                as.character(old$name), as.character(old$label), default=NA, keep.na=T)
+  })
+  replaceHeaderNamesWithLabels(new("formhubData", data, form=form))
+}
+
 #' Download data from formhub.
 #'
 #' This function downloads a dataset for the given form and username, and produces a 
