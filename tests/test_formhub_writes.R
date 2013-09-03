@@ -14,7 +14,7 @@ good_eats_formfile <- str_c(test_dir, "fixtures/good_eats.json")
 # Spatial Point Data Frame Object
 test_that("SpatialPointsDataFrame Object can be produced", {
   edu_formhubObj <- formhubRead(edu_datafile, edu_formfile)
-  expect_warning(good_eats <- formhubRead(good_eats_datafile, good_eats_formfile))
+  good_eats <- formhubRead(good_eats_datafile, good_eats_formfile)
   
   edu_spdf <- as.SpatialPointsDataFrame(edu_formhubObj)
   expect_is(edu_spdf, "SpatialPointsDataFrame")
@@ -28,7 +28,7 @@ test_that("SpatialPointsDataFrame Object can be produced", {
  
 test_that("SpatialPointsDataFrame Object can be produced even when _lat _long columns missing", {
   edu_formhubObj <- formhubRead(edu_datafile, edu_formfile, dropCols="*tude")
-  expect_warning(good_eats <- formhubRead(good_eats_datafile, good_eats_formfile, dropCols="*tude"))
+  good_eats <- formhubRead(good_eats_datafile, good_eats_formfile, dropCols="*tude")
           
   edu_spdf <- as.SpatialPointsDataFrame(edu_formhubObj)
   expect_is(edu_spdf, "SpatialPointsDataFrame")
@@ -42,7 +42,7 @@ test_that("SpatialPointsDataFrame Object can be produced even when _lat _long co
 
 test_that("SpatialPointDataFrame Objec conversion returns NA when gps field missing", {
   edu_formhubObj <- formhubRead(edu_datafile, edu_formfile, dropCols="gps")
-  expect_warning(good_eats <- formhubRead(good_eats_datafile, good_eats_formfile, dropCols="gps"))
+  good_eats <- formhubRead(good_eats_datafile, good_eats_formfile, dropCols="gps")
   
   expect_true(is.na(as.SpatialPointsDataFrame(edu_formhubObj)))
   expect_true(is.na(as.SpatialPointsDataFrame(good_eats)))
