@@ -4,6 +4,7 @@ library(plyr)
 library(RCurl)
 library(lubridate)
 library(sp)
+library(doBy)
 
 
 setClass("formhubData", representation("data.frame", form="data.frame"), contains="data.frame")
@@ -80,7 +81,7 @@ replaceHeaderNamesWithLabels <- function(formhubDataObj) {
 #' good_eats <- formhubDownload("good_eats", "mberg")
 #' names(good_eats) # still slugged names
 #' summary(good_eats$rating)
-#' good_eats_readable <- replaceHeaderNamesWithLabels(good_eats)
+#' good_eats_readable <- replaceAllNamesWithLabels(good_eats)
 #' names(good_eats_readable) # not slugged anymore
 #' summary(good_eats_readable$`Risk Factor`) # not slugged anymore.
 replaceAllNamesWithLabels <- function(formhubDataObj) {

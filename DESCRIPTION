@@ -10,7 +10,8 @@ Depends:
     stringr,
     plyr,
     RCurl,
-    lubridate
+    lubridate,
+    doBy
 Suggests:
     ggplot2
 Description: formhub.R provides functions to pull data from formhub.org
