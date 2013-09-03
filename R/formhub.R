@@ -90,7 +90,6 @@ replaceAllNamesWithLabels <- function(formhubDataObj) {
   row.names(form) <- form$name
   
   l_ply(form[form$type == 'select one',]$name, function(ln) {
-    print(ln)
     ol <- fromJSON(form[ln,'options'])
     old <- ldply(ol, rbind)
     row.names(old) <- old$name
