@@ -223,7 +223,9 @@ recastDataFrameBasedOnFormDF = function(df, formdf, convert.dates=TRUE) {
   reTypeColumns <- function(types, reTypeFunc) { 
     cols <- c(subset(formdf, type %in% types)$name)
     colsToReType <- unique(cols[cols %in% names(df)])
-    df[colsToReType] <<- colwise(reTypeFunc)(df[colsToReType])
+    suppressWarnings(suppressMessages(
+      df[colsToReType] <<- colwise(reTypeFunc)(df[colsToReType])
+    ))
   }
   # lubridate doesn't handle ISO 8601 datetimes yet, so we just chuck the timezone info
   iso8601DateTimeConvert <- function(x) { ymd_hms(str_extract(x, '^[^+Z]*(T| )[^+Z-]*')) }

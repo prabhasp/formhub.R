@@ -1,9 +1,13 @@
 formhub.R News
 
-Changes in formhub.R 0.0.3.5 (June 28, 2013):
+Changes in formhub.R 0.0.3.5 (Sept 03, 2013):
 
  * added as.SpatialPointsDataFrame function that drops all invalid gps points, and returns a SpatialPointsDataFrame
  * added convert.dates option to formhub(Read|Download|Cast)
+
+Changes in formhub.R 0.0.3.2 (June 28, 2013):
+
+ * suppressing warnings when doing type conversion according to formhub types
 
 Changes in formhub.R 0.0.3.1 (May 24, 2013):
 
