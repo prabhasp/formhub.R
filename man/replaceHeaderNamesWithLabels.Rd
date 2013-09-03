@@ -22,6 +22,10 @@
 }
 \examples{
 good_eats <- formhubDownload("good_eats", "mberg")
-names(good_eats
+names(good_eats) # still slugged names
+summary(good_eats$rating)
+full_header_good_eats <- replaceHeaderNamesWithLabels(good_eats)
+names(full_header_good_eats) # not slugged anymore
+summary(full_header_good_eats$Rating) # but data is the same
 }
 

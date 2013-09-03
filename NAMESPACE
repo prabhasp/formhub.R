@@ -1,3 +1,5 @@
+export(as.SpatialPointsDataFrame)
 export(formhubDownload)
 export(formhubRead)
+export(replaceAllNamesWithLabels)
 export(replaceHeaderNamesWithLabels)

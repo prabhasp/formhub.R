@@ -2,7 +2,8 @@
 \alias{recastDataFrameBasedOnFormDF}
 \title{Casts a dataframe to the right types based on a form-dataframe. Used by formhubCast}
 \usage{
-  recastDataFrameBasedOnFormDF(df, formdf)
+  recastDataFrameBasedOnFormDF(df, formdf,
+    convert.dates = TRUE)
 }
 \arguments{
   \item{df}{data}

@@ -3,7 +3,7 @@
 \title{Casts a dataframe to the right types based on a form-dataframe.}
 \usage{
   formhubCast(dataDF, formDF, extraFormDF = data.frame(),
-    dropCols = "")
+    dropCols = "", convert.dates = TRUE)
 }
 \arguments{
   \item{dataDF}{data}

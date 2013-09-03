@@ -19,5 +19,8 @@
 }
 \examples{
 good_eats_df <- formhubDownload("good_eats", "mberg")
+names(good_eats_form_df) # note it includes submit_date and submit_data both
+names(removeColumns(good_eats_form_df, "submit*")) # both of which are gone now
+names(removeColumns(good_eats_form_df, c("submit*", "_gps*")) # you can pass a list of regular expressions
 }
 

@@ -25,6 +25,7 @@
 }
 \examples{
 good_eats <- formhubDownload("good_eats", "mberg")
+good_eats # is a data frame of all the data
 good_eats
 }
 
