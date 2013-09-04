@@ -1,6 +1,6 @@
 formhub.R News
 
-Changes in formhub.R 0.0.3.6 (Sept 03, 2013):
+Changes in formhub.R 0.0.3.6.1 (Sept 03, 2013):
 
  * added a replaceAllNamesWithLables function that will replace 'slugs' within select one data, as well as the question, with the label text.
  
