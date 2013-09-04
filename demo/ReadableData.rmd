@@ -29,7 +29,7 @@ summary(good_eats_readable_questions$`Risk Factor`) # Note: the column name, bec
 ```
 
 We can also do that, easily, using the `replaceAllNamesWithLabels` function:
-```{r  warning=FALSE, message=FALSE, include=FALSE}
+```{r  warning=FALSE, message=FALSE}
 good_eats_readable <- replaceAllNamesWithLabels(good_eats)
 summary(good_eats_readable$`Risk Factor`)
 ```
