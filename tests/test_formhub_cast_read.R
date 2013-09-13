@@ -38,7 +38,7 @@ test_that("formdf is read properly", {
   expect_true(edu_typeofname("respondent_contact") == "string")
   expect_true(edu_typeofname("power_sources.generator") == "boolean")
   
-  expect_true(is.factor(edu_form_df$type))
+  expect_true(is.character(edu_form_df$type))
   expect_true(is.character(edu_form_df$name))
   expect_true(is.character(edu_form_df$label))
   
@@ -130,6 +130,9 @@ test_that("passing nice extraFormDF in works", {
   expect_true(is.factor(edu_df_with_extra$mylga))
   expect_true(is.factor(edu_df_with_extra$mylga_state))
   expect_true(is.numeric(edu_df_with_extra$deviceid))
+  expect_true(all(edu_df_with_extra@form$type %in% 
+    c("boolean", "calculate", "end", "gps", "integer", "note", "phonenumber", "photo",
+      "select one", "simserial", "start", "string", "subscriberid", "text", "today")))
 })
 
 test_that("passing bad extraFormDF in works", {

@@ -234,7 +234,6 @@ form_to_df = function(formJSON) {
     })
   }
   df <- form_to_df_internal(formJSON)
-  df$type <- as.factor(df$type)
   df
 }
 

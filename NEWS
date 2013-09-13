@@ -1,5 +1,9 @@
 formhub.R News
 
+Changes in formhub.R 0.0.3.6.1 (Sept 13, 2013):
+
+ * Made it so that the type column in formDFs remain as character. The factor was doing funky things on rbind.fill.
+
 Changes in formhub.R 0.0.3.6 (Sept 03, 2013):
 
  * added a replaceAllNamesWithLables function that will replace 'slugs' within select one data, as well as the question, with the label text.
