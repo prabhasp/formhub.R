@@ -1,6 +1,6 @@
-library(testthat)
-library(stringr)
-library(formhub)
+require(testthat)
+require(stringr)
+require(formhub)
 
 test_dir = ""
 #source("~/Code/formhub.R/R/formhub.R");test_file("~/Code/formhub.R/tests/test_formhub_funcs.R")
@@ -30,7 +30,7 @@ test_that("replaceHeaderNamesWithLabels basically works", {
                     "23. What type(s) of power sources are available at this school? >> None")
               %in% names(edu_formhubObj_replaced)))
 })
-
+ 
 test_that("replaceAllNamesWithLabels works on good_eats", {
   good_eats <- formhubRead(good_eats_datafile, good_eats_formfile)
   good_eats_replaced <- replaceAllNamesWithLabels(good_eats)
@@ -44,4 +44,20 @@ test_that("replaceAllNamesWithLabels works on good_eats", {
   expect_equivalent(table(good_eats_replaced$Rating)["What was I thinking"], 2)
   
   expect_true("Low Risk" %in% good_eats_replaced[,"Risk Factor"])
+})
+
+test_that("replace Functions work with dot-replaced names", {
+  good_eats <- formhubRead(good_eats_datafile, good_eats_formfile)
+  names(good_eats)[3] <- 'food.type' # R replaces characters with dot sometimes
+                                     # doesn't replace _, but we don't have better
+                                     # test data at the moment
+  good_eats_replaced <- replaceAllNamesWithLabels(good_eats)
+  good_eats_names_replaced <- replaceHeaderNamesWithLabels(good_eats)
+  
+  expect_false(any(names(good_eats_replaced) == "NA"))
+  expect_true("Type of Eat" %in% names(good_eats_replaced))
+  expect_true("Dinner" %in% good_eats_replaced[,"Type of Eat"])
+  
+  expect_false(any(names(good_eats_names_replaced) == "NA"))
+  expect_true("Type of Eat" %in% names(good_eats_names_replaced))
 })

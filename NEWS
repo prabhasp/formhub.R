@@ -1,5 +1,9 @@
 formhub.R News
 
+Changes in formhub.R 0.0.3.6.2 (Sept 16, 2013):
+
+ * replace*NamesWithLabels now *should* work on forms with weird characters that R replaced with dot
+
 Changes in formhub.R 0.0.3.6.1 (Sept 13, 2013):
 
  * Made it so that the type column in formDFs remain as character. The factor was doing funky things on rbind.fill.

@@ -56,7 +56,8 @@ as.SpatialPointsDataFrame <- function(formhubObj) {
 #' summary(full_header_good_eats$Rating) # but data is the same
 replaceHeaderNamesWithLabels <- function(formhubDataObj) {
   newNames <- lapply(names(formhubDataObj), function(nm) {
-    index <- which(formhubDataObj@form$name==nm)
+    index <- which(str_detect(formhubDataObj@form$name, paste0('^',nm,'$'))) 
+      # deals with data frame names where character are replaced by dots
     if(length(index) > 0) {
        formhubDataObj@form$label[[index]]
     } else {
@@ -89,11 +90,19 @@ replaceAllNamesWithLabels <- function(formhubDataObj) {
   form <- formhubDataObj@form
   row.names(form) <- form$name
   
-  l_ply(form[form$type == 'select one',]$name, function(ln) {
-    ol <- fromJSON(form[ln,'options'])
+  l_ply(form[form$type == 'select one',]$name, function(field_name) {
+    ol <- fromJSON(form[field_name,'options'])
     old <- ldply(ol, rbind)
     row.names(old) <- old$name
-    levels(data[,ln]) <<- recodeVar(levels(data[,ln]), 
+    if (! field_name %in% names(data)) {
+      col_name <- names(data)[str_detect(field_name, paste0('^', names(data), '$'))] # sometimes characters are
+        # replaced by dot; we take advantage of fact that . is an all-character
+        # match for regular expressions, and reassign field_name to a name that matches
+    } else {
+      col_name <- field_name
+    }
+    stopifnot(length(col_name) == 1) #form and data don't match
+    levels(data[,col_name]) <<- recodeVar(levels(data[,col_name]), 
                 as.character(old$name), as.character(old$label), default=NA, keep.na=T)
   })
   replaceHeaderNamesWithLabels(new("formhubData", data, form=form))

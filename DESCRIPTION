@@ -1,6 +1,6 @@
 Package: formhub
-Version: 0.0.3.6.1
-Date: 2013-09-03
+Version: 0.0.3.6.2
+Date: 2013-09-16
 Title: formhub.R -- pulling data from formhub.org repositories easily.
 Author: Prabhas Pokharel (Modi Research Group, Columbia University)
 Maintainer: Prabhas Pokharel <prabhas.pokharel@gmail.com>
@@ -11,7 +11,8 @@ Depends:
     plyr,
     RCurl,
     lubridate,
-    doBy
+    doBy,
+    sp
 Suggests:
     ggplot2
 Description: formhub.R provides functions to pull data from formhub.org
