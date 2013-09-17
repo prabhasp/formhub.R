@@ -159,6 +159,8 @@ formhubDownload = function(formName, uname, pass=NA, ...) {
 #' @param extraFormDF override the form (such as by providing a type for a calculate, a new label, etc.)
 #' @param dropCols a regular expression, any column name that matches that regexp will be dropped
 #' @param na.strings list of na.strings to be passed onto read.csv (default: "n/a")
+#' @param keepGroupNames for a question with name foo in group bar, keepGroupName=T will generate
+#'        a name foo.bar, while keepGroupName=F will generate a name bar
 #' @export
 #' @return formhubDataObj a formhubData Object, with "data" and "form" slots
 #' @examples
@@ -236,6 +238,8 @@ formhubCast  = function(dataDF, formDF, extraFormDF=data.frame(), dropCols="", c
 #' Converts formhub form.json format to dataframe format. Dataframe has name, type, label columns.
 #'
 #' @param formJSON formJSON that has been freshly read from JSON using JSONIO's fromJSON function.
+#' @param keepGroupNames for a question with name foo in group bar, keepGroupName=T will generate
+#'        a name foo.bar, while keepGroupName=F will generate a name bar
 #' @return formDF
 #' @examples
 #' good_eats_form_df <- form_to_df(fromJSON("~/Downloads/good_eats.json"))

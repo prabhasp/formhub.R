@@ -1,5 +1,9 @@
 formhub.R News
 
+Changes in formhub.R 0.0.3.7 (Sept 17, 2013):
+
+ * implemented a keepGroupNames=T argument to formhubRead. Make keepGroupNames FALSE, and formhub will discard group names from your dataframe, which can make it easier to manage.
+
 Changes in formhub.R 0.0.3.6.2 (Sept 16, 2013):
 
  * replace*NamesWithLabels now *should* work on forms with weird characters that R replaced with dot

@@ -190,8 +190,6 @@ test_that("formhubRead works when keepGroupNames is FALSE", {
   expect_equivalent(setNames(hlt_with_groups, names(hlt)), hlt)
 })
 
-
-
 test_that("column deletion works", {
   edu_df_dropped <- removeColumns(edu_df, "")
   edu_df_dropped <- removeColumns(edu_df_dropped, NA)

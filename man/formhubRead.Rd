@@ -4,7 +4,8 @@
 \usage{
   formhubRead(csvfilename, jsonfilename,
     extraFormDF = data.frame(), dropCols = "",
-    na.strings = c("n/a"), convert.dates = TRUE)
+    na.strings = c("n/a"), convert.dates = TRUE,
+    keepGroupNames = TRUE)
 }
 \arguments{
   \item{csvfilename}{filename (or a connection object) that
@@ -21,6 +22,10 @@
 
   \item{na.strings}{list of na.strings to be passed onto
   read.csv (default: "n/a")}
+
+  \item{keepGroupNames}{for a question with name foo in
+  group bar, keepGroupName=T will generate a name foo.bar,
+  while keepGroupName=F will generate a name bar}
 }
 \value{
   formhubDataObj a formhubData Object, with "data" and
