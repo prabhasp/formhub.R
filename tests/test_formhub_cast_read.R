@@ -47,6 +47,21 @@ test_that("formdf is read properly", {
   expect_true(hlt_typeofname("not_for_private_1.power_sources.generator")=="boolean")
 })
 
+test_that("formdf is read properly when keepGroupNames is FALSE", {
+  hlt_form_df_without_groups <- form_to_df(fromJSON(hlt_formfile), keepGroupNames=F)
+  expect_false(any(str_detect(hlt_form_df_without_groups$name, 'not_for_private')))
+  expect_true(all(c("num_flush_or_pour_flush_piped", "power_sources.generator") %in%
+                    hlt_form_df_without_groups$name))
+  hlt_typeofname <- function(nom) { subset(hlt_form_df_without_groups, name==nom)$type }
+  expect_true(hlt_typeofname("num_flush_or_pour_flush_piped")=="integer")
+  expect_true(hlt_typeofname("power_sources.generator")=="boolean")
+  
+  hlt_form_df_with_groups <- form_to_df(fromJSON(hlt_formfile), keepGroupNames=T)
+  expect_true(all(hlt_form_df_without_groups$type == hlt_form_df_with_groups$type))
+  expect_true(all(hlt_form_df_without_groups$label == hlt_form_df_with_groups$label))
+  expect_true(all(hlt_form_df_without_groups$options == hlt_form_df_with_groups$options, na.rm=T))
+})
+
 # test_that("reCastingRVectors Works as expected", {
 #   expect_true(is.character(edu_rawdf$mylga))
 #   
@@ -151,6 +166,17 @@ test_that("passing na.strings works", {
   edu_df_wo_SE <- formhubRead(edu_datafile, edu_formfile, na.strings=na.strings)
   expect_equal(levels(edu_df_wo_SE$mylga_zone), c("northwest"))
 })
+
+test_that("formhubRead works when keepGroupNames is FALSE", {
+  edu <- formhubRead(edu_datafile, edu_formfile, keepGroupNames=F)
+  expect_true(all(c("num_ss_total", "num_students_female") %in% names(edu)))
+  
+  edu_with_groups <- formhubRead(edu_datafile, edu_formfile)
+  expect_false(all(names(edu_with_groups) == names(edu)))
+  expect_equivalent(setNames(edu, names(edu_with_groups)), edu_with_groups)
+  expect_equivalent(setNames(edu_with_groups, names(edu)), edu)
+})
+
 
 
 test_that("column deletion works", {

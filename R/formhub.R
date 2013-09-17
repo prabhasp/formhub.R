@@ -178,10 +178,33 @@ formhubDownload = function(formName, uname, pass=NA, ...) {
 #' good_eatsNA$amount # notice that the value that was 999 is now missing. This is helpful when using values such
 #'                    # as 999 to indicate no data
 formhubRead  = function(csvfilename, jsonfilename, extraFormDF=data.frame(), dropCols="", na.strings=c("n/a"),
-                        convert.dates=TRUE) {
+                        convert.dates=TRUE, keepGroupNames=TRUE) {
   dataframe <- read.csv(csvfilename, stringsAsFactors=FALSE, header=TRUE, na.strings=na.strings)
+  formDF <- form_to_df(fromJSON(jsonfilename), keepGroupNames=keepGroupNames)
   
-  formhubCast(dataframe, form_to_df(fromJSON(jsonfilename)), extraFormDF=extraFormDF, dropCols=dropCols,
+  # drop group names from data frame names
+  dataframe <- setNames(dataframe, llply(names(dataframe), function(name) {
+    if(name %in% formDF$name) { name } else {
+      split_by_dots <- unlist(str_split(name, '\\.'))
+      sbd_length <- length(split_by_dots)
+      if(sbd_length == 1) { name } else {
+        # first try and see if we find a match as a simple question
+        searchstring <- paste0('^',split_by_dots[sbd_length],'$')
+        possible_name <- formDF$name[str_detect(formDF$name, searchstring)]
+        if(length(possible_name) == 1) { # we're home free
+          possible_name
+        } else {
+          # next try to see if we match the last dot-phrase (ie, an option for multi-select)
+          searchstring <- paste0('^',split_by_dots[sbd_length-1], '\\.',
+                                 split_by_dots[sbd_length],'$')
+          possible_name <- formDF$name[str_detect(formDF$name, searchstring)]
+          if(length(possible_name) == 1) possible_name else name
+        }
+      }
+    }
+  }))
+
+  formhubCast(dataframe, formDF, extraFormDF=extraFormDF, dropCols=dropCols,
               convert.dates=convert.dates)
 }
 
@@ -216,13 +239,17 @@ formhubCast  = function(dataDF, formDF, extraFormDF=data.frame(), dropCols="", c
 #' @return formDF
 #' @examples
 #' good_eats_form_df <- form_to_df(fromJSON("~/Downloads/good_eats.json"))
-form_to_df = function(formJSON) {
+form_to_df = function(formJSON, keepGroupNames=TRUE) {
   form_to_df_internal = function(formJSON, prefix="") {
     ldply(formJSON[["children"]], function(child) {
       nom <- if (prefix == "") { child[["name"]] } else { paste(prefix, child[["name"]], sep=".") }
   
       if (child[["type"]] == "group") {
-        form_to_df_internal(child, nom)
+        if(keepGroupNames) {
+          form_to_df_internal(child, prefix=nom)
+        } else {
+          form_to_df_internal(child)
+        }
       } else if (child[["type"]] == "select all that apply") {
 
         options <- child[["children"]]        
