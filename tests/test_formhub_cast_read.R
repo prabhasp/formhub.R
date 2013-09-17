@@ -7,7 +7,8 @@ test_dir = ""
 
 edu_datafile <- str_c(test_dir, "fixtures/edu1.csv")
 edu_formfile <- str_c(test_dir, "fixtures/edu1.json")
-hlt_formfile <- str_c(test_dir, "fixtures/healthschema.json")
+hlt_datafile <- str_c(test_dir, "fixtures/health1.csv")
+hlt_formfile <- str_c(test_dir, "fixtures/health1.json")
 good_eats_datafile <- str_c(test_dir, "fixtures/good_eats.csv")
 good_eats_formfile <- str_c(test_dir, "fixtures/good_eats.json")
 
@@ -175,6 +176,18 @@ test_that("formhubRead works when keepGroupNames is FALSE", {
   expect_false(all(names(edu_with_groups) == names(edu)))
   expect_equivalent(setNames(edu, names(edu_with_groups)), edu_with_groups)
   expect_equivalent(setNames(edu_with_groups, names(edu)), edu)
+  
+  hlt <- formhubRead(hlt_datafile, hlt_formfile, keepGroupNames=F)
+  expect_false(any(str_detect(names(hlt), 'not_for_private')))
+  expect_true(all(c("num_flush_or_pour_flush_piped", "power_sources.generator") %in%
+                    names(hlt)))
+  expect_true(is.numeric(hlt$num_flush_or_pour_flush_piped))
+  expect_true(is.logical(hlt$power_sources.generator))
+  
+  hlt_with_groups <- formhubRead(hlt_datafile, hlt_formfile)
+  expect_false(all(names(hlt_with_groups) == names(hlt)))
+  expect_equivalent(setNames(hlt, names(hlt_with_groups)), hlt_with_groups)
+  expect_equivalent(setNames(hlt_with_groups, names(hlt)), hlt)
 })
 
 
