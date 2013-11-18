@@ -2,11 +2,16 @@
 \alias{replaceAllNamesWithLabels}
 \title{Get a new dataframe, where all 'name's are replaced with full labels.}
 \usage{
-  replaceAllNamesWithLabels(formhubDataObj)
+  replaceAllNamesWithLabels(formhubDataObj,
+    language = NULL)
 }
 \arguments{
   \item{formhubDataObj}{is the formhub data object whose
   data slot will be renamed}
+
+  \item{language}{if this is a multi-lingual form, the
+  language of choice for the labels should be passed in.
+  For single-language forms language=NULL.}
 }
 \value{
   a new data frames with the column names, as well as

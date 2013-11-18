@@ -9,6 +9,8 @@ edu_datafile <- str_c(test_dir, "fixtures/edu1.csv")
 edu_formfile <- str_c(test_dir, "fixtures/edu1.json")
 good_eats_datafile <- str_c(test_dir, "fixtures/good_eats.csv")
 good_eats_formfile <- str_c(test_dir, "fixtures/good_eats.json")
+pde_datafile <- str_c(test_dir, "fixtures/pde.csv")
+pde_formfile <- str_c(test_dir, "fixtures/pde.json")
 
 
 # Header Names with Labels works
@@ -18,6 +20,9 @@ test_that("replaceHeaderNamesWithLabels basically works", {
   
   edu_formhubObj_replaced <- replaceHeaderNamesWithLabels(edu_formhubObj)
   good_eats_replaced <- replaceHeaderNamesWithLabels(good_eats)
+  
+  expect_equal(class(edu_formhubObj_replaced), "data.frame")
+  expect_equal(class(good_eats_replaced), "data.frame")
   
   expect_false(any(names(edu_formhubObj_replaced) == "NA"))
   expect_false(any(names(good_eats_replaced) == "NA"))
@@ -35,6 +40,7 @@ test_that("replaceAllNamesWithLabels works on good_eats", {
   good_eats <- formhubRead(good_eats_datafile, good_eats_formfile)
   good_eats_replaced <- replaceAllNamesWithLabels(good_eats)
   
+  expect_equal(class(good_eats_replaced), "data.frame")
   expect_false(any(names(good_eats_replaced) == "NA"))
   expect_true(all(c("submit_date", "imei", "X_gps_longitude","Rating","Type of Eat", "Food Pic")
                   %in% names(good_eats_replaced)))
@@ -54,6 +60,9 @@ test_that("replace Functions work with dot-replaced names", {
   good_eats_replaced <- replaceAllNamesWithLabels(good_eats)
   good_eats_names_replaced <- replaceHeaderNamesWithLabels(good_eats)
   
+  expect_equal(class(good_eats_replaced), "data.frame")
+  expect_equal(class(good_eats_names_replaced), "data.frame")
+  
   expect_false(any(names(good_eats_replaced) == "NA"))
   expect_true("Type of Eat" %in% names(good_eats_replaced))
   expect_true("Dinner" %in% good_eats_replaced[,"Type of Eat"])
@@ -61,3 +70,25 @@ test_that("replace Functions work with dot-replaced names", {
   expect_false(any(names(good_eats_names_replaced) == "NA"))
   expect_true("Type of Eat" %in% names(good_eats_names_replaced))
 })
+
+test_that("replace Functions work with multi-lingual forms", {
+    pde <- formhubRead(pde_datafile, pde_formfile)
+    pde_names_replaced <- replaceHeaderNamesWithLabels(pde)
+    pde_replaced_en <- replaceAllNamesWithLabels(pde, "English")
+    pde_replaced_fr <- replaceAllNamesWithLabels(pde, "French")
+    
+    expect_equal(class(pde_replaced), "data.frame")
+    expect_equal(class(pde_names_replaced), "data.frame")
+    
+    expect_false(any(names(pde_replaced) == "NA"))
+    expect_true("A-2.4 Commune" %in% names(pde_replaced_en))
+    expect_true("A-2.4 Commune" %in% names(pde_replaced_fr))
+    expect_true("Grid is further than 500m" %in% 
+        pde_replaced_en[,"A-3.1 A quelle distance estimez-vous le reseau electrique national EDH de cet etablissment."])
+    expect_true("Information non disponible/Ne sais pas" %in% 
+        pde_replaced_fr[,"A-3.1 A quelle distance estimez-vous le reseau electrique national EDH de cet etablissment."])
+    
+    expect_false(any(names(pde_names_replaced) == "NA"))
+    expect_true("A-2.4 Commune" %in% names(pde_names_replaced))
+})
+

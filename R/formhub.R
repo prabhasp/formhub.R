@@ -46,7 +46,7 @@ as.SpatialPointsDataFrame <- function(formhubObj) {
 #'
 #' @param formhubDataObj is the formhub data object whose data slot will be renamed
 #' @export
-#' @return a new data frames with the column names renamed from `name`s (slugs) to `label`s(full questions)
+#' @return a new data frame with the column names renamed from `name`s (slugs) to `label`s(full questions)
 #' @examples
 #' good_eats <- formhubDownload("good_eats", "mberg")
 #' names(good_eats) # still slugged names
@@ -56,15 +56,19 @@ as.SpatialPointsDataFrame <- function(formhubObj) {
 #' summary(full_header_good_eats$Rating) # but data is the same
 replaceHeaderNamesWithLabels <- function(formhubDataObj) {
   newNames <- lapply(names(formhubDataObj), function(nm) {
-    index <- which(str_detect(formhubDataObj@form$name, paste0('^',nm,'$'))) 
-      # deals with data frame names where character are replaced by dots
-    if(length(index) > 0) {
+    index <- which(formhubDataObj@form$name == nm)
+    if (length(index) == 0) {
+        # 2nd pass: deals with data frame names where character are replaced by dots
+        index <- which(str_detect(formhubDataObj@form$name, paste0('^',nm,'$'))) 
+    } 
+    # replace the name if exactly one other label matches
+    if(length(index) == 1 && !is.na(formhubDataObj@form$label[[index]])) {
        formhubDataObj@form$label[[index]]
     } else {
       nm
     }
   })
-  setNames(formhubDataObj, newNames)
+  setNames(data.frame(formhubDataObj), newNames)
 }
 
 #' Get a new dataframe, where all 'name's are replaced with full labels.
@@ -76,6 +80,8 @@ replaceHeaderNamesWithLabels <- function(formhubDataObj) {
 #' select one options with the actual resposne text.
 #'
 #' @param formhubDataObj is the formhub data object whose data slot will be renamed
+#' @param language if this is a multi-lingual form, the language of choice for
+#'        the labels should be passed in. For single-language forms language=NULL.
 #' @export
 #' @return a new data frames with the column names, as well as factor values, renamed from `name`s (slugs) to `label`s(full questions)
 #' @examples
@@ -85,14 +91,28 @@ replaceHeaderNamesWithLabels <- function(formhubDataObj) {
 #' good_eats_readable <- replaceAllNamesWithLabels(good_eats)
 #' names(good_eats_readable) # not slugged anymore
 #' summary(good_eats_readable$`Risk Factor`) # not slugged anymore.
-replaceAllNamesWithLabels <- function(formhubDataObj) {
+replaceAllNamesWithLabels <- function(formhubDataObj, language=NULL) {
   data <- data.frame(formhubDataObj)
   form <- formhubDataObj@form
   row.names(form) <- form$name
   
   l_ply(form[form$type == 'select one',]$name, function(field_name) {
     ol <- fromJSON(form[field_name,'options'])
-    old <- ldply(ol, rbind)
+    old <- if (is.null(language)) {
+        tryCatch({
+            ldply(ol, rbind)
+        }, error=function(e) {
+            stop("If you have a multi-language form, please specify the language.") 
+        })
+    } else {
+        tryCatch({
+            ldply(ol, function(option) {
+                c(name = option[['name']], label=option[['label']][[language]])
+            })
+        }, error=function(e) {
+            stop("Language argument should be null for single-language forms.") 
+        })
+    }
     row.names(old) <- old$name
     if (! field_name %in% names(data)) {
       col_name <- names(data)[str_detect(field_name, paste0('^', names(data), '$'))] # sometimes characters are
@@ -182,7 +202,7 @@ formhubDownload = function(formName, uname, pass=NA, ...) {
 formhubRead  = function(csvfilename, jsonfilename, extraFormDF=data.frame(), dropCols="", na.strings=c("n/a"),
                         convert.dates=TRUE, keepGroupNames=TRUE) {
   dataframe <- read.csv(csvfilename, stringsAsFactors=FALSE, header=TRUE, na.strings=na.strings)
-  formDF <- form_to_df(fromJSON(jsonfilename), keepGroupNames=keepGroupNames)
+  formDF <- form_to_df(fromJSON(jsonfilename, encoding='utf-8'), keepGroupNames=keepGroupNames)
   
   # drop group names from data frame names
   dataframe <- setNames(dataframe, llply(names(dataframe), function(name) {
