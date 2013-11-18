@@ -9,7 +9,7 @@
   data slot will be renamed}
 }
 \value{
-  a new data frames with the column names renamed from
+  a new data frame with the column names renamed from
   `name`s (slugs) to `label`s(full questions)
 }
 \description{
