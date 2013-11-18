@@ -1,5 +1,9 @@
 formhub.R News
 
+Changes in formhub.R 0.0.3.8 (Nov 18, 2013):
+ * replace*NamesWithLabels no longer return formhubData objects, they return data.frames
+ * replaceAllNamesWithLabels will now work with multi-lingual forms, you have to pass in the language of your options
+
 Changes in formhub.R 0.0.3.7 (Sept 17, 2013):
 
  * implemented a keepGroupNames=T argument to formhubRead. Make keepGroupNames FALSE, and formhub will discard group names from your dataframe, which can make it easier to manage.

@@ -8,7 +8,7 @@ In this example, we will go through how to make data downloaded from formhub pre
 
 So lets begin with the public `good_eats` dataset, and look at (1) the names of that csv, and (2) the values of the "ratings" of various good eats.
 ```{r  warning=FALSE, message=FALSE}
-library(formhub)
+require(formhub)
 # Download the dataset named good_eats in the account of mberg
 good_eats <- formhubDownload("good_eats", "mberg")
 names(good_eats)
@@ -36,6 +36,14 @@ summary(good_eats_readable$`Risk Factor`)
 
 And of course, even the graph comes out looking slightly better  with better default labels:
 ```{r  warning=FALSE, message=FALSE}
+require(ggplot2)
 qplot(data=good_eats_readable, x=submit_date, fill=`Risk Factor`)
 ```
 
+For multi-lingual forms, the `replaceAllNamesWithLabels` function takes a language argument:
+```{r  warning=FALSE, message=FALSE, include=FALSE}
+pde <- formhubDownload("points_d_eau", "Roxance")
+pde_fr <- replaceAllNamesWithLabels(pde, "French")
+qplot(data=pde_fr, x=`A-6.6 Qui gère cette source/ ce point d’eau ?`) +
+    coord_flip()
+```
