@@ -2,7 +2,7 @@
 Quality control -- how long did survey authoring take?
 ========================================================
 
-formhub.R makes is easy to download and work with datasets on [formhub](http://formhub.org). If you haven't read the [basics document](http://modilabs.github.com/formhub.R/demo/Basics_of_formhub.R.html), I recommend that you read that first. In this showcase, we will demonstrate how to figure out how long enumerators take to enter survey data, and correlate completion time with enumerator and date of survey. 
+formhub.R makes is easy to download and work with datasets on [formhub](http://formhub.org). If you haven't read the [basics document](http://SEL-Columbia.github.com/formhub.R/demo/Basics_of_formhub.R.html), I recommend that you read that first. In this showcase, we will demonstrate how to figure out how long enumerators take to enter survey data, and correlate completion time with enumerator and date of survey. 
 
 After reading the dataset, we want to prepare two basic fields, the first one, `completion_time` will denote how long it took someone to fill the survey out. The second will be the enumerator's initial (which in this case is completely identifying, and helps us process multiple spellings).
 
