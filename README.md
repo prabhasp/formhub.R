@@ -7,12 +7,12 @@ formhub.R is a library for making reading data form [formhub.org](http://formhub
 Examples
 --------
 
- * Getting started -- [Basics of formhub.R](http://modilabs.github.com/formhub.R/demo/Basics_of_formhub.R.html)
- * Quick example -- [Charting good_eats submission over time](http://modilabs.github.com/formhub.R/demo/Good_Eats_Example.html)
- * Making maps -- [Making maps with North Ghana data](http://modilabs.github.com/formhub.R/demo/Water_Points_Example.html)
- * Quality control -- [How long did it take to process a survey](http://modilabs.github.com/formhub.R/demo/How_Long_Example.html)
- * Quality control II -- [A basic tutorial on removing outliers from your data](http://modilabs.github.com/formhub.R/demo/RemoveOutliers.html)
- * Making Readable Data -- [Replacing "slugs" in data output with survey text](http://modilabs.github.io/formhub.R/demo/ReadableData.html)
+ * Getting started -- [Basics of formhub.R](http://SEL-Columbia.github.com/formhub.R/demo/Basics_of_formhub.R.html)
+ * Quick example -- [Charting good_eats submission over time](http://SEL-Columbia.github.com/formhub.R/demo/Good_Eats_Example.html)
+ * Making maps -- [Making maps with North Ghana data](http://SEL-Columbia.github.com/formhub.R/demo/Water_Points_Example.html)
+ * Quality control -- [How long did it take to process a survey](http://SEL-Columbia.github.com/formhub.R/demo/How_Long_Example.html)
+ * Quality control II -- [A basic tutorial on removing outliers from your data](http://SEL-Columbia.github.com/formhub.R/demo/RemoveOutliers.html)
+ * Making Readable Data -- [Replacing "slugs" in data output with survey text](http://SEL-Columbia.github.io/formhub.R/demo/ReadableData.html)
 
 For most of the examples, I use the [ggplot2](http://ggplot2.org) library, which is an amazing data visualization library worth every minute of your time spent learning it.
 
@@ -22,7 +22,7 @@ The package for formhub.R in R is simply called `formhub`. For now, it cannot be
 
     install.packages('devtools') 
     library(devtools)
-    install_github("formhub.R", username="modilabs")
+    install_github("formhub.R", username="SEL-Columbia")
     library(formhub)
 
 And voila! The `formhub` package is installed in your R system! You can check by running:
@@ -43,6 +43,6 @@ At the moment, it has the following features:
  * removeColumns convenience function that removes columns based on matching the title with a regular expression
  * 'extra-schema' over-ride. 
 
-For planned features, go to the [issues](https://github.com/modilabs/formhub.R/issues) page.
+For planned features, go to the [issues](https://github.com/SEL-Columbia/formhub.R/issues) page.
 
 

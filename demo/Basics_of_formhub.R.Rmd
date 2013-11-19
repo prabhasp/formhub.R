@@ -9,7 +9,7 @@ formhub.R makes is easy to download and work with datasets on [formhub](http://f
 ```
   install.packages("devtools")
   library(devtools)
-  install_github("formhub.R", username="modilabs")
+  install_github("formhub.R", username="SEL-Columbia")
 ```
 
 The `install_github` line will need to be re-run every time you need to update the package, which will be frequent for now, as the package is in early testing. After installation, it can be loaded like you load any other R package:
@@ -84,4 +84,4 @@ And thats really the gist of it!
 
 What if I get an error while running a function?
 ------------------------------------------------
-This is software that has been tested by only a couple of use cases so far, and writing good code in R is pretty tricky, so there are probably bugs! If you encounter one, please go to your form page, and under "Sharing", give the username "prabhasp" "View" privileges, and file an [issue on github](http://github.com/modilabs/formhub.R/issues)
+This is software that has been tested by only a couple of use cases so far, and writing good code in R is pretty tricky, so there are probably bugs! If you encounter one, please go to your form page, and under "Sharing", give the username "prabhasp" "View" privileges, and file an [issue on github](http://github.com/SEL-Columbia/formhub.R/issues)

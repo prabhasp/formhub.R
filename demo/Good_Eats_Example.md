@@ -2,7 +2,7 @@
 A simple example using formhub.R -- good eats
 ========================================================
 
-formhub.R makes is easy to download and work with datasets on [formhub](http://formhub.org). After downloading, formhub.R post-processes your dataset to convert the different columns to the correct type, which it derives from the `type` you specified during the creation of your XLSform. If you haven't read the [basics document](http://modilabs.github.com/formhub.R/demo/Basics_of_formhub.R.html), I recommend that you read that first.
+formhub.R makes is easy to download and work with datasets on [formhub](http://formhub.org). After downloading, formhub.R post-processes your dataset to convert the different columns to the correct type, which it derives from the `type` you specified during the creation of your XLSform. If you haven't read the [basics document](http://SEL-Columbia.github.com/formhub.R/demo/Basics_of_formhub.R.html), I recommend that you read that first.
 
 Let us illustrate this with a simple example:
 

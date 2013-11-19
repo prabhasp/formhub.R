@@ -22,7 +22,7 @@ Description: formhub.R provides functions to pull data from formhub.org
     that was used to collect data, and offers some convenience functions
     appropriate for data collected through surveys.
 License: Dual-licensed. GPL for commercial uses. BSD for non-commercial uses.
-URL: http://www.modilabs.github.com/formhub.R
-BugReports: http://github.com/modilabs/formhub.R/issues
+URL: http://www.SEL-Columbia.github.com/formhub.R
+BugReports: http://github.com/SEL-Columbia/formhub.R/issues
 Collate:
     'formhub.R'
