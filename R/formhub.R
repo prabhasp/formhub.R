@@ -97,7 +97,7 @@ replaceAllNamesWithLabels <- function(formhubDataObj, language=NULL) {
   row.names(form) <- form$name
   
   l_ply(form[form$type == 'select one',]$name, function(field_name) {
-    ol <- fromJSON(form[field_name,'options'])
+    ol <- RJSONIO::fromJSON(form[field_name,'options'])
     old <- if (is.null(language)) {
         tryCatch({
             ldply(ol, rbind)
@@ -202,7 +202,7 @@ formhubDownload = function(formName, uname, pass=NA, ...) {
 formhubRead  = function(csvfilename, jsonfilename, extraFormDF=data.frame(), dropCols="", na.strings=c("n/a"),
                         convert.dates=TRUE, keepGroupNames=TRUE) {
   dataframe <- read.csv(csvfilename, stringsAsFactors=FALSE, header=TRUE, na.strings=na.strings)
-  formDF <- form_to_df(fromJSON(jsonfilename, encoding='utf-8'), keepGroupNames=keepGroupNames)
+  formDF <- form_to_df(RJSONIO::fromJSON(jsonfilename, encoding='utf-8'), keepGroupNames=keepGroupNames)
   
   # drop group names from data frame names
   dataframe <- setNames(dataframe, llply(names(dataframe), function(name) {

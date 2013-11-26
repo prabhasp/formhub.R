@@ -1,5 +1,8 @@
 formhub.R News
 
+Changes in formhub.R 0.0.3.8.1 (Nov 26, 2013):
+ * make sure RJSONIO is higher than version 0.96; use RJSONIO explicitly in fromJSON calls
+
 Changes in formhub.R 0.0.3.8 (Nov 18, 2013):
  * replace*NamesWithLabels no longer return formhubData objects, they return data.frames
  * replaceAllNamesWithLabels will now work with multi-lingual forms, you have to pass in the language of your options

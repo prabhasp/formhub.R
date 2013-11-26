@@ -1,12 +1,12 @@
 Package: formhub
-Version: 0.0.3.8
-Date: 2013-11-18
+Version: 0.0.3.8.1
+Date: 2013-11-26
 Title: formhub.R -- pulling data from formhub.org repositories easily.
 Author: Prabhas Pokharel (Modi Research Group, Columbia University)
 Maintainer: Prabhas Pokharel <prabhas.pokharel@gmail.com>
 Depends:
     R (>= 2.15.1),
-    RJSONIO,
+    RJSONIO (>= 0.96),
     stringr,
     plyr,
     RCurl,

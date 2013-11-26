@@ -77,10 +77,12 @@ test_that("replace Functions work with multi-lingual forms", {
     pde_replaced_en <- replaceAllNamesWithLabels(pde, "English")
     pde_replaced_fr <- replaceAllNamesWithLabels(pde, "French")
     
-    expect_equal(class(pde_replaced), "data.frame")
+    expect_equal(class(pde_replaced_en), "data.frame")
+    expect_equal(class(pde_replaced_fr), "data.frame")
     expect_equal(class(pde_names_replaced), "data.frame")
     
-    expect_false(any(names(pde_replaced) == "NA"))
+    expect_false(any(names(pde_replaced_en) == "NA"))
+    expect_false(any(names(pde_replaced_fr) == "NA"))
     expect_true("A-2.4 Commune" %in% names(pde_replaced_en))
     expect_true("A-2.4 Commune" %in% names(pde_replaced_fr))
     expect_true("Grid is further than 500m" %in% 
