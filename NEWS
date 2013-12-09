@@ -1,5 +1,8 @@
 formhub.R News
 
+Changes in formhub.R 0.0.3.8.2 (Dec 09, 2013):
+ * handle forms with itemsets (at a cursory level) 
+
 Changes in formhub.R 0.0.3.8.1 (Nov 26, 2013):
  * make sure RJSONIO is higher than version 0.96; use RJSONIO explicitly in fromJSON calls
 
