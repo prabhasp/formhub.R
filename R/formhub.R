@@ -243,7 +243,7 @@ formhubRead  = function(csvfilename, jsonfilename, extraFormDF=data.frame(), dro
 #' @return formhubDataObj a formhubData Object, with "data" and "form" slots
 #' @examples
 #' 
-#' See examples under formhubRead; this should be used through formhubRead in almost all cases
+#' #See examples under formhubRead; this should be used through formhubRead in almost all cases
 formhubCast  = function(dataDF, formDF, extraFormDF=data.frame(), dropCols="", convert.dates=TRUE) {
   dataDF <- removeColumns(dataDF, dropCols)
 
