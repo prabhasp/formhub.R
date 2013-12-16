@@ -288,7 +288,7 @@ form_to_df = function(formJSON, keepGroupNames=TRUE) {
                    stringsAsFactors=F)
         } else if ("itemset" %in% names(child)) {
             data.frame(name=nom, type=child[["type"]],
-                     options=toJSON(child$itemset), # options are more complex with itemset
+                     options=toJSON(formJSON$choices[[child$itemset]]), # options are more complex with itemset
                      label=if("label" %in% names(child)) {child[["label"]]} else {child[["name"]]},
                      stringsAsFactors=F)
         }
