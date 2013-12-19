@@ -1,14 +1,14 @@
 library(testthat)
 library(stringr)
+library(formhub)
 
-source("../formhub.R")
 test_dir = ""
-# test_dir = "~/Code/formhub.R/tests/"
-# test_dir("~/Code/formhub.R/tests/")
+#test_dir("~/Code/formhub.R/tests/")
 
 edu_datafile <- str_c(test_dir, "fixtures/edu1.csv")
 edu_formfile <- str_c(test_dir, "fixtures/edu1.json")
-hlt_formfile <- str_c(test_dir, "fixtures/healthschema.json")
+hlt_datafile <- str_c(test_dir, "fixtures/health1.csv")
+hlt_formfile <- str_c(test_dir, "fixtures/health1.json")
 good_eats_datafile <- str_c(test_dir, "fixtures/good_eats.csv")
 good_eats_formfile <- str_c(test_dir, "fixtures/good_eats.json")
 
@@ -16,10 +16,17 @@ edu_rawdf <- read.csv(edu_datafile, na.strings="n/a", stringsAsFactors=FALSE, he
 hlt_form_df <- form_to_df(fromJSON(hlt_formfile))
 
 edu_formhubObj <- formhubRead(edu_datafile, edu_formfile)
-edu_df <- edu_formhubObj@data
+edu_df <- edu_formhubObj
 edu_form_df <- edu_formhubObj@form
 
-good_eats <- formhubRead(good_eats_datafile, good_eats_formfile)@data
+good_eats <- formhubRead(good_eats_datafile, good_eats_formfile)
+
+test_that("convert.dates works", {
+  ef <- formhubRead(edu_datafile, edu_formfile)
+  expect_true(is.instant(ef$start))
+  ef <- formhubRead(edu_datafile, edu_formfile, convert.dates=F)
+  expect_false(is.instant(ef$start))
+})
 
 test_that("formdf is read properly", {
   edu_typeofname <- function(nom) { subset(edu_form_df, name==nom)$type }
@@ -32,13 +39,28 @@ test_that("formdf is read properly", {
   expect_true(edu_typeofname("respondent_contact") == "string")
   expect_true(edu_typeofname("power_sources.generator") == "boolean")
   
-  expect_true(is.factor(edu_form_df$type))
+  expect_true(is.character(edu_form_df$type))
   expect_true(is.character(edu_form_df$name))
   expect_true(is.character(edu_form_df$label))
   
   hlt_typeofname <- function(nom) { subset(hlt_form_df, name==nom)$type }
   expect_true(hlt_typeofname("not_for_private_1.toilets_available.num_flush_or_pour_flush_piped")=="integer")
   expect_true(hlt_typeofname("not_for_private_1.power_sources.generator")=="boolean")
+})
+
+test_that("formdf is read properly when keepGroupNames is FALSE", {
+  hlt_form_df_without_groups <- form_to_df(fromJSON(hlt_formfile), keepGroupNames=F)
+  expect_false(any(str_detect(hlt_form_df_without_groups$name, 'not_for_private')))
+  expect_true(all(c("num_flush_or_pour_flush_piped", "power_sources.generator") %in%
+                    hlt_form_df_without_groups$name))
+  hlt_typeofname <- function(nom) { subset(hlt_form_df_without_groups, name==nom)$type }
+  expect_true(hlt_typeofname("num_flush_or_pour_flush_piped")=="integer")
+  expect_true(hlt_typeofname("power_sources.generator")=="boolean")
+  
+  hlt_form_df_with_groups <- form_to_df(fromJSON(hlt_formfile), keepGroupNames=T)
+  expect_true(all(hlt_form_df_without_groups$type == hlt_form_df_with_groups$type))
+  expect_true(all(hlt_form_df_without_groups$label == hlt_form_df_with_groups$label))
+  expect_true(all(hlt_form_df_without_groups$options == hlt_form_df_with_groups$options, na.rm=T))
 })
 
 # test_that("reCastingRVectors Works as expected", {
@@ -121,9 +143,12 @@ test_that("passing nice extraFormDF in works", {
                            label=c("LGA",       "STATE",      "Device ID"))
   
   edu_df_with_extra <- formhubRead(edu_datafile, edu_formfile, extraFormDF=extraFormDF)
-  expect_true(is.factor(edu_df_with_extra@data$mylga))
-  expect_true(is.factor(edu_df_with_extra@data$mylga_state))
-  expect_true(is.numeric(edu_df_with_extra@data$deviceid))
+  expect_true(is.factor(edu_df_with_extra$mylga))
+  expect_true(is.factor(edu_df_with_extra$mylga_state))
+  expect_true(is.numeric(edu_df_with_extra$deviceid))
+  expect_true(all(edu_df_with_extra@form$type %in% 
+    c("boolean", "calculate", "end", "gps", "integer", "note", "phonenumber", "photo",
+      "select one", "simserial", "start", "string", "subscriberid", "text", "today")))
 })
 
 test_that("passing bad extraFormDF in works", {
@@ -132,17 +157,38 @@ test_that("passing bad extraFormDF in works", {
     c("mylga_state", "select one", "State"))),
                          c("name", "type", "label"))
   
-  edu_df_with_extra <- formhubRead(edu_datafile, edu_formfile, extraFormDF=extraFormDF)@data
+  edu_df_with_extra <- formhubRead(edu_datafile, edu_formfile, extraFormDF=extraFormDF)
   expect_true(is.factor(edu_df_with_extra$mylga))
   expect_true(is.factor(edu_df_with_extra$mylga_state))
 })
 
 test_that("passing na.strings works", {
   na.strings = c("southeast")
-  edu_df_wo_SE <- formhubRead(edu_datafile, edu_formfile, na.strings=na.strings)@data
+  edu_df_wo_SE <- formhubRead(edu_datafile, edu_formfile, na.strings=na.strings)
   expect_equal(levels(edu_df_wo_SE$mylga_zone), c("northwest"))
 })
 
+test_that("formhubRead works when keepGroupNames is FALSE", {
+  edu <- formhubRead(edu_datafile, edu_formfile, keepGroupNames=F)
+  expect_true(all(c("num_ss_total", "num_students_female") %in% names(edu)))
+  
+  edu_with_groups <- formhubRead(edu_datafile, edu_formfile)
+  expect_false(all(names(edu_with_groups) == names(edu)))
+  expect_equivalent(setNames(edu, names(edu_with_groups)), edu_with_groups)
+  expect_equivalent(setNames(edu_with_groups, names(edu)), edu)
+  
+  hlt <- formhubRead(hlt_datafile, hlt_formfile, keepGroupNames=F)
+  expect_false(any(str_detect(names(hlt), 'not_for_private')))
+  expect_true(all(c("num_flush_or_pour_flush_piped", "power_sources.generator") %in%
+                    names(hlt)))
+  expect_true(is.numeric(hlt$num_flush_or_pour_flush_piped))
+  expect_true(is.logical(hlt$power_sources.generator))
+  
+  hlt_with_groups <- formhubRead(hlt_datafile, hlt_formfile)
+  expect_false(all(names(hlt_with_groups) == names(hlt)))
+  expect_equivalent(setNames(hlt, names(hlt_with_groups)), hlt_with_groups)
+  expect_equivalent(setNames(hlt_with_groups, names(hlt)), hlt)
+})
 
 test_that("column deletion works", {
   edu_df_dropped <- removeColumns(edu_df, "")

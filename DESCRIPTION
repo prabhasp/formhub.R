@@ -1,0 +1,28 @@
+Package: formhub
+Version: 0.0.3.9
+Date: 2013-12-19
+Title: formhub.R -- pulling data from formhub.org repositories easily.
+Author: Prabhas Pokharel (Modi Research Group, Columbia University)
+Maintainer: Prabhas Pokharel <prabhas.pokharel@gmail.com>
+Depends:
+    R (>= 2.15.1),
+    RJSONIO (>= 0.96),
+    stringr,
+    plyr,
+    RCurl,
+    lubridate,
+    doBy,
+    sp
+Suggests:
+    ggplot2
+Description: formhub.R provides functions to pull data from formhub.org
+    into R. Included are functions to download the data directly from formhub,
+    read data from disk, and to convert formhub forms into dataframes.
+    formhub.R also parses data into the right formats according to the form
+    that was used to collect data, and offers some convenience functions
+    appropriate for data collected through surveys.
+License: Dual-licensed. GPL for commercial uses. BSD for non-commercial uses.
+URL: http://www.SEL-Columbia.github.com/formhub.R
+BugReports: http://github.com/SEL-Columbia/formhub.R/issues
+Collate:
+    'formhub.R'
