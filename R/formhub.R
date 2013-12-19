@@ -366,11 +366,12 @@ addPhotoURLs = function(formhubDataObj, formhubUsername) {
     setNames(data.frame(
       urlFromCol(photoCol, ""),
       urlFromCol(photoCol, "medium"),
-      urlFromCol(photoCol, "small")
-    ), paste0(photoColName, c(".URLOriginal", ".URLMedium", ".URLSmall")))
+      urlFromCol(photoCol, "small"),
+      stringsAsFactors=FALSE
+    ), paste0(photoColName, c("_URL_original", "_URL_medium", "_URL_small")))
   })
   tmp <- cbind(formhubDataObj, do.call(cbind, tmp))
-  new("formhubData", df, form=formhubDataObj@form)
+  new("formhubData", tmp, form=formhubDataObj@form)
 }
 
 #' Helper function to remove columns from data based on reg-exp matching. Also takes list of strings.
