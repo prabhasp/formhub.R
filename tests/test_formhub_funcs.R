@@ -3,7 +3,8 @@ require(stringr)
 require(formhub)
 
 test_dir = ""
-#source("~/Code/formhub.R/R/formhub.R");test_file("~/Code/formhub.R/tests/test_formhub_funcs.R")
+# test_dir = "~/Code/formhub.R/tests/"
+# test_file("~/Code/formhub.R/tests/test_formhub_funcs.R")
 
 edu_datafile <- str_c(test_dir, "fixtures/edu1.csv")
 edu_formfile <- str_c(test_dir, "fixtures/edu1.json")
@@ -47,7 +48,7 @@ test_that("replaceAllNamesWithLabels works on good_eats", {
   
   expect_false("bad" %in% good_eats_replaced$Rating)
   expect_true("What was I thinking" %in% good_eats_replaced$Rating)
-  expect_equivalent(table(good_eats_replaced$Rating)["What was I thinking"], 2)
+  expect_equivalent(table(good_eats_replaced$Rating)["What was I thinking"], 25)
   
   expect_true("Low Risk" %in% good_eats_replaced[,"Risk Factor"])
 })
@@ -71,6 +72,7 @@ test_that("replace Functions work with dot-replaced names", {
   expect_true("Type of Eat" %in% names(good_eats_names_replaced))
 })
 
+# Replace works with multi-lingual forms
 test_that("replace Functions work with multi-lingual forms", {
     pde <- formhubRead(pde_datafile, pde_formfile)
     pde_names_replaced <- replaceHeaderNamesWithLabels(pde)
