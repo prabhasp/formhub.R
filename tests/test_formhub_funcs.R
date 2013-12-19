@@ -96,3 +96,24 @@ test_that("replace Functions work with multi-lingual forms", {
     expect_true("A-2.4 Commune" %in% names(pde_names_replaced))
 })
 
+# Adding photo URLs work
+test_that("adding photo urls works", {
+  good_eats <- formhubRead(good_eats_datafile, good_eats_formfile)
+  good_eats_with_photo_urls <- addPhotoURLs(good_eats, 'mberg')
+  # check that new columns were added
+  expect_true(all(c("food_photo_URL_original", "food_photo_URL_medium", "food_photo_URL_small",
+                "location_photo_URL_original", "location_photo_URL_medium",
+                "location_photo_URL_small") %in% names(good_eats_with_photo_urls)))
+  # check that if original is blank, so is medium and small
+  expect_true(all(which(good_eats_with_photo_urls$food_photo_URL_original == "") ==
+              intersect(which(good_eats_with_photo_urls$food_photo_URL_small == ""),
+                        which(good_eats_with_photo_urls$food_photo_URL_medium == ""))))
+  # check one of the URLs
+  expect_equal(subset(good_eats_with_photo_urls, description == "Fistikli")$location_photo_URL_original,
+               "https://formhub.org/attachment/?media_file=mberg/attachments/1325233817453.jpg")
+  expect_equal(subset(good_eats_with_photo_urls, description == "Fistikli")$location_photo_URL_medium,
+               "https://formhub.org/attachment/medium?media_file=mberg/attachments/1325233817453.jpg")
+  expect_equal(subset(good_eats_with_photo_urls, description == "Fistikli")$location_photo_URL_small,
+               "https://formhub.org/attachment/small?media_file=mberg/attachments/1325233817453.jpg")
+})
+
