@@ -9,6 +9,25 @@ library(doBy)
 
 setClass("formhubData", representation("data.frame", form="data.frame"), contains="data.frame")
 
+#' Produce a data.frame out of a formhubDataObj
+#'
+#' @param the formhub object which will be possibly co-erced to a dataframe.
+#' @export
+#' @return A data.frame represntation of this formhub oject
+#' @examples
+#' #' Produce a SpatialPointsDataFrame if data has a column of type `gps` or `geopoint`.
+#' Otherwise, return NA.
+#'
+#' @param the formhub object which will be possibly co-erced to a SpatialPointsDataFrame object.
+#' @export
+#' @return A SpatialPointsDataFrame representation of this formhub Object
+#' @examples
+#' good_eats_data <- as.data.frame(formhubDownload("good_eats", "mberg"))
+#' class(ge_spdf) # "data.frame"
+as.data.frame.formhubData <- function(fhD, ...) {
+   data.frame(setNames(fhD@.Data, names(fhD)))
+}
+
 #' Produce a SpatialPointsDataFrame if data has a column of type `gps` or `geopoint`.
 #' Otherwise, return NA.
 #'
