@@ -2,7 +2,7 @@
 \alias{removeColumns}
 \title{Helper function to remove columns from data based on reg-exp matching. Also takes list of strings.}
 \usage{
-  removeColumns(df, columnNameRegExpMatcher)
+removeColumns(df, columnNameRegExpMatcher)
 }
 \arguments{
   \item{df}{data}
@@ -11,11 +11,11 @@
   columns; matched columns are dropped.}
 }
 \value{
-  a smaller data frame.
+a smaller data frame.
 }
 \description{
-  Helper function to remove columns from data based on
-  reg-exp matching. Also takes list of strings.
+Helper function to remove columns from data based on
+reg-exp matching. Also takes list of strings.
 }
 \examples{
 good_eats_df <- formhubDownload("good_eats", "mberg")

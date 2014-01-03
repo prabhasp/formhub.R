@@ -24,5 +24,3 @@ Description: formhub.R provides functions to pull data from formhub.org
 License: Dual-licensed. GPL for commercial uses. BSD for non-commercial uses.
 URL: http://www.SEL-Columbia.github.com/formhub.R
 BugReports: http://github.com/SEL-Columbia/formhub.R/issues
-Collate:
-    'formhub.R'
