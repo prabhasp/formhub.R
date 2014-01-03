@@ -22,7 +22,7 @@ test_that("SpatialPointsDataFrame Object can be produced", {
   
   # good eats: WARNINGS should be emitted; we have NAs in the gps field; we'll drop 3 rows
   expect_warning(good_eats_spdf <- as.SpatialPointsDataFrame(good_eats))
-  expect_equal(nrow(good_eats_spdf) + 3, nrow(as.data.frame(good_eats)))
+  expect_equal(nrow(as.data.frame(good_eats_spdf)), length(which(!is.na(good_eats$gps))))
   expect_is(good_eats_spdf, "SpatialPointsDataFrame")
 })
  
@@ -36,7 +36,7 @@ test_that("SpatialPointsDataFrame Object can be produced even when _lat _long co
   
   # good eats: WARNINGS should be emitted; we have NAs in the gps field; we'll drop 3 rows
   expect_warning(good_eats_spdf <- as.SpatialPointsDataFrame(good_eats))
-  expect_equal(nrow(good_eats_spdf) + 3, nrow(as.data.frame(good_eats)))
+  expect_equal(nrow(good_eats_spdf), length(which(!is.na(good_eats$gps))),)
   expect_is(good_eats_spdf, "SpatialPointsDataFrame")
 })
 

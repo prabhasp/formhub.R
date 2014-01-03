@@ -9,6 +9,25 @@ library(doBy)
 
 setClass("formhubData", representation("data.frame", form="data.frame"), contains="data.frame")
 
+#' Produce a data.frame out of a formhubDataObj
+#'
+#' @param the formhub object which will be possibly co-erced to a dataframe.
+#' @export
+#' @return A data.frame represntation of this formhub oject
+#' @examples
+#' #' Produce a SpatialPointsDataFrame if data has a column of type `gps` or `geopoint`.
+#' Otherwise, return NA.
+#'
+#' @param the formhub object which will be possibly co-erced to a SpatialPointsDataFrame object.
+#' @export
+#' @return A SpatialPointsDataFrame representation of this formhub Object
+#' @examples
+#' good_eats_data <- as.data.frame(formhubDownload("good_eats", "mberg"))
+#' class(ge_spdf) # "data.frame"
+as.data.frame.formhubData <- function(fhD, ...) {
+   data.frame(setNames(fhD@.Data, names(fhD)))
+}
+
 #' Produce a SpatialPointsDataFrame if data has a column of type `gps` or `geopoint`.
 #' Otherwise, return NA.
 #'
@@ -206,7 +225,9 @@ formhubRead  = function(csvfilename, jsonfilename, extraFormDF=data.frame(), dro
   
   # drop group names from data frame names
   dataframe <- setNames(dataframe, llply(names(dataframe), function(name) {
-    if(name %in% formDF$name) { name } else {
+    if (name %in% formDF$name) {
+      name
+    } else { # try to deal with the fact that R munges non-alphanumeric characters into a .
       split_by_dots <- unlist(str_split(name, '\\.'))
       sbd_length <- length(split_by_dots)
       if(sbd_length == 1) { name } else {
@@ -337,6 +358,39 @@ recastDataFrameBasedOnFormDF = function(df, formdf, convert.dates=TRUE) {
     reTypeColumns(c("start", "end", "datetime"), iso8601DateTimeConvert)
   }
   df
+}
+
+#' Add columns corresponding to the original, as well as medium and small thumbnails of images
+#' as stored on the formhub server.
+#'
+#' @param the formhubData object which to create URLs from.
+#' @param the formhub username of the person who owns this form.
+#'
+#' @export
+#' @return a formhubData object, with a few additional URL columns
+#' @examples
+#' good_eats <- as.data.frame(formhubDownload("good_eats", "mberg"))
+#' good_eats_with_photos <- addPhotoURLs(good_eats, "mberg")
+#' grep("URL", names(good_eats_with_photo), value=T) # the new columns
+addPhotoURLs = function(formhubDataObj, formhubUsername) {
+  photos <- c(subset(formhubDataObj@form, type %in% "photo")$name)
+  urlFromCol <- function(photoCol, size) {
+    stopifnot(size %in% c("", "medium", "small"))
+    ifelse(is.na(photoCol), "",
+           sprintf("https://formhub.org/attachment/%s?media_file=%s/attachments/%s",
+                   size, formhubUsername, photoCol))
+  }
+  tmp <- llply(photos, function(photoColName) {
+    photoCol <- formhubDataObj[[photoColName]]
+    setNames(data.frame(
+      urlFromCol(photoCol, ""),
+      urlFromCol(photoCol, "medium"),
+      urlFromCol(photoCol, "small"),
+      stringsAsFactors=FALSE
+    ), paste0(photoColName, c("_URL_original", "_URL_medium", "_URL_small")))
+  })
+  tmp <- cbind(formhubDataObj, do.call(cbind, tmp))
+  new("formhubData", tmp, form=formhubDataObj@form)
 }
 
 #' Helper function to remove columns from data based on reg-exp matching. Also takes list of strings.

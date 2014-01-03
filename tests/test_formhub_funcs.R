@@ -3,7 +3,8 @@ require(stringr)
 require(formhub)
 
 test_dir = ""
-#source("~/Code/formhub.R/R/formhub.R");test_file("~/Code/formhub.R/tests/test_formhub_funcs.R")
+# test_dir = "~/Code/formhub.R/tests/"
+# test_file("~/Code/formhub.R/tests/test_formhub_funcs.R")
 
 edu_datafile <- str_c(test_dir, "fixtures/edu1.csv")
 edu_formfile <- str_c(test_dir, "fixtures/edu1.json")
@@ -47,7 +48,7 @@ test_that("replaceAllNamesWithLabels works on good_eats", {
   
   expect_false("bad" %in% good_eats_replaced$Rating)
   expect_true("What was I thinking" %in% good_eats_replaced$Rating)
-  expect_equivalent(table(good_eats_replaced$Rating)["What was I thinking"], 2)
+  expect_equivalent(table(good_eats_replaced$Rating)["What was I thinking"], 25)
   
   expect_true("Low Risk" %in% good_eats_replaced[,"Risk Factor"])
 })
@@ -71,6 +72,7 @@ test_that("replace Functions work with dot-replaced names", {
   expect_true("Type of Eat" %in% names(good_eats_names_replaced))
 })
 
+# Replace works with multi-lingual forms
 test_that("replace Functions work with multi-lingual forms", {
     pde <- formhubRead(pde_datafile, pde_formfile)
     pde_names_replaced <- replaceHeaderNamesWithLabels(pde)
@@ -92,5 +94,26 @@ test_that("replace Functions work with multi-lingual forms", {
     
     expect_false(any(names(pde_names_replaced) == "NA"))
     expect_true("A-2.4 Commune" %in% names(pde_names_replaced))
+})
+
+# Adding photo URLs work
+test_that("adding photo urls works", {
+  good_eats <- formhubRead(good_eats_datafile, good_eats_formfile)
+  good_eats_with_photo_urls <- addPhotoURLs(good_eats, 'mberg')
+  # check that new columns were added
+  expect_true(all(c("food_photo_URL_original", "food_photo_URL_medium", "food_photo_URL_small",
+                "location_photo_URL_original", "location_photo_URL_medium",
+                "location_photo_URL_small") %in% names(good_eats_with_photo_urls)))
+  # check that if original is blank, so is medium and small
+  expect_true(all(which(good_eats_with_photo_urls$food_photo_URL_original == "") ==
+              intersect(which(good_eats_with_photo_urls$food_photo_URL_small == ""),
+                        which(good_eats_with_photo_urls$food_photo_URL_medium == ""))))
+  # check one of the URLs
+  expect_equal(subset(good_eats_with_photo_urls, description == "Fistikli")$location_photo_URL_original,
+               "https://formhub.org/attachment/?media_file=mberg/attachments/1325233817453.jpg")
+  expect_equal(subset(good_eats_with_photo_urls, description == "Fistikli")$location_photo_URL_medium,
+               "https://formhub.org/attachment/medium?media_file=mberg/attachments/1325233817453.jpg")
+  expect_equal(subset(good_eats_with_photo_urls, description == "Fistikli")$location_photo_URL_small,
+               "https://formhub.org/attachment/small?media_file=mberg/attachments/1325233817453.jpg")
 })
 
