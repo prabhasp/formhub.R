@@ -301,6 +301,8 @@ form_to_df = function(formJSON, keepGroupNames=TRUE) {
         names <- paste(nameprefix, sapply(options, function(o) o['name']), sep=".")
         
         labels <- sapply(options, function(o) { paste( child[["label"]], o['label'], sep=" >> ")})
+        #TODO: fix properly; this is a hack for multi-lingual labels
+        labels <- if(class(labels) == 'matrix') { labels[1,] } else { labels }
         data.frame(name=names, label=labels, type="boolean", options=NA, stringsAsFactors=F)
       } else if (child[["type"]] == "select one") {
         if("children" %in% names(child)) {
