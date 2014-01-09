@@ -132,7 +132,6 @@ replaceAllNamesWithLabels <- function(formhubDataObj, language=NULL) {
             stop("Language argument should be null for single-language forms.") 
         })
     }
-    row.names(old) <- old$name
     if (! field_name %in% names(data)) {
       col_name <- names(data)[str_detect(field_name, paste0('^', names(data), '$'))] # sometimes characters are
         # replaced by dot; we take advantage of fact that . is an all-character
