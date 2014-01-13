@@ -366,6 +366,7 @@ recastDataFrameBasedOnFormDF = function(df, formdf, convert.dates=TRUE) {
 #'
 #' @param the formhubData object which to create URLs from.
 #' @param the formhub username of the person who owns this form.
+#' @param type: "url" or "img". URL only puts image url in, img puts image tag in.
 #'
 #' @export
 #' @return a formhubData object, with a few additional URL columns
@@ -373,20 +374,28 @@ recastDataFrameBasedOnFormDF = function(df, formdf, convert.dates=TRUE) {
 #' good_eats <- as.data.frame(formhubDownload("good_eats", "mberg"))
 #' good_eats_with_photos <- addPhotoURLs(good_eats, "mberg")
 #' grep("URL", names(good_eats_with_photo), value=T) # the new columns
-addPhotoURLs = function(formhubDataObj, formhubUsername) {
+addPhotoURLs = function(formhubDataObj, formhubUsername, type="url") {
   photos <- c(subset(formhubDataObj@form, type %in% "photo")$name)
-  urlFromCol <- function(photoCol, size) {
+  htmlFromCol <- function(photoCol, size, type) {
     stopifnot(size %in% c("", "medium", "small"))
-    ifelse(is.na(photoCol), "",
+    if (type == "url") { 
+      ifelse(is.na(photoCol), "",
            sprintf("https://formhub.org/attachment/%s?media_file=%s/attachments/%s",
                    size, formhubUsername, photoCol))
+    } else if (type == "img") {
+      ifelse(is.na(photoCol), "",
+             sprintf('<img src="https://formhub.org/attachment/%s?media_file=%s/attachments/%s" />',
+                     size, formhubUsername, photoCol))
+    } else { 
+      stop("Type must be either 'url' or 'img'.")
+    }
   }
   tmp <- llply(photos, function(photoColName) {
     photoCol <- formhubDataObj[[photoColName]]
     setNames(data.frame(
-      urlFromCol(photoCol, ""),
-      urlFromCol(photoCol, "medium"),
-      urlFromCol(photoCol, "small"),
+      htmlFromCol(photoCol, "", type),
+      htmlFromCol(photoCol, "medium", type),
+      htmlFromCol(photoCol, "small", type),
       stringsAsFactors=FALSE
     ), paste0(photoColName, c("_URL_original", "_URL_medium", "_URL_small")))
   })
