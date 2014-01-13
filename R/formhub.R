@@ -9,6 +9,25 @@ library(doBy)
 
 setClass("formhubData", representation("data.frame", form="data.frame"), contains="data.frame")
 
+#' Produce a data.frame out of a formhubDataObj
+#'
+#' @param the formhub object which will be possibly co-erced to a dataframe.
+#' @export
+#' @return A data.frame represntation of this formhub oject
+#' @examples
+#' #' Produce a SpatialPointsDataFrame if data has a column of type `gps` or `geopoint`.
+#' Otherwise, return NA.
+#'
+#' @param the formhub object which will be possibly co-erced to a SpatialPointsDataFrame object.
+#' @export
+#' @return A SpatialPointsDataFrame representation of this formhub Object
+#' @examples
+#' good_eats_data <- as.data.frame(formhubDownload("good_eats", "mberg"))
+#' class(ge_spdf) # "data.frame"
+as.data.frame.formhubData <- function(fhD, ...) {
+   data.frame(setNames(fhD@.Data, names(fhD)))
+}
+
 #' Produce a SpatialPointsDataFrame if data has a column of type `gps` or `geopoint`.
 #' Otherwise, return NA.
 #'
@@ -113,7 +132,6 @@ replaceAllNamesWithLabels <- function(formhubDataObj, language=NULL) {
             stop("Language argument should be null for single-language forms.") 
         })
     }
-    row.names(old) <- old$name
     if (! field_name %in% names(data)) {
       col_name <- names(data)[str_detect(field_name, paste0('^', names(data), '$'))] # sometimes characters are
         # replaced by dot; we take advantage of fact that . is an all-character
@@ -282,6 +300,8 @@ form_to_df = function(formJSON, keepGroupNames=TRUE) {
         names <- paste(nameprefix, sapply(options, function(o) o['name']), sep=".")
         
         labels <- sapply(options, function(o) { paste( child[["label"]], o['label'], sep=" >> ")})
+        #TODO: fix properly; this is a hack for multi-lingual labels
+        labels <- if(class(labels) == 'matrix') { labels[1,] } else { labels }
         data.frame(name=names, label=labels, type="boolean", options=NA, stringsAsFactors=F)
       } else if (child[["type"]] == "select one") {
         if("children" %in% names(child)) {
@@ -346,6 +366,7 @@ recastDataFrameBasedOnFormDF = function(df, formdf, convert.dates=TRUE) {
 #'
 #' @param the formhubData object which to create URLs from.
 #' @param the formhub username of the person who owns this form.
+#' @param type: "url" or "img". URL only puts image url in, img puts image tag in.
 #'
 #' @export
 #' @return a formhubData object, with a few additional URL columns
@@ -353,20 +374,28 @@ recastDataFrameBasedOnFormDF = function(df, formdf, convert.dates=TRUE) {
 #' good_eats <- as.data.frame(formhubDownload("good_eats", "mberg"))
 #' good_eats_with_photos <- addPhotoURLs(good_eats, "mberg")
 #' grep("URL", names(good_eats_with_photo), value=T) # the new columns
-addPhotoURLs = function(formhubDataObj, formhubUsername) {
+addPhotoURLs = function(formhubDataObj, formhubUsername, type="url") {
   photos <- c(subset(formhubDataObj@form, type %in% "photo")$name)
-  urlFromCol <- function(photoCol, size) {
+  htmlFromCol <- function(photoCol, size, type) {
     stopifnot(size %in% c("", "medium", "small"))
-    ifelse(is.na(photoCol), "",
+    if (type == "url") { 
+      ifelse(is.na(photoCol), "",
            sprintf("https://formhub.org/attachment/%s?media_file=%s/attachments/%s",
                    size, formhubUsername, photoCol))
+    } else if (type == "img") {
+      ifelse(is.na(photoCol), "",
+             sprintf('<img src="https://formhub.org/attachment/%s?media_file=%s/attachments/%s" />',
+                     size, formhubUsername, photoCol))
+    } else { 
+      stop("Type must be either 'url' or 'img'.")
+    }
   }
   tmp <- llply(photos, function(photoColName) {
     photoCol <- formhubDataObj[[photoColName]]
     setNames(data.frame(
-      urlFromCol(photoCol, ""),
-      urlFromCol(photoCol, "medium"),
-      urlFromCol(photoCol, "small"),
+      htmlFromCol(photoCol, "", type),
+      htmlFromCol(photoCol, "medium", type),
+      htmlFromCol(photoCol, "small", type),
       stringsAsFactors=FALSE
     ), paste0(photoColName, c("_URL_original", "_URL_medium", "_URL_small")))
   })

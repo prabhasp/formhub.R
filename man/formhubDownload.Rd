@@ -2,7 +2,7 @@
 \alias{formhubDownload}
 \title{Download data from formhub.}
 \usage{
-  formhubDownload(formName, uname, pass = NA, ...)
+formhubDownload(formName, uname, pass = NA, ...)
 }
 \arguments{
   \item{formName}{formname on formhub.org for which we
@@ -16,12 +16,12 @@
   \item{...}{other parameters to pass onto formhubRead}
 }
 \value{
-  formhubDataObj a formhubData Object, with "data" and
-  "form" slots
+formhubDataObj a formhubData Object, with "data" and "form"
+slots
 }
 \description{
-  This function downloads a dataset for the given form and
-  username, and produces a formhubData Object.
+This function downloads a dataset for the given form and
+username, and produces a formhubData Object.
 }
 \examples{
 good_eats <- formhubDownload("good_eats", "mberg")
