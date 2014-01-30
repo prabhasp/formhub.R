@@ -1,5 +1,8 @@
 formhub.R News
 
+Changes in formhub.R 0.0.3.9.3 (Jan 30, 2014):
+ * minor bugfix
+
 Changes in formhub.R 0.0.3.9.2 (Jan 13, 2014):
  * add type parameter to addPhotoURLs function
 
