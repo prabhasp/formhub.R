@@ -2,8 +2,7 @@
 \alias{replaceAllNamesWithLabels}
 \title{Get a new dataframe, where all 'name's are replaced with full labels.}
 \usage{
-  replaceAllNamesWithLabels(formhubDataObj,
-    language = NULL)
+replaceAllNamesWithLabels(formhubDataObj, language = NULL)
 }
 \arguments{
   \item{formhubDataObj}{is the formhub data object whose
@@ -14,18 +13,17 @@
   For single-language forms language=NULL.}
 }
 \value{
-  a new data frames with the column names, as well as
-  factor values, renamed from `name`s (slugs) to
-  `label`s(full questions)
+a new data frames with the column names, as well as factor
+values, renamed from `name`s (slugs) to `label`s(full
+questions)
 }
 \description{
-  formhub Objects have some data, as well as the form,
-  which documents how the data was obtained through a
-  survey. The data, by default, is represented by slugs,
-  ie, items in the `name` column in the original xfrom.
-  This function replaces slugs in the header with actual
-  question text, and replaces slugs in select one options
-  with the actual resposne text.
+formhub Objects have some data, as well as the form, which
+documents how the data was obtained through a survey. The
+data, by default, is represented by slugs, ie, items in the
+`name` column in the original xfrom. This function replaces
+slugs in the header with actual question text, and replaces
+slugs in select one options with the actual resposne text.
 }
 \examples{
 good_eats <- formhubDownload("good_eats", "mberg")

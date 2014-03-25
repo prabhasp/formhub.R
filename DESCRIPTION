@@ -1,6 +1,6 @@
 Package: formhub
-Version: 0.0.3.9
-Date: 2013-12-19
+Version: 0.0.3.9.3
+Date: 2014-1-30
 Title: formhub.R -- pulling data from formhub.org repositories easily.
 Author: Prabhas Pokharel (Modi Research Group, Columbia University)
 Maintainer: Prabhas Pokharel <prabhas.pokharel@gmail.com>
@@ -24,5 +24,3 @@ Description: formhub.R provides functions to pull data from formhub.org
 License: Dual-licensed. GPL for commercial uses. BSD for non-commercial uses.
 URL: http://www.SEL-Columbia.github.com/formhub.R
 BugReports: http://github.com/SEL-Columbia/formhub.R/issues
-Collate:
-    'formhub.R'

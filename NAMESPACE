@@ -1,3 +1,5 @@
+S3method(as.data.frame,formhubData)
+export(addPhotoURLs)
 export(as.SpatialPointsDataFrame)
 export(formhubDownload)
 export(formhubRead)

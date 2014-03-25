@@ -2,10 +2,9 @@
 \alias{formhubRead}
 \title{Reads data from a passed csv filename and json filename into a formhubData object.}
 \usage{
-  formhubRead(csvfilename, jsonfilename,
-    extraFormDF = data.frame(), dropCols = "",
-    na.strings = c("n/a"), convert.dates = TRUE,
-    keepGroupNames = TRUE)
+formhubRead(csvfilename, jsonfilename, extraFormDF = data.frame(),
+  dropCols = "", na.strings = c("n/a"), convert.dates = TRUE,
+  keepGroupNames = TRUE)
 }
 \arguments{
   \item{csvfilename}{filename (or a connection object) that
@@ -28,14 +27,13 @@
   while keepGroupName=F will generate a name bar}
 }
 \value{
-  formhubDataObj a formhubData Object, with "data" and
-  "form" slots
+formhubDataObj a formhubData Object, with "data" and "form"
+slots
 }
 \description{
-  This function creates a formhubData object from two
-  files: a csv data file, and a json form file. These
-  should both be downloaded from formhub.org for the same
-  form.
+This function creates a formhubData object from two files:
+a csv data file, and a json form file. These should both be
+downloaded from formhub.org for the same form.
 }
 \examples{
 # will need to download data.csv and form.json for a specific form on formhub, for below, download
