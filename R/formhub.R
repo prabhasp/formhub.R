@@ -269,7 +269,11 @@ formhubCast  = function(dataDF, formDF, extraFormDF=data.frame(), dropCols="", c
 
   extraFormDF <- colwise(as.character)(extraFormDF)
   formDF <- rbind.fill(extraFormDF, formDF)
-  formDF <- formDF[!duplicated(formDF$name),]
+  if(anyDuplicated(formDF$name)) {
+    warning("Question names not unique in form; questions may be dropped from form df.")
+    formDF <- formDF[!duplicated(formDF$name),]
+  }
+  row.names(formDF) <- formDF$name
   
   new("formhubData", recastDataFrameBasedOnFormDF(dataDF, formDF, convert.dates=convert.dates),
                      form=formDF)
