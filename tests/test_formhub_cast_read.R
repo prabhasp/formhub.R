@@ -2,7 +2,7 @@ library(testthat)
 library(stringr)
 library(formhub)
 
-test_dir = ""
+test_dir = "" # set to "tests/" when working on the project, for dynamic loading below
 #test_dir("~/Code/formhub.R/tests/")
 
 edu_datafile <- str_c(test_dir, "fixtures/edu1.csv")
@@ -20,6 +20,13 @@ edu_df <- edu_formhubObj
 edu_form_df <- edu_formhubObj@form
 
 good_eats <- formhubRead(good_eats_datafile, good_eats_formfile)
+
+test_that("@form has nice row.names", {
+    expect_true(!all(row.names(hlt_form_df) == hlt_form_df$name))
+    expect_warning(edu_formhubObj <- formhubRead(edu_datafile, edu_formfile))
+    expect_equal(row.names(edu_formhubObj@form), edu_formhubObj@form$name)
+    expect_equal(row.names(good_eats@form), good_eats@form$name)
+})
 
 test_that("convert.dates works", {
   ef <- formhubRead(edu_datafile, edu_formfile)
