@@ -1,5 +1,8 @@
 formhub.R News
 
+Changes in formhub.R 0.0.3.10 (April 3, 2014):
+ * @form data frames have row.names (the same as the name column)
+
 Changes in formhub.R 0.0.3.9.3 (Jan 30, 2014):
  * minor bugfix
 

@@ -6,7 +6,6 @@ library(lubridate)
 library(sp)
 library(doBy)
 
-
 setClass("formhubData", representation("data.frame", form="data.frame"), contains="data.frame")
 
 #' Produce a data.frame out of a formhubDataObj
@@ -425,5 +424,4 @@ removeColumns <- function(df, columnNameRegExpMatcher) {
     df[,-which(str_detect(names(df), orMatcher))]
   }
 }
-
 
