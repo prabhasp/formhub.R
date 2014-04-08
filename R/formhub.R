@@ -161,7 +161,7 @@ replaceAllNamesWithLabels <- function(formhubDataObj, language=NULL) {
 #' good_eats # is a data frame of all the data
 #' good_eats@form # is the form for that data, encoded as a dataframe
 #' privateData <- formhubDownload("Private_Data_For_Testing", uname="formhub_r", pass="t3st~p4ss")
-formhubDownload = function(formName, uname, pass=NA, ...) {
+formhubDownload = function(formName, uname, pass=NA, authfile=NA, ...) {
   fUrl <- function(formName, uname, form=F) {
     str_c('http://formhub.org/', uname, '/forms/', formName,
           ifelse(form,'/form.json', '/data.csv'))
@@ -169,20 +169,27 @@ formhubDownload = function(formName, uname, pass=NA, ...) {
   dataUrl = fUrl(formName, uname)
   formUrl = fUrl(formName, uname, form=T)
   
+  ## TODO: implement better authentication in formhub. until then, we use a simple authfile
+  upass <- if(!is.na(authfile)) {
+    scan(authfile, what=character())
+  } else if(!is.na(pass)) {
+    str_c(uname,pass,sep=":")
+  }
+  
   #TODO -- pre-flight check? below doesn't work; expects 200+ status
   #if(!url.exists(datUrl)) { stop("could not find ", dataUrl)}
   #if(!url.exists(formUrl)) { stop("could not find ", formUrl)}
   
   # get the data, depending on public or not
-  dataCSVstr <- ifelse(is.na(pass),
+  dataCSVstr <- ifelse(is.na(pass) & is.na(authfile),
                  getURI(dataUrl),
-                 getURI(dataUrl, userpwd=str_c(uname,pass,sep=":"), httpauth = 1L))
+                 getURI(dataUrl, userpwd=upass, httpauth = 1L))
   
   # get the form, depending on public or not
   # TODO: situations where data is public, form is not
-  formJSON <- ifelse(is.na(pass),
+  formJSON <- ifelse(is.na(pass) & is.na(authfile),
                  getURI(formUrl),
-                 getURI(formUrl, userpwd=str_c(uname,pass,sep=":"), httpauth = 1L))
+                 getURI(formUrl, userpwd=upass, httpauth = 1L))
   formhubRead(textConnection(dataCSVstr), formJSON, ...)
 }
 
