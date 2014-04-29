@@ -1,5 +1,8 @@
 formhub.R News
 
+Changes in formhub.R 0.0.3.12 (April 29, 2014):
+ * added replaceColumnNamesWithLabels
+
 Changes in formhub.R 0.0.3.11 (April 8, 2014):
  * added authfile hack 
 

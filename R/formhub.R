@@ -55,6 +55,7 @@ as.SpatialPointsDataFrame <- function(formhubObj) {
   }
 }
 
+
 #' Get a new dataframe, where the header contains the full questions as opposed to slugs.
 #'
 #' formhub Objects have some data, as well as the form, which documents how
@@ -87,6 +88,22 @@ replaceHeaderNamesWithLabels <- function(formhubDataObj) {
     }
   })
   setNames(data.frame(formhubDataObj), newNames)
+}
+
+#' Get a column of a formhubData object, but with its values replaced by labels
+#'
+#' @param formhubDataObj is the formhub data object to operate on
+#' @param colname is the column name we want to revalue and return
+#' @export
+#' @return A vector of re-valued data
+#' @examples
+#' good_eats <- formhubDownload("good_eats", "mberg")
+#' replaceColumnNamesWithLabels(good_eats, 'rating')
+replaceColumnNamesWithLabels <- function(formhubDataObj, colname) {
+    coloptions = formhubDataObj@form[colname,'options']
+    if(is.na(coloptions)) stop("names and labels not found for column ", colname)
+    optiondf = ldply(RJSONIO::fromJSON(coloptions))
+    revalue(formhubDataObj[[colname]], setNames(optiondf$label, optiondf$name))
 }
 
 #' Get a new dataframe, where all 'name's are replaced with full labels.
