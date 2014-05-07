@@ -1,6 +1,5 @@
 require(testthat)
 require(stringr)
-require(formhub)
 
 test_dir = ""
 # test_dir = "~/Code/formhub.R/tests/"

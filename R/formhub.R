@@ -1,10 +1,5 @@
-library(RJSONIO)
 library(stringr)
 library(plyr)
-library(RCurl)
-library(lubridate)
-library(sp)
-library(doBy)
 
 setClass("formhubData", representation("data.frame", form="data.frame"), contains="data.frame")
 
@@ -50,8 +45,8 @@ as.SpatialPointsDataFrame <- function(formhubObj) {
       gpses <- gpses[!dropRows]
     }
     gpses_split <- apply(str_split_fixed(gpses, " ", 3)[,c(2,1)], 2, FUN=as.numeric)
-    SpatialPointsDataFrame(gpses_split, data.frame(formhubObj)[!dropRows,],
-                           proj4string=CRS("+proj=longlat +datum=WGS84 +ellps=WGS84"))
+    sp::SpatialPointsDataFrame(gpses_split, data.frame(formhubObj)[!dropRows,],
+                           proj4string=sp::CRS("+proj=longlat +datum=WGS84 +ellps=WGS84"))
   }
 }
 
@@ -156,8 +151,8 @@ replaceAllNamesWithLabels <- function(formhubDataObj, language=NULL) {
       col_name <- field_name
     }
     stopifnot(length(col_name) == 1) #form and data don't match
-    levels(data[,col_name]) <<- recodeVar(levels(data[,col_name]), 
-                as.character(old$name), as.character(old$label), default=NA, keep.na=T)
+    levels(data[,col_name]) <<- revalue(levels(data[,col_name]), 
+                                        setNames(as.character(old$label), as.character(old$name)))
   })
   replaceHeaderNamesWithLabels(new("formhubData", data, form=form))
 }
@@ -199,14 +194,14 @@ formhubDownload = function(formName, uname, pass=NA, authfile=NA, ...) {
   
   # get the data, depending on public or not
   dataCSVstr <- ifelse(is.na(pass) & is.na(authfile),
-                 getURI(dataUrl),
-                 getURI(dataUrl, userpwd=upass, httpauth = 1L))
+                 RCurl::getURI(dataUrl),
+                 RCurl::getURI(dataUrl, userpwd=upass, httpauth = 1L))
   
   # get the form, depending on public or not
   # TODO: situations where data is public, form is not
   formJSON <- ifelse(is.na(pass) & is.na(authfile),
-                 getURI(formUrl),
-                 getURI(formUrl, userpwd=upass, httpauth = 1L))
+                     RCurl::getURI(formUrl),
+                     RCurl::getURI(formUrl, userpwd=upass, httpauth = 1L))
   formhubRead(textConnection(dataCSVstr), formJSON, ...)
 }
 
@@ -332,12 +327,12 @@ form_to_df = function(formJSON, keepGroupNames=TRUE) {
         data.frame(name=names, label=labels, type="boolean", options=NA, stringsAsFactors=F)
       } else if (child[["type"]] == "select one") {
         if("children" %in% names(child)) {
-            data.frame(name=nom, type=child[["type"]], options=toJSON(child$children),
+            data.frame(name=nom, type=child[["type"]], options=RJSONIO::toJSON(child$children),
                    label=if("label" %in% names(child)) {child[["label"]]} else {child[["name"]]},
                    stringsAsFactors=F)
         } else if ("itemset" %in% names(child)) {
             data.frame(name=nom, type=child[["type"]],
-                     options=toJSON(formJSON$choices[[child[['itemset']]]]), # options are more complex with itemset
+                     options=RJSONIO::toJSON(formJSON$choices[[child[['itemset']]]]), # options are more complex with itemset
                      label=if("label" %in% names(child)) {child[["label"]]} else {child[["name"]]},
                      stringsAsFactors=F)
         }
@@ -373,10 +368,10 @@ recastDataFrameBasedOnFormDF = function(df, formdf, convert.dates=TRUE) {
     ))
   }
   # lubridate doesn't handle ISO 8601 datetimes yet, so we just chuck the timezone info
-  iso8601DateTimeConvert <- function(x) { ymd_hms(str_extract(x, '^[^+Z]*(T| )[^+Z-]*')) }
+  iso8601DateTimeConvert <- function(x) { lubridate::ymd_hms(str_extract(x, '^[^+Z]*(T| )[^+Z-]*')) }
   
   # some formhub dates come in the format 2011-04-24T00:20:00.000000
-  iso8601DateConvert <- function(x) { ymd(str_extract(x, '^[^T]*')) }
+  iso8601DateConvert <- function(x) { lubridate::ymd(str_extract(x, '^[^T]*')) }
   
   reTypeColumns(c("integer", "decimal"), as.numeric)
   reTypeColumns(c("boolean"), as.logical)

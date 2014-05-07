@@ -1,7 +1,7 @@
 formhub.R News
 
-Changes in formhub.R 0.0.4.0 (April 29, 2014):
- * bumping version number; unwise to have > .9
+Changes in formhub.R 0.0.4.01 (May 07, 2014):
+ * changed all dependencies but plyr,stringr to reference functions as package::function directly
 
 Changes in formhub.R 0.0.3.12 (April 29, 2014):
  * added replaceColumnNamesWithLabels

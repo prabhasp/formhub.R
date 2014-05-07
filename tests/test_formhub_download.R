@@ -19,7 +19,7 @@ test_that("downloading private data works", {
                         pass="t3st~p4ss")
   expect_true("submit_date" %in% names(data))
   expect_true(nrow(data) > 0)
-  expect_true(is.instant(data$submit_date))
+  expect_true(lubridate::is.instant(data$submit_date))
   expect_true(is.factor(data$functional))
   expect_true(is.character(data$wp_id))
 })
@@ -28,7 +28,7 @@ test_that("downloading private data works", {
 test_that("downloading public data (with private form) falls back gracefully", {
   data <- formhubDownload("Public_Data_Private_Schema", uname="formhub_r")
   expect_true(nrow(data) > 0)
-  expect_true(is.instant(data$submit_date))
+  expect_true(lubridate::is.instant(data$submit_date))
   expect_true(is.factor(data$functional))
   expect_true(is.character(data$wp_id))
 })

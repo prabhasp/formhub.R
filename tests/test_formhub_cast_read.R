@@ -1,6 +1,5 @@
 library(testthat)
 library(stringr)
-library(formhub)
 
 test_dir = "" # set to "tests/" when working on the project, for dynamic loading below
 #test_dir("~/Code/formhub.R/tests/")
@@ -13,7 +12,7 @@ good_eats_datafile <- str_c(test_dir, "fixtures/good_eats.csv")
 good_eats_formfile <- str_c(test_dir, "fixtures/good_eats.json")
 
 edu_rawdf <- read.csv(edu_datafile, na.strings="n/a", stringsAsFactors=FALSE, header=TRUE)
-hlt_form_df <- form_to_df(fromJSON(hlt_formfile))
+hlt_form_df <- form_to_df(RJSONIO::fromJSON(hlt_formfile))
 
 edu_formhubObj <- formhubRead(edu_datafile, edu_formfile)
 edu_df <- edu_formhubObj
@@ -30,9 +29,9 @@ test_that("@form has nice row.names", {
 
 test_that("convert.dates works", {
   ef <- formhubRead(edu_datafile, edu_formfile)
-  expect_true(is.instant(ef$start))
+  expect_true(lubridate::is.instant(ef$start))
   ef <- formhubRead(edu_datafile, edu_formfile, convert.dates=F)
-  expect_false(is.instant(ef$start))
+  expect_false(lubridate::is.instant(ef$start))
 })
 
 test_that("formdf is read properly", {
@@ -56,7 +55,7 @@ test_that("formdf is read properly", {
 })
 
 test_that("formdf is read properly when keepGroupNames is FALSE", {
-  hlt_form_df_without_groups <- form_to_df(fromJSON(hlt_formfile), keepGroupNames=F)
+  hlt_form_df_without_groups <- form_to_df(RJSONIO::fromJSON(hlt_formfile), keepGroupNames=F)
   expect_false(any(str_detect(hlt_form_df_without_groups$name, 'not_for_private')))
   expect_true(all(c("num_flush_or_pour_flush_piped", "power_sources.generator") %in%
                     hlt_form_df_without_groups$name))
@@ -64,7 +63,7 @@ test_that("formdf is read properly when keepGroupNames is FALSE", {
   expect_true(hlt_typeofname("num_flush_or_pour_flush_piped")=="integer")
   expect_true(hlt_typeofname("power_sources.generator")=="boolean")
   
-  hlt_form_df_with_groups <- form_to_df(fromJSON(hlt_formfile), keepGroupNames=T)
+  hlt_form_df_with_groups <- form_to_df(RJSONIO::fromJSON(hlt_formfile), keepGroupNames=T)
   expect_true(all(hlt_form_df_without_groups$type == hlt_form_df_with_groups$type))
   expect_true(all(hlt_form_df_without_groups$label == hlt_form_df_with_groups$label))
   expect_true(all(hlt_form_df_without_groups$options == hlt_form_df_with_groups$options, na.rm=T))
@@ -119,12 +118,12 @@ test_that("formhubRead converted types properly", {
   expect_true(is.character(edu_df$photo)) # type: attachment
   
   
-  expect_true(is.instant(edu_df$start)) # type: start
-  expect_true(is.instant(edu_df$end)) # type: end 
+  expect_true(lubridate::is.instant(edu_df$start)) # type: start
+  expect_true(lubridate::is.instant(edu_df$end)) # type: end 
   
   # need to test type: datetime
-  expect_true(is.instant(good_eats$submit_date))
-  expect_true(is.instant(good_eats$submit_data))
+  expect_true(lubridate::is.instant(good_eats$submit_date))
+  expect_true(lubridate::is.instant(good_eats$submit_data))
   
   # miscellaneous values that are converted to factors
   expect_true(is.factor(good_eats$imei))
@@ -136,7 +135,7 @@ test_that("formhubRead converted types properly", {
 })  
   
 test_that("formhubRead parses dates in wild formhub data properly", {
-  expect_true(is.instant(recastDataFrameBasedOnFormDF(
+  expect_true(lubridate::is.instant(recastDataFrameBasedOnFormDF(
       read.csv(textConnection("date\n2012-08-15T00:00:00.000000\n2012-08-15T00:00:00.000000")),
       data.frame(name=c("date"), type=c("today"), label=c("Today's date:"), stringsAsFactors=F))
     $date))
