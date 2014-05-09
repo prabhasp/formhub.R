@@ -1,7 +1,9 @@
 library(stringr)
 library(plyr)
 
-setClass("formhubData", representation("data.frame", form="data.frame"), contains="data.frame")
+setClass("formhubData", 
+         representation(form="data.frame"),
+         contains="data.frame")
 
 #' Produce a data.frame out of a formhubDataObj
 #'
@@ -154,6 +156,7 @@ replaceAllNamesWithLabels <- function(formhubDataObj, language=NULL) {
     levels(data[,col_name]) <<- revalue(levels(data[,col_name]), 
                                         setNames(as.character(old$label), as.character(old$name)))
   })
+  stopifnot(is.data.frame(data))
   replaceHeaderNamesWithLabels(new("formhubData", data, form=form))
 }
 
@@ -293,8 +296,9 @@ formhubCast  = function(dataDF, formDF, extraFormDF=data.frame(), dropCols="", c
   }
   row.names(formDF) <- formDF$name
   
-  new("formhubData", recastDataFrameBasedOnFormDF(dataDF, formDF, convert.dates=convert.dates),
-                     form=formDF)
+  data = recastDataFrameBasedOnFormDF(dataDF, formDF, convert.dates=convert.dates)
+  stopifnot(is.data.frame(data))
+  new("formhubData", data, form=formDF)
 }
 
 #' Converts formhub form.json format to dataframe format. Dataframe has name, type, label columns.
