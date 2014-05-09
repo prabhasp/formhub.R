@@ -101,6 +101,24 @@ replaceColumnNamesWithLabels <- function(formhubDataObj, colname) {
     revalue(formhubDataObj[[colname]], setNames(optiondf$label, optiondf$name))
 }
 
+#' Remap all of the columns of the formhub data object according to the remap_list
+#'
+#' @param remapList A list of vectors. In each underlying vector, the name is
+#'        what to map, and the value what to map to. Example,
+#'        remapList = list(c("yes" = TRUE, "no" = FALSE, "dk" = NA))
+#'        maps all "yes" values to TRUE, "no" to FALSE, and "dk" to NA
+#' @param strictness One of "exact", "all_found", or "any_found"; Default = all.
+#'        Defines the strictness of finding data. For example, all_found ensures
+#'        that all keys in the data are found in the keys of our remapList,
+#'        anyFound will replace partial matches, whereas exact ensures a full 2way match.
+#' @export
+#' @return A data.frame with values replaced.
+#' @examples
+#' good_eats <- formhubDownload("good_eats", "mberg")
+#' 
+remapAllColumns <- function(formhubDataObj, remapList, strict=TRUE) {
+}
+
 #' Get a new dataframe, where all 'name's are replaced with full labels.
 #'
 #' formhub Objects have some data, as well as the form, which documents how
