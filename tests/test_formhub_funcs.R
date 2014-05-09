@@ -116,3 +116,24 @@ test_that("adding photo urls works", {
                "https://formhub.org/attachment/small?media_file=mberg/attachments/1325233817453.jpg")
 })
 
+# Re-mapping field values works
+test_that("remapColumns can map values", {
+  edu_formhubObj <- formhubRead(edu_datafile, edu_formfile)
+  edu_mapped <- remapColumns(edu_formhubObj, remap_list = list(c("yes"=TRUE, "no"=FALSE)))
+  expect_equal(mean(edu_formhubObj$nomadic_school_yn == 'yes'), mean(edu_mapped$nomadic_school_yn))
+  
+  good_eats <- formhubRead(good_eats_datafile, good_eats_formfile)
+  ge_mapped <- remapColumns(good_eats, remap_list = list(c("high_risk" = TRUE, "medium_risk" = FALSE, "low_risk" = NA)))
+  expect_equal(mean(ge_mapped$risk_factor),
+               sum(good_eats$risk_factor =="high_risk") / sum(good_eats$risk_factor %in% c("high_risk", "medium_risk")))
+})
+
+test_that("remapColumns doesn't map values unless all values in data are in remap_list", {
+  edu_formhubObj <- formhubRead(edu_datafile, edu_formfile)
+  edu_mapped <- remapColumns(edu_formhubObj, remap_list = list(c("yes"=TRUE)))
+  expect_match(edu_formhubObj$nomadic_school_yn, edu_mapped$nomadic_school_yn)
+  
+  good_eats <- formhubRead(good_eats_datafile, good_eats_formfile)
+  ge_mapped <- remapColumns(good_eats, remap_list = list(c("high_risk" = TRUE, "medium_risk" = FALSE)))
+  expect_true(good_eats == ge_mapped)
+})
