@@ -103,9 +103,9 @@ replaceColumnNamesWithLabels <- function(formhubDataObj, colname) {
 
 #' Remap all of the columns of the formhub data object according to the remap_list
 #'
-#' @param remapList A list of vectors. In each underlying vector, the name is
-#'        what to map, and the value what to map to. Example,
-#'        remapList = list(c("yes" = TRUE, "no" = FALSE, "dk" = NA))
+#' @param remap A vector. The name is what to map, and the value what to map to. 
+#'        Example:
+#'            remap = c("yes" = TRUE, "no" = FALSE, "dk" = NA)
 #'        maps all "yes" values to TRUE, "no" to FALSE, and "dk" to NA
 #' @param strictness One of "exact", "all_found", or "any_found"; Default = all.
 #'        Defines the strictness of finding data. For example, all_found ensures
@@ -116,7 +116,26 @@ replaceColumnNamesWithLabels <- function(formhubDataObj, colname) {
 #' @examples
 #' good_eats <- formhubDownload("good_eats", "mberg")
 #' 
-remapAllColumns <- function(formhubDataObj, remapList, strict=TRUE) {
+remapAllColumns <- function(formhubDataObj, remap, strictness="all_found") {
+  data.frame(
+    llply(formhubDataObj, function(column) {
+      if(is.factor(column)) {
+        data_keys = levels(column)
+        new_keys = names(remap)
+        strictness_criteria_met = switch(strictness,
+          all_found = length(data_keys) > 0 & all(data_keys %in% new_keys),
+          any_found = length(intersect(data_keys, new_keys)) > 0,
+          exact = length(new_keys) == length(data_keys) &
+            length(new_keys) == length(union(data_keys, new_keys)))
+        if(strictness_criteria_met)
+          if(is.logical(remap)) { ## SPECIAL CASE for TRUE/FALSE: cast before returning
+            return(as.logical(revalue(column, remap, warn_missing=FALSE)))
+          } else {
+            return(revalue(column, remap, warn_missing=FALSE))
+          }
+      }
+      return(column)
+  }), stringsAsFactors=FALSE)
 }
 
 #' Get a new dataframe, where all 'name's are replaced with full labels.
