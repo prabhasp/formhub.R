@@ -19,7 +19,7 @@ setClass("formhubData", representation("data.frame", form="data.frame"), contain
 #' good_eats_data <- as.data.frame(formhubDownload("good_eats", "mberg"))
 #' class(ge_spdf) # "data.frame"
 as.data.frame.formhubData <- function(fhD, ...) {
-   data.frame(setNames(fhD@.Data, names(fhD)))
+   data.frame(setNames(fhD@.Data, names(fhD)), stringsAsFactors=F)
 }
 
 #' Produce a SpatialPointsDataFrame if data has a column of type `gps` or `geopoint`.
@@ -272,7 +272,7 @@ formhubDownload = function(formName, uname, pass=NA, authfile=NA, ...) {
 #'              na.strings=c("999"))
 #' good_eatsNA$amount # notice that the value that was 999 is now missing. This is helpful when using values such
 #'                    # as 999 to indicate no data
-formhubRead  = function(csvfilename, jsonfilename, extraFormDF=data.frame(), dropCols="", na.strings=c("n/a"),
+formhubRead = function(csvfilename, jsonfilename, extraFormDF=data.frame(), dropCols="", na.strings=c("n/a"),
                         convert.dates=TRUE, keepGroupNames=TRUE) {
   dataframe <- read.csv(csvfilename, stringsAsFactors=FALSE, header=TRUE, na.strings=na.strings)
   formDF <- form_to_df(RJSONIO::fromJSON(jsonfilename, encoding='utf-8'), keepGroupNames=keepGroupNames)
@@ -449,7 +449,7 @@ addPhotoURLs = function(formhubDataObj, formhubUsername, type="url") {
       stop("Type must be either 'url' or 'img'.")
     }
   }
-  tmp <- llply(photos, function(photoColName) {
+  tmp <- as.data.frame(llply(photos, function(photoColName) {
     photoCol <- formhubDataObj[[photoColName]]
     setNames(data.frame(
       htmlFromCol(photoCol, "", type),
@@ -457,8 +457,8 @@ addPhotoURLs = function(formhubDataObj, formhubUsername, type="url") {
       htmlFromCol(photoCol, "small", type),
       stringsAsFactors=FALSE
     ), paste0(photoColName, c("_URL_original", "_URL_medium", "_URL_small")))
-  })
-  tmp <- cbind(formhubDataObj, do.call(cbind, tmp))
+  }))
+  tmp <- cbind(formhubDataObj, tmp)
   new("formhubData", tmp, form=formhubDataObj@form)
 }
 
