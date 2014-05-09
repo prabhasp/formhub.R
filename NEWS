@@ -1,5 +1,8 @@
 formhub.R News
 
+Changes in formhub.R 0.0.4.2 (May 09, 2014):
+ * added remapAllColumns
+
 Changes in formhub.R 0.0.4.01 (May 07, 2014):
  * changed all dependencies but plyr,stringr to reference functions as package::function directly
 

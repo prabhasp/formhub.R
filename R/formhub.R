@@ -21,7 +21,7 @@ setClass("formhubData",
 #' good_eats_data <- as.data.frame(formhubDownload("good_eats", "mberg"))
 #' class(ge_spdf) # "data.frame"
 as.data.frame.formhubData <- function(fhD, ...) {
-   data.frame(setNames(fhD@.Data, names(fhD)))
+   data.frame(setNames(fhD@.Data, names(fhD)), stringsAsFactors=F)
 }
 
 #' Produce a SpatialPointsDataFrame if data has a column of type `gps` or `geopoint`.
@@ -101,6 +101,43 @@ replaceColumnNamesWithLabels <- function(formhubDataObj, colname) {
     if(is.na(coloptions)) stop("names and labels not found for column ", colname)
     optiondf = ldply(RJSONIO::fromJSON(coloptions))
     revalue(formhubDataObj[[colname]], setNames(optiondf$label, optiondf$name))
+}
+
+#' Remap all of the columns of the formhub data object according to the remap_list
+#'
+#' @param remap A vector. The name is what to map, and the value what to map to. 
+#'        Example:
+#'            remap = c("yes" = TRUE, "no" = FALSE, "dk" = NA)
+#'        maps all "yes" values to TRUE, "no" to FALSE, and "dk" to NA
+#' @param strictness One of "exact", "all_found", or "any_found"; Default = all.
+#'        Defines the strictness of finding data. For example, all_found ensures
+#'        that all keys in the data are found in the keys of our remapList,
+#'        anyFound will replace partial matches, whereas exact ensures a full 2way match.
+#' @export
+#' @return A data.frame with values replaced.
+#' @examples
+#' good_eats <- formhubDownload("good_eats", "mberg")
+#' 
+remapAllColumns <- function(formhubDataObj, remap, strictness="all_found") {
+  data.frame(
+    llply(formhubDataObj, function(column) {
+      if(is.factor(column)) {
+        data_keys = levels(column)
+        new_keys = names(remap)
+        strictness_criteria_met = switch(strictness,
+          all_found = length(data_keys) > 0 & all(data_keys %in% new_keys),
+          any_found = length(intersect(data_keys, new_keys)) > 0,
+          exact = length(new_keys) == length(data_keys) &
+            length(new_keys) == length(union(data_keys, new_keys)))
+        if(strictness_criteria_met)
+          if(is.logical(remap)) { ## SPECIAL CASE for TRUE/FALSE: cast before returning
+            return(as.logical(revalue(column, remap, warn_missing=FALSE)))
+          } else {
+            return(revalue(column, remap, warn_missing=FALSE))
+          }
+      }
+      return(column)
+  }), stringsAsFactors=FALSE)
 }
 
 #' Get a new dataframe, where all 'name's are replaced with full labels.
@@ -238,7 +275,7 @@ formhubDownload = function(formName, uname, pass=NA, authfile=NA, ...) {
 #'              na.strings=c("999"))
 #' good_eatsNA$amount # notice that the value that was 999 is now missing. This is helpful when using values such
 #'                    # as 999 to indicate no data
-formhubRead  = function(csvfilename, jsonfilename, extraFormDF=data.frame(), dropCols="", na.strings=c("n/a"),
+formhubRead = function(csvfilename, jsonfilename, extraFormDF=data.frame(), dropCols="", na.strings=c("n/a"),
                         convert.dates=TRUE, keepGroupNames=TRUE) {
   dataframe <- read.csv(csvfilename, stringsAsFactors=FALSE, header=TRUE, na.strings=na.strings)
   formDF <- form_to_df(RJSONIO::fromJSON(jsonfilename, encoding='utf-8'), keepGroupNames=keepGroupNames)
@@ -416,7 +453,7 @@ addPhotoURLs = function(formhubDataObj, formhubUsername, type="url") {
       stop("Type must be either 'url' or 'img'.")
     }
   }
-  tmp <- llply(photos, function(photoColName) {
+  tmp <- as.data.frame(llply(photos, function(photoColName) {
     photoCol <- formhubDataObj[[photoColName]]
     setNames(data.frame(
       htmlFromCol(photoCol, "", type),
@@ -424,8 +461,8 @@ addPhotoURLs = function(formhubDataObj, formhubUsername, type="url") {
       htmlFromCol(photoCol, "small", type),
       stringsAsFactors=FALSE
     ), paste0(photoColName, c("_URL_original", "_URL_medium", "_URL_small")))
-  })
-  tmp <- cbind(formhubDataObj, do.call(cbind, tmp))
+  }))
+  tmp <- cbind(formhubDataObj, tmp)
   new("formhubData", tmp, form=formhubDataObj@form)
 }
 
