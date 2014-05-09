@@ -1,5 +1,10 @@
 library(testthat)
 library(stringr)
+library(formhub)
+
+# testing un-exported functions
+form_to_df = formhub:::form_to_df
+recastDataFrameBasedOnFormDF = formhub:::recastDataFrameBasedOnFormDF
 
 test_dir = "" # set to "tests/" when working on the project, for dynamic loading below
 #test_dir("~/Code/formhub.R/tests/")
