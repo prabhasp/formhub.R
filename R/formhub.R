@@ -121,8 +121,8 @@ replaceColumnNamesWithLabels <- function(formhubDataObj, colname) {
 remapAllColumns <- function(formhubDataObj, remap, strictness="all_found") {
   data.frame(
     llply(formhubDataObj, function(column) {
-      if(is.factor(column)) {
-        data_keys = levels(column)
+      if(is.factor(column) || is.character(column)) {
+        data_keys = levels(as.factor(column))
         new_keys = names(remap)
         strictness_criteria_met = switch(strictness,
           all_found = length(data_keys) > 0 & all(data_keys %in% new_keys),
