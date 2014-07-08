@@ -213,9 +213,9 @@ replaceAllNamesWithLabels <- function(formhubDataObj, language=NULL) {
 #' good_eats # is a data frame of all the data
 #' good_eats@form # is the form for that data, encoded as a dataframe
 #' privateData <- formhubDownload("Private_Data_For_Testing", uname="formhub_r", pass="t3st~p4ss")
-formhubDownload = function(formName, uname, pass=NA, authfile=NA, ...) {
+formhubDownload = function(formName, uname, pass=NA, authfile=NA, url='http://formhub.org/', ...) {
   fUrl <- function(formName, uname, form=F) {
-    str_c('http://formhub.org/', uname, '/forms/', formName,
+    str_c(url, uname, '/forms/', formName,
           ifelse(form,'/form.json', '/data.csv'))
   }
   dataUrl = fUrl(formName, uname)
