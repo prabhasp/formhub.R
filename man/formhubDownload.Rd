@@ -2,7 +2,7 @@
 \alias{formhubDownload}
 \title{Download data from formhub.}
 \usage{
-formhubDownload(formName, uname, pass = NA, ...)
+formhubDownload(formName, uname, pass = NA, authfile = NA, ...)
 }
 \arguments{
   \item{formName}{formname on formhub.org for which we

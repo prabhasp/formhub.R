@@ -1,0 +1,160 @@
+<link href="http://kevinburke.bitbucket.org/markdowncss/markdown.css" rel="stylesheet"></link>
+Monitoring the reasons for _Don't Know_
+========================================================
+
+In our surveys, we have found it useful to include a _Don't Know / Information Not Available_ option when asking mutliple-choice questions. When users select this option, we also ask them why this information wasn't available. This is similar to allowing for an _other_ option, and asking enumerators to _Please Specify Other_. In the response to the follow-up question, enumerators enter free-form text. This article helps survey managers analyze such free-form text data. We are looking at real data from a recent facilities survey in Nigeria. The analysis below was very similar to the actual analysis we conducted after a pilot survey, to analyze how to improve our surveys better.  
+
+In this demo, we will use the `formhub` and `tm` (text mining) packages in R to download data from formhub, and look at answers from a survey on schoools. Before we go any further, we will load our schools dataset into R. If you haven't used formhub.R before, please read the [basics tutorial](http://sel-columbia.github.io/formhub.R/demo/Basics_of_formhub.R.html) to learn how to load your own formhub data into R.
+
+```{r message=FALSE, cache=TRUE}
+require(formhub) # See http://sel-columbia.github.io/formhub.R/ for install instructions if you get an error
+require(tm)      # Run install.packages('tm') if you get an error
+edu <- formhubRead("~/Downloads/mopup_questionnaire_education_final_2014_04_02_08_15_46.csv",
+                   "~/Downloads/mopup_questionnaire_education_final.json")
+```
+
+The Facility Level Question
+---
+
+We will look at the question that asks about the level of education in surveyed schools. The question is called `facility_type` in our dataset. Lets look at it.
+```{r message=FALSE, cache=TRUE}
+## The question was worded  follows:
+edu@form['facility_type', 'label']
+## The options were worded as follows:
+ldply(fromJSON(edu@form['facility_type', 'options']))$label
+```
+
+If the enumerator selected _Information not available / Don't know_, then she would be asked a follow up question:
+_`r edu@form['facility_type_dontknow', 'label']`_
+The following analysis looks at the responses to this follow up question.
+
+Don't Know Responses for Facility Level
+----
+Our goal here is to discover why enumerators are selecting _Don't Know_ when they are asked what the level of the school is. Usually, this happens either because the options aren't exhaustive, enumerators have an understanding gap, or that there was an extreme circumstance in the field, such as the facility being closed.
+
+With that in mind, lets look at (1) how many don't know responses we have and (2) some of the responses. For (2), instead of looking at the top or bottom entries in our dataset (using `head` or `tail`), we'll look at a random sample of 15 entries using the `sample` function:
+
+```{r message=FALSE, cache=TRUE}
+## First, we pull our data into a dontknow_responses variable, 
+## omitting missing data (NA) in the process.
+dontknow_responses <- na.omit(edu$facility_type_dontknow)
+
+## (1) How many don't know responses do we have?
+length(dontknow_responses)
+
+## (2) A random sample of 15 responses
+sample(dontknow_responses, 15)
+```
+
+The challenge here is to group our responses in a meaningful way. There are many different spellings and punctuation patterns used for the same basic response. To do this, we can borrow some techniques from the text mining literature. Two things we have found illustrative to look at are: (1) the top 10 individual responses (2) the top ten terms.
+
+Note that when looking at either of these, we should lower case everything. In addition, when looking at terms, we should remove punctuation, remove whitespace, and perform something known as stemming. [Stemming](http://en.wikipedia.org/wiki/Stemming) removes the ends of words, so "connected", "connection", and "connecting" end up all being transformed to "connect", which will help us produce better term frequencies.
+
+#### 1) Top ten responses
+```{r message=FALSE, cache=TRUE, fig.width=7, fig.height=6}
+## First we write a quick helper function, top_N, which outputs the frequency of the top N elements
+top_N <- function(vector, N=10) {
+    x <- sort(table(vector), decreasing=TRUE)
+    x[1:min(N, length(x))]
+}
+
+## The top 10 entries are easy to produce; Note that the response is printed with the number of times
+## we found it in our dataset right below it.
+top_N(tolower(dontknow_responses), 10)
+```
+
+The fact that we were missing combined nursery and primary schools is clearly a major cause for enumerators selecting the _Don't Know_ option. However, this picture doesn't yet tell us whether smaller issues, such as senior secondary only, or facility closed, are major issues in the survey as well. For that, we turn to term frequencies.
+
+#### 2) Term Frequencies
+```{r message=FALSE, cache=TRUE, fig.width=7, fig.height=6}
+## Producing the top 10 terms in our responses.
+## To do this, we first convert the data into a "corpus". Then we apply text processing,
+## and then finally create a document term matrix, which will show us our top terms.
+ftdk_corpus <- Corpus(VectorSource(na.omit(dontknow_responses)))
+ftdk_corpus <- tm_map(ftdk_corpus, tolower) # lowercase the documents
+ftdk_corpus <- tm_map(ftdk_corpus, stemDocument) # stem Document
+ftdk_corpus <- tm_map(ftdk_corpus, removeWords, c("school")) # school is sometimes used, and othertimes not
+ftdk_corpus <- tm_map(ftdk_corpus, removePunctuation) # remove Punctuation
+ftdk_corpus <- tm_map(ftdk_corpus, stripWhitespace) # remove white space
+document_term_matrix <- DocumentTermMatrix(ftdk_corpus)
+sort(colSums(as.matrix(document_term_matrix)), decreasing=TRUE)
+```
+
+The term frequency table can be hard to work with, since all the terms mentioned will appear here. One trick is to remove all terms above a certain number of entries. Another trick is to make it more visual, and make the table into a wordcloud. Lets try both below. For this dataset, we will remove any term with less than 3 entries.
+```{r wordcloud1, message=FALSE, cache=TRUE, fig.width=7, fig.height=6}
+## Output term frequency table again, this time only showing terms with at least 3 entries
+term_frequencies <- sort(colSums(as.matrix(document_term_matrix)), decreasing=TRUE)
+term_frequencies[term_frequencies >= 3]
+
+## Make a wordcloud out of term frequencies. Note, you may need to install.packages('wordcloud')
+require(wordcloud)   # Maybe also install.packages('wordcloud')
+wordcloud(ftdk_corpus)
+```
+
+We note that senior secondary schools do seem to be a big source of _Don't Know_ resopnses (18 entries for "senior"), whereas closed or abandoned facilities are much less a source of _Don't Know_ responses (only 3 responses for "close").
+
+The big picture
+----
+Stepping back, note that we dove straight in with one of the questions. We may have many such questions in our survey. How do we determine which questions actually are eliciting lots of _Don't Know_ responses, and merit further analysis? To do this, we can look at how many of the responses to our follow up question are NA. In our case, all of our _Don't Know_ questions have a standard name, they  always end with `_dontknow`. So we can just look at the number of NA responses for each of these questions:
+
+```{r message=FALSE, cache=TRUE}
+# Find all the _dontknow columns, and then look at the number of NAs per question.
+relevant_columns <- names(edu)[str_detect(names(edu), "_dontknow")]
+colSums(!is.na(edu[relevant_columns]))
+```
+
+Looks like we picked one of the correct columns to analyze above! The other question we should make sure to look at is the `grid_proximity` question. Lets repeat the analysis above for that field. 
+
+Grid Proximity
+----
+
+Below, we repeat the exact same analysis as above. Only this time, we make functions functions produce our complicated output. As a result, you can copy and paste most of this code to produce outputs for a completely different dataset. You will only have to change the line just below the comment marked CHANGE.
+
+```{r wordcloud2, message=FALSE, cache=TRUE}
+require(tm); require(wordcloud)
+
+## This function outputs the top ten entries in a vector
+top_N <- function(response_vector, N=10) {
+    x <- sort(table(response_vector), decreasing=TRUE)
+    x[1:min(N, length(x))]
+}
+
+## This function takes a vector of string responses, and outputs the top N terms in that corpus
+## It will also return the processed corpus
+top_N_terms <- function(response_vector, NMIN=NULL) {
+    corpus <- Corpus(VectorSource(response_vector))
+    corpus <- tm_map(corpus, tolower) # lowercase the documents
+    corpus <- tm_map(corpus, stemDocument) # stem Document
+    corpus <- tm_map(corpus, removeWords, c("school")) # school is sometimes used, and othertimes not
+    corpus <- tm_map(corpus, removePunctuation) # remove Punctuation
+    corpus <- tm_map(corpus, stripWhitespace) # remove Punctuation
+    
+    dtm <- DocumentTermMatrix(corpus)
+    top_terms <- sort(colSums(as.matrix(dtm)), decreasing=TRUE)
+    if(!is.null(NMIN)) { top_terms <- top_terms[top_terms >= NMIN] }
+    print(top_terms)
+    return(corpus)
+}
+
+## Extract the relevant responses from the relevant survey.
+## CHANGE: If you try to reproduce this code, change the following line.
+dontknow_responses <- na.omit(edu$grid_proximity_dontknow)
+
+## Top 10 responses
+top_N(tolower(dontknow_responses))
+## Term frequencies for terms appearing at least twice
+dontknow_corpus <- top_N_terms(dontknow_responses, NMIN=3)
+## Make a word cloud
+wordcloud(dontknow_corpus)
+```
+Most of the answers relate to facilities not being connected, or being far from the grid. In this case, this was actually listed as one of the possible responses in our grid proximity questions. Due to tricky wording, it seems that enumerators  simply mis-understood the question.
+
+So what
+---
+What can we actually do with our analysis results?
+
+In this case, we have very actionable information about our survey. For this survey, we modified the facility level question to include more options. And we re-worded the grid proximity quesiton and its options to help make the meaning clearer. Finally, we gained confidence that our other questions were actually working fairly well.
+
+Reproducing this work
+---
+We hope that you are able to benefit from similar analysis yourself as well. If you have R installed, you should be able to run R code very similar to what you see on this page, as long as you put in the correct filenames and column names. In fact, the last block of code is designed to be copy-pasted; as long as you change the line marked CHANGE, you should be able to reproduce this analysis for your own datase. For questions, please contact the formhub-users [Google group](https://groups.google.com/d/forum/formhub-users).

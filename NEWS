@@ -1,5 +1,20 @@
 formhub.R News
 
+Changes in formhub.R 0.0.4.3 (May 09, 2014):
+ * added remapAllColumns
+
+Changes in formhub.R 0.0.4.01 (May 07, 2014):
+ * changed all dependencies but plyr,stringr to reference functions as package::function directly
+
+Changes in formhub.R 0.0.3.12 (April 29, 2014):
+ * added replaceColumnNamesWithLabels
+
+Changes in formhub.R 0.0.3.11 (April 8, 2014):
+ * added authfile hack 
+
+Changes in formhub.R 0.0.3.10 (April 3, 2014):
+ * @form data frames have row.names (the same as the name column)
+
 Changes in formhub.R 0.0.3.9.3 (Jan 30, 2014):
  * minor bugfix
 

@@ -1,6 +1,5 @@
 library(testthat)
 library(stringr)
-library(formhub)
 
 test_dir = ""
 #source("~/Code/formhub.R/R/formhub.R");test_file("~/Code/formhub.R/tests/test_formhub_writes.R")

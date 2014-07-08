@@ -1,6 +1,5 @@
 require(testthat)
 require(stringr)
-require(formhub)
 
 test_dir = ""
 # test_dir = "~/Code/formhub.R/tests/"
@@ -117,3 +116,42 @@ test_that("adding photo urls works", {
                "https://formhub.org/attachment/small?media_file=mberg/attachments/1325233817453.jpg")
 })
 
+# Re-mapping field values works
+test_that("remapAllColumns can map values", {
+  edu_formhubObj <- formhubRead(edu_datafile, edu_formfile)
+  edu_mapped <- remapAllColumns(edu_formhubObj, remap = c("yes"=TRUE, "no"=FALSE))
+  expect_equal(mean(edu_formhubObj$nomadic_school_yn == 'yes', na.rm=T), mean(edu_mapped$nomadic_school_yn, na.rm=T))
+  
+  good_eats <- formhubRead(good_eats_datafile, good_eats_formfile)
+  ge_mapped <- remapAllColumns(good_eats, remap = c("high_risk" = TRUE, "medium_risk" = FALSE, "low_risk" = NA))
+  expect_equal(mean(ge_mapped$risk_factor),
+               sum(good_eats$risk_factor =="high_risk") / sum(good_eats$risk_factor %in% c("high_risk", "medium_risk")))
+})
+
+test_that("remapAllColumns doesn't map values unless all values in data are in remap", {
+  edu_formhubObj <- formhubRead(edu_datafile, edu_formfile)
+  edu_mapped <- remapAllColumns(edu_formhubObj, remap = c("yes"=TRUE))
+  expect_equivalent(edu_formhubObj$nomadic_school_yn, edu_mapped$nomadic_school_yn)
+  
+  good_eats <- formhubRead(good_eats_datafile, good_eats_formfile)
+  ge_mapped <- remapAllColumns(good_eats, remap = c("high_risk" = TRUE, "medium_risk" = FALSE))
+  expect_true(all(apply(good_eats == ge_mapped, 2, all, na.rm=T)))
+})
+
+test_that("remapAllColumns works with various strictness parameters", {
+  edu_formhubObj <- formhubRead(edu_datafile, edu_formfile)
+  edu_mapped <- remapAllColumns(edu_formhubObj, remap = c("yes"=TRUE, "no"=FALSE, "dk"=NA), strictness="any_found")
+  expect_true(is.logical(edu_mapped$nomadic_school_yn))
+  expect_true(is.logical(edu_mapped$generator_funct_yn))
+  expect_true(sum(unlist(colwise(is.logical)(edu_mapped))) == 4 + sum(unlist(llply(edu_formhubObj, is.logical))))
+  
+  edu_mapped <- remapAllColumns(edu_formhubObj, remap = c("yes"=TRUE, "no"=FALSE), strictness="exact")
+  expect_true(is.logical(edu_mapped$nomadic_school_yn))
+  expect_false(is.logical(edu_mapped$generator_funct_yn))
+  expect_true(sum(unlist(colwise(is.logical)(edu_mapped))) == 1 + sum(unlist(llply(edu_formhubObj, is.logical))))
+  
+  edu_mapped <- remapAllColumns(edu_formhubObj, remap = c("yes"=TRUE), strictness="all_found")
+  expect_false(is.logical(edu_mapped$nomadic_school_yn))
+  expect_true(is.logical(edu_mapped$generator_funct_yn))
+  expect_true(sum(unlist(colwise(is.logical)(edu_mapped))) == 3 + sum(unlist(llply(edu_formhubObj, is.logical))))
+})

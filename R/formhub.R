@@ -1,13 +1,9 @@
-library(RJSONIO)
 library(stringr)
 library(plyr)
-library(RCurl)
-library(lubridate)
-library(sp)
-library(doBy)
 
-
-setClass("formhubData", representation("data.frame", form="data.frame"), contains="data.frame")
+setClass("formhubData", 
+         representation(form="data.frame"),
+         contains="data.frame")
 
 #' Produce a data.frame out of a formhubDataObj
 #'
@@ -25,7 +21,7 @@ setClass("formhubData", representation("data.frame", form="data.frame"), contain
 #' good_eats_data <- as.data.frame(formhubDownload("good_eats", "mberg"))
 #' class(ge_spdf) # "data.frame"
 as.data.frame.formhubData <- function(fhD, ...) {
-   data.frame(setNames(fhD@.Data, names(fhD)))
+   data.frame(setNames(fhD@.Data, names(fhD)), stringsAsFactors=F)
 }
 
 #' Produce a SpatialPointsDataFrame if data has a column of type `gps` or `geopoint`.
@@ -51,10 +47,11 @@ as.SpatialPointsDataFrame <- function(formhubObj) {
       gpses <- gpses[!dropRows]
     }
     gpses_split <- apply(str_split_fixed(gpses, " ", 3)[,c(2,1)], 2, FUN=as.numeric)
-    SpatialPointsDataFrame(gpses_split, data.frame(formhubObj)[!dropRows,],
-                           proj4string=CRS("+proj=longlat +datum=WGS84 +ellps=WGS84"))
+    sp::SpatialPointsDataFrame(gpses_split, data.frame(formhubObj)[!dropRows,],
+                           proj4string=sp::CRS("+proj=longlat +datum=WGS84 +ellps=WGS84"))
   }
 }
+
 
 #' Get a new dataframe, where the header contains the full questions as opposed to slugs.
 #'
@@ -88,6 +85,59 @@ replaceHeaderNamesWithLabels <- function(formhubDataObj) {
     }
   })
   setNames(data.frame(formhubDataObj), newNames)
+}
+
+#' Get a column of a formhubData object, but with its values replaced by labels
+#'
+#' @param formhubDataObj is the formhub data object to operate on
+#' @param colname is the column name we want to revalue and return
+#' @export
+#' @return A vector of re-valued data
+#' @examples
+#' good_eats <- formhubDownload("good_eats", "mberg")
+#' replaceColumnNamesWithLabels(good_eats, 'rating')
+replaceColumnNamesWithLabels <- function(formhubDataObj, colname) {
+    coloptions = formhubDataObj@form[colname,'options']
+    if(is.na(coloptions)) stop("names and labels not found for column ", colname)
+    optiondf = ldply(RJSONIO::fromJSON(coloptions))
+    revalue(formhubDataObj[[colname]], setNames(optiondf$label, optiondf$name))
+}
+
+#' Remap all of the columns of the formhub data object according to the remap_list
+#'
+#' @param remap A vector. The name is what to map, and the value what to map to. 
+#'        Example:
+#'            remap = c("yes" = TRUE, "no" = FALSE, "dk" = NA)
+#'        maps all "yes" values to TRUE, "no" to FALSE, and "dk" to NA
+#' @param strictness One of "exact", "all_found", or "any_found"; Default = all.
+#'        Defines the strictness of finding data. For example, all_found ensures
+#'        that all keys in the data are found in the keys of our remapList,
+#'        anyFound will replace partial matches, whereas exact ensures a full 2way match.
+#' @export
+#' @return A data.frame with values replaced.
+#' @examples
+#' good_eats <- formhubDownload("good_eats", "mberg")
+#' 
+remapAllColumns <- function(formhubDataObj, remap, strictness="all_found") {
+  data.frame(
+    llply(formhubDataObj, function(column) {
+      if(is.factor(column) || is.character(column)) {
+        data_keys = levels(as.factor(column))
+        new_keys = names(remap)
+        strictness_criteria_met = switch(strictness,
+          all_found = length(data_keys) > 0 & all(data_keys %in% new_keys),
+          any_found = length(intersect(data_keys, new_keys)) > 0,
+          exact = length(new_keys) == length(data_keys) &
+            length(new_keys) == length(union(data_keys, new_keys)))
+        if(strictness_criteria_met)
+          if(is.logical(remap)) { ## SPECIAL CASE for TRUE/FALSE: cast before returning
+            return(as.logical(revalue(column, remap, warn_missing=FALSE)))
+          } else {
+            return(revalue(column, remap, warn_missing=FALSE))
+          }
+      }
+      return(column)
+  }), stringsAsFactors=FALSE)
 }
 
 #' Get a new dataframe, where all 'name's are replaced with full labels.
@@ -140,9 +190,10 @@ replaceAllNamesWithLabels <- function(formhubDataObj, language=NULL) {
       col_name <- field_name
     }
     stopifnot(length(col_name) == 1) #form and data don't match
-    levels(data[,col_name]) <<- recodeVar(levels(data[,col_name]), 
-                as.character(old$name), as.character(old$label), default=NA, keep.na=T)
+    levels(data[,col_name]) <<- revalue(levels(data[,col_name]), 
+                                        setNames(as.character(old$label), as.character(old$name)))
   })
+  stopifnot(is.data.frame(data))
   replaceHeaderNamesWithLabels(new("formhubData", data, form=form))
 }
 
@@ -162,28 +213,35 @@ replaceAllNamesWithLabels <- function(formhubDataObj, language=NULL) {
 #' good_eats # is a data frame of all the data
 #' good_eats@form # is the form for that data, encoded as a dataframe
 #' privateData <- formhubDownload("Private_Data_For_Testing", uname="formhub_r", pass="t3st~p4ss")
-formhubDownload = function(formName, uname, pass=NA, ...) {
+formhubDownload = function(formName, uname, pass=NA, authfile=NA, url='http://formhub.org/', ...) {
   fUrl <- function(formName, uname, form=F) {
-    str_c('http://formhub.org/', uname, '/forms/', formName,
+    str_c(url, uname, '/forms/', formName,
           ifelse(form,'/form.json', '/data.csv'))
   }
   dataUrl = fUrl(formName, uname)
   formUrl = fUrl(formName, uname, form=T)
+  
+  ## TODO: implement better authentication in formhub. until then, we use a simple authfile
+  upass <- if(!is.na(authfile)) {
+    scan(authfile, what=character())
+  } else if(!is.na(pass)) {
+    str_c(uname,pass,sep=":")
+  }
   
   #TODO -- pre-flight check? below doesn't work; expects 200+ status
   #if(!url.exists(datUrl)) { stop("could not find ", dataUrl)}
   #if(!url.exists(formUrl)) { stop("could not find ", formUrl)}
   
   # get the data, depending on public or not
-  dataCSVstr <- ifelse(is.na(pass),
-                 getURI(dataUrl),
-                 getURI(dataUrl, userpwd=str_c(uname,pass,sep=":"), httpauth = 1L))
+  dataCSVstr <- ifelse(is.na(pass) & is.na(authfile),
+                 RCurl::getURI(dataUrl),
+                 RCurl::getURI(dataUrl, userpwd=upass, httpauth = 1L))
   
   # get the form, depending on public or not
   # TODO: situations where data is public, form is not
-  formJSON <- ifelse(is.na(pass),
-                 getURI(formUrl),
-                 getURI(formUrl, userpwd=str_c(uname,pass,sep=":"), httpauth = 1L))
+  formJSON <- ifelse(is.na(pass) & is.na(authfile),
+                     RCurl::getURI(formUrl),
+                     RCurl::getURI(formUrl, userpwd=upass, httpauth = 1L))
   formhubRead(textConnection(dataCSVstr), formJSON, ...)
 }
 
@@ -217,7 +275,7 @@ formhubDownload = function(formName, uname, pass=NA, ...) {
 #'              na.strings=c("999"))
 #' good_eatsNA$amount # notice that the value that was 999 is now missing. This is helpful when using values such
 #'                    # as 999 to indicate no data
-formhubRead  = function(csvfilename, jsonfilename, extraFormDF=data.frame(), dropCols="", na.strings=c("n/a"),
+formhubRead = function(csvfilename, jsonfilename, extraFormDF=data.frame(), dropCols="", na.strings=c("n/a"),
                         convert.dates=TRUE, keepGroupNames=TRUE) {
   dataframe <- read.csv(csvfilename, stringsAsFactors=FALSE, header=TRUE, na.strings=na.strings)
   formDF <- form_to_df(RJSONIO::fromJSON(jsonfilename, encoding='utf-8'), keepGroupNames=keepGroupNames)
@@ -269,10 +327,15 @@ formhubCast  = function(dataDF, formDF, extraFormDF=data.frame(), dropCols="", c
 
   extraFormDF <- colwise(as.character)(extraFormDF)
   formDF <- rbind.fill(extraFormDF, formDF)
-  formDF <- formDF[!duplicated(formDF$name),]
+  if(anyDuplicated(formDF$name)) {
+    warning("Question names not unique in form; questions may be dropped from form df.")
+    formDF <- formDF[!duplicated(formDF$name),]
+  }
+  row.names(formDF) <- formDF$name
   
-  new("formhubData", recastDataFrameBasedOnFormDF(dataDF, formDF, convert.dates=convert.dates),
-                     form=formDF)
+  data = recastDataFrameBasedOnFormDF(dataDF, formDF, convert.dates=convert.dates)
+  stopifnot(is.data.frame(data))
+  new("formhubData", data, form=formDF)
 }
 
 #' Converts formhub form.json format to dataframe format. Dataframe has name, type, label columns.
@@ -305,12 +368,12 @@ form_to_df = function(formJSON, keepGroupNames=TRUE) {
         data.frame(name=names, label=labels, type="boolean", options=NA, stringsAsFactors=F)
       } else if (child[["type"]] == "select one") {
         if("children" %in% names(child)) {
-            data.frame(name=nom, type=child[["type"]], options=toJSON(child$children),
+            data.frame(name=nom, type=child[["type"]], options=RJSONIO::toJSON(child$children),
                    label=if("label" %in% names(child)) {child[["label"]]} else {child[["name"]]},
                    stringsAsFactors=F)
         } else if ("itemset" %in% names(child)) {
             data.frame(name=nom, type=child[["type"]],
-                     options=toJSON(formJSON$choices[[child[['itemset']]]]), # options are more complex with itemset
+                     options=RJSONIO::toJSON(formJSON$choices[[child[['itemset']]]]), # options are more complex with itemset
                      label=if("label" %in% names(child)) {child[["label"]]} else {child[["name"]]},
                      stringsAsFactors=F)
         }
@@ -346,10 +409,10 @@ recastDataFrameBasedOnFormDF = function(df, formdf, convert.dates=TRUE) {
     ))
   }
   # lubridate doesn't handle ISO 8601 datetimes yet, so we just chuck the timezone info
-  iso8601DateTimeConvert <- function(x) { ymd_hms(str_extract(x, '^[^+Z]*(T| )[^+Z-]*')) }
+  iso8601DateTimeConvert <- function(x) { lubridate::ymd_hms(str_extract(x, '^[^+Z]*(T| )[^+Z-]*')) }
   
   # some formhub dates come in the format 2011-04-24T00:20:00.000000
-  iso8601DateConvert <- function(x) { ymd(str_extract(x, '^[^T]*')) }
+  iso8601DateConvert <- function(x) { lubridate::ymd(str_extract(x, '^[^T]*')) }
   
   reTypeColumns(c("integer", "decimal"), as.numeric)
   reTypeColumns(c("boolean"), as.logical)
@@ -390,7 +453,7 @@ addPhotoURLs = function(formhubDataObj, formhubUsername, type="url") {
       stop("Type must be either 'url' or 'img'.")
     }
   }
-  tmp <- llply(photos, function(photoColName) {
+  tmp <- as.data.frame(llply(photos, function(photoColName) {
     photoCol <- formhubDataObj[[photoColName]]
     setNames(data.frame(
       htmlFromCol(photoCol, "", type),
@@ -398,8 +461,8 @@ addPhotoURLs = function(formhubDataObj, formhubUsername, type="url") {
       htmlFromCol(photoCol, "small", type),
       stringsAsFactors=FALSE
     ), paste0(photoColName, c("_URL_original", "_URL_medium", "_URL_small")))
-  })
-  tmp <- cbind(formhubDataObj, do.call(cbind, tmp))
+  }))
+  tmp <- cbind(formhubDataObj, tmp)
   new("formhubData", tmp, form=formhubDataObj@form)
 }
 
@@ -421,5 +484,4 @@ removeColumns <- function(df, columnNameRegExpMatcher) {
     df[,-which(str_detect(names(df), orMatcher))]
   }
 }
-
 
