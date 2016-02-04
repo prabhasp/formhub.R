@@ -164,7 +164,7 @@ replaceAllNamesWithLabels <- function(formhubDataObj, language=NULL) {
 #' privateData <- formhubDownload("Private_Data_For_Testing", uname="formhub_r", pass="t3st~p4ss")
 formhubDownload = function(formName, uname, pass=NA, ...) {
   fUrl <- function(formName, uname, form=F) {
-    str_c('http://formhub.org/', uname, '/forms/', formName,
+    str_c('https://odk.ona.io/', uname, '/forms/', formName,
           ifelse(form,'/form.json', '/data.csv'))
   }
   dataUrl = fUrl(formName, uname)
@@ -380,11 +380,11 @@ addPhotoURLs = function(formhubDataObj, formhubUsername, type="url") {
     stopifnot(size %in% c("", "medium", "small"))
     if (type == "url") { 
       ifelse(is.na(photoCol), "",
-           sprintf("https://formhub.org/attachment/%s?media_file=%s/attachments/%s",
+           sprintf("https://odk.ona.io/attachment/%s?media_file=%s/attachments/%s",
                    size, formhubUsername, photoCol))
     } else if (type == "img") {
       ifelse(is.na(photoCol), "",
-             sprintf('<img src="https://formhub.org/attachment/%s?media_file=%s/attachments/%s" />',
+             sprintf('<img src="https://odk.ona.io/attachment/%s?media_file=%s/attachments/%s" />',
                      size, formhubUsername, photoCol))
     } else { 
       stop("Type must be either 'url' or 'img'.")
