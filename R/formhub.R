@@ -162,13 +162,13 @@ replaceAllNamesWithLabels <- function(formhubDataObj, language=NULL) {
 #' good_eats # is a data frame of all the data
 #' good_eats@form # is the form for that data, encoded as a dataframe
 #' privateData <- formhubDownload("Private_Data_For_Testing", uname="formhub_r", pass="t3st~p4ss")
-formhubDownload = function(formName, uname, pass=NA, ...) {
+formhubDownload = function(formName, account, uname, pass=NA, ...) {
   fUrl <- function(formName, uname, form=F) {
-    str_c('https://odk.ona.io/', uname, '/forms/', formName,
+    str_c('https://api.ona.io/', account, '/forms/', formName,
           ifelse(form,'/form.json', '/data.csv'))
   }
-  dataUrl = fUrl(formName, uname)
-  formUrl = fUrl(formName, uname, form=T)
+  dataUrl = fUrl(formName, account)
+  formUrl = fUrl(formName, account, form=T)
   
   #TODO -- pre-flight check? below doesn't work; expects 200+ status
   #if(!url.exists(datUrl)) { stop("could not find ", dataUrl)}
