@@ -1,14 +1,13 @@
 <link href="http://kevinburke.bitbucket.org/markdowncss/markdown.css" rel="stylesheet"></link>
-formhub.R
-=========
+ona.R
+=====
 
-formhub.R is a library for making reading data form [formhub.org](http://formhub.org) into R easier.
-<a href="https://github.com/SEL-Columbia/formhub.R"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Fork me on GitHub"></a>
+ona.R is a library for making reading data form [ona.io](https://ona.io) into R easier.
 
 Examples
 --------
 
- * Getting started -- [Basics of formhub.R](http://SEL-Columbia.github.com/formhub.R/demo/Basics_of_formhub.R.html)
+ * Getting started -- [Basics of ona.R](http://SEL-Columbia.github.com/formhub.R/demo/Basics_of_formhub.R.html)
  * Quick example -- [Charting good_eats submission over time](http://SEL-Columbia.github.com/formhub.R/demo/Good_Eats_Example.html)
  * Making maps -- [Making maps with North Ghana data](http://SEL-Columbia.github.com/formhub.R/demo/Water_Points_Example.html)
  * Quality control -- [How long did it take to process a survey](http://SEL-Columbia.github.com/formhub.R/demo/How_Long_Example.html)
@@ -17,16 +16,16 @@ Examples
 
 For most of the examples, I use the [ggplot2](http://ggplot2.org) library, which is an amazing data visualization library worth every minute of your time spent learning it.
 
-Installing formhub.R
+Installing ona.R
 --------------------
-The package for formhub.R in R is simply called `formhub`. For now, it cannot be installed from CRAN, but using Hadley Wickam's excellent `devtools` package, you can install it directly from github. To install (or upgrade), run the following commands from your R terminal:
+The package for ona.R in R is simply called `ona`. For now, it cannot be installed from CRAN, but using Hadley Wickam's excellent `devtools` package, you can install it directly from github. To install (or upgrade), run the following commands from your R terminal:
 
     install.packages('devtools') 
     library(devtools)
-    install_github("formhub.R", username="SEL-Columbia")
-    library(formhub)
+    install_github("ona.R", username="onaio")
+    library(ona)
 
-And voila! The `formhub` package is installed in your R system! You can check by running:
+And voila! The `ona` package is installed in your R system! You can check by running:
 
     help(formhubDownload)
  
