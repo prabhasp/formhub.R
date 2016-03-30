@@ -1,9 +1,10 @@
-Package: formhub
-Version: 0.0.3.9.3
-Date: 2014-1-30
-Title: formhub.R -- pulling data from formhub.org repositories easily.
+Package: ona
+Version: 0.0.1.1.1
+Date: 2016-3-30
+Title: ona.R -- pulling data from ona.io repositories easily.
 Author: Prabhas Pokharel (Modi Research Group, Columbia University)
-Maintainer: Prabhas Pokharel <prabhas.pokharel@gmail.com>
+Clone: Jonathan Munene (Ona Kenya Ltd.)
+Maintainer: Jonathan Munene <munenegicoiv@gmail.com>
 Depends:
     R (>= 2.15.1),
     RJSONIO (>= 0.96),
@@ -15,12 +16,12 @@ Depends:
     sp
 Suggests:
     ggplot2
-Description: formhub.R provides functions to pull data from formhub.org
-    into R. Included are functions to download the data directly from formhub,
-    read data from disk, and to convert formhub forms into dataframes.
-    formhub.R also parses data into the right formats according to the form
+Description: ona.R provides functions to pull data from ona.org
+    into R. Included are functions to download the data directly from ona,
+    read data from disk, and to convert ona forms into dataframes.
+    ona.R also parses data into the right formats according to the form
     that was used to collect data, and offers some convenience functions
     appropriate for data collected through surveys.
 License: Dual-licensed. GPL for commercial uses. BSD for non-commercial uses.
-URL: http://www.SEL-Columbia.github.com/formhub.R
-BugReports: http://github.com/SEL-Columbia/formhub.R/issues
+URL: https://github.com/onaio/ona.r
+BugReports: https://github.com/onaio/ona.r/issues

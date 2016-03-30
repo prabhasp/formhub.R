@@ -43,6 +43,6 @@ At the moment, it has the following features:
  * removeColumns convenience function that removes columns based on matching the title with a regular expression
  * 'extra-schema' over-ride. 
 
-For planned features, go to the [issues](https://onaio.github.comona.R/issues) page.
+For planned features, go to the [issues](https://onaio.github.com/ona.R/issues) page.
 
 

@@ -1,4 +1,6 @@
-formhub.R News
+ona.R News
+Renaming formhub.R to ona.r (Mar 30, 2016):
+*Renaming formhub.R to ona.r
 
 Changes in formhub.R 0.0.3.9.3 (Jan 30, 2014):
  * minor bugfix
