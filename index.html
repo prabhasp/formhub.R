@@ -18,19 +18,19 @@
 
 <p>For most of the examples, I use the <a href="http://ggplot2.org">ggplot2</a> library, which is an amazing data visualization library worth every minute of your time spent learning it.</p>
 
-<h2>Installing formhub.R</h2>
+<h2>Installing ona.R</h2>
 
-<p>The package for formhub.R in R is simply called <code>formhub</code>. For now, it cannot be installed from CRAN, but using Hadley Wickam's excellent <code>devtools</code> package, you can install it directly from github. To install (or upgrade), run the following commands from your R terminal:</p>
+<p>The package for ona.R in R is simply called <code>ona</code>. For now, it cannot be installed from CRAN, but using Hadley Wickam's excellent <code>devtools</code> package, you can install it directly from github. To install (or upgrade), run the following commands from your R terminal:</p>
 
 <pre><code>install.packages('devtools') 
 library(devtools)
-install_github("formhub.R", username="SEL-Columbia")
-library(formhub)
+install_github("ona.R", username="onaio")
+library(ona)
 </code></pre>
 
-<p>And voila! The <code>formhub</code> package is installed in your R system! You can check by running:</p>
+<p>And voila! The <code>ona</code> package is installed in your R system! You can check by running:</p>
 
-<pre><code>help(formhubDownload)
+<pre><code>help(ona)
 </code></pre>
 
 <h2>Features</h2>
@@ -38,7 +38,7 @@ library(formhub)
 <p>At the moment, it has the following features:</p>
 
 <ul>
-<li>One command download of formhub.org data -- both public and private</li>
+<li>One command download of ona.io data -- both public and private</li>
 <li>(Automatic) casting of data to the right type, based on the type of the input field in XLSform
 <ul>
 <li><code>select one</code> fields are converted to factors</li>
@@ -50,4 +50,4 @@ library(formhub)
 <li>'extra-schema' over-ride. </li>
 </ul>
 
-<p>For planned features, go to the <a href="https://github.com/SEL-Columbia/formhub.R/issues">issues</a> page.</p>
+<p>For planned features, go to the <a href="https://github.com/onaio/ona.R/issues">issues</a> page.</p>
