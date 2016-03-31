@@ -1,30 +1,31 @@
-\name{formhubDownload}
-\alias{formhubDownload}
-\title{Download data from formhub.}
+\name{onaDownload}
+\alias{onaDownload}
+\title{Download data from ona.}
 \usage{
-formhubDownload(formName, uname, pass = NA, ...)
+onaDownload(formName, account, uname, pass = NA, ...)
 }
 \arguments{
-  \item{formName}{formname on formhub.org for which we
+  \item{formName}{formname on ona for which we
   download the data}
 
-  \item{uname}{formhub.org username}
+  \item{account}{ona username/org_name}
+  \item{uname}{ona username}
 
-  \item{pass}{formhub.org password, if the data and/or form
+  \item{pass}{ona password, if the data and/or form
   is private}
 
-  \item{...}{other parameters to pass onto formhubRead}
+  \item{...}{other parameters to pass onto onaRead}
 }
 \value{
-formhubDataObj a formhubData Object, with "data" and "form"
+onaDataObj a onaData Object, with "data" and "form"
 slots
 }
 \description{
-This function downloads a dataset for the given form and
-username, and produces a formhubData Object.
+This function downloads a dataset for the given form, account(username/org_name) and
+username, and produces a onaData Object.
 }
 \examples{
-good_eats <- formhubDownload("good_eats", "mberg")
+good_eats <- onaDownload("good_eats", "mberg","mberg")
 good_eats # is a data frame of all the data
 good_eats
 }

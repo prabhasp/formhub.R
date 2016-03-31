@@ -1,6 +1,6 @@
 \name{form_to_df}
 \alias{form_to_df}
-\title{Converts formhub form.json format to dataframe format. Dataframe has name, type, label columns.}
+\title{Converts ona form.json format to dataframe format. Dataframe has name, type, label columns.}
 \usage{
 form_to_df(formJSON, keepGroupNames = TRUE)
 }
@@ -16,7 +16,7 @@ form_to_df(formJSON, keepGroupNames = TRUE)
 formDF
 }
 \description{
-Converts formhub form.json format to dataframe format.
+Converts ona form.json format to dataframe format.
 Dataframe has name, type, label columns.
 }
 \examples{

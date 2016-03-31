@@ -1,6 +1,6 @@
 \name{recastDataFrameBasedOnFormDF}
 \alias{recastDataFrameBasedOnFormDF}
-\title{Casts a dataframe to the right types based on a form-dataframe. Used by formhubCast}
+\title{Casts a dataframe to the right types based on a form-dataframe. Used by onaCast}
 \usage{
 recastDataFrameBasedOnFormDF(df, formdf, convert.dates = TRUE)
 }
@@ -8,16 +8,16 @@ recastDataFrameBasedOnFormDF(df, formdf, convert.dates = TRUE)
   \item{df}{data}
 
   \item{formdf}{form data frame. See format on
-  formhubCast.}
+  onaCast.}
 }
 \value{
 df re-casted data frame.
 }
 \description{
 Casts a dataframe to the right types based on a
-form-dataframe. Used by formhubCast
+form-dataframe. Used by onaCast
 }
 \examples{
-#See examples under formhubRead; this should be used through formhubRead in almost all cases
+#See examples under onaRead; this should be used through onaRead in almost all cases
 }
 

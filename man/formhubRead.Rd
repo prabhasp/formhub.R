@@ -1,14 +1,14 @@
-\name{formhubRead}
-\alias{formhubRead}
-\title{Reads data from a passed csv filename and json filename into a formhubData object.}
+\name{onaRead}
+\alias{onaRead}
+\title{Reads data from a passed csv filename and json filename into a onaData object.}
 \usage{
-formhubRead(csvfilename, jsonfilename, extraFormDF = data.frame(),
+onaRead(csvfilename, jsonfilename, extraFormDF = data.frame(),
   dropCols = "", na.strings = c("n/a"), convert.dates = TRUE,
   keepGroupNames = TRUE)
 }
 \arguments{
   \item{csvfilename}{filename (or a connection object) that
-  has the formhub data}
+  has the ona data}
 
   \item{jsonfilename}{filename of a json file (or a
   connection object) that has the form.json form}
@@ -27,20 +27,20 @@ formhubRead(csvfilename, jsonfilename, extraFormDF = data.frame(),
   while keepGroupName=F will generate a name bar}
 }
 \value{
-formhubDataObj a formhubData Object, with "data" and "form"
+onaDataObj a onaData Object, with "data" and "form"
 slots
 }
 \description{
-This function creates a formhubData object from two files:
+This function creates a onaData object from two files:
 a csv data file, and a json form file. These should both be
-downloaded from formhub.org for the same form.
+downloaded from ona for the same form.
 }
 \examples{
-# will need to download data.csv and form.json for a specific form on formhub, for below, download
-http://formhub.org/mberg/forms/good_eats/data.csv http://formhub.org/mberg/forms/good_eats/form.json
-good_eats <- formhubRead("~/Downloads/good_eats_2013_05_05.csv", "~/Downloads/good_eats.json")
+# will need to download data.csv and form.json for a specific form on ona, for below, download
+https://api.ona.io/mberg/forms/good_eats/data.csv https://api.ona.io/mberg/forms/good_eats/form.json
+good_eats <- onaRead("~/Downloads/good_eats_2013_05_05.csv", "~/Downloads/good_eats.json")
 head(good_eats) # is a data frame of all the data
-good_eatsX <- formhubRead("~/Downloads/good_eats_2013_05_05.csv", "~/Downloads/good_eats.json",
+good_eatsX <- onaRead("~/Downloads/good_eats_2013_05_05.csv", "~/Downloads/good_eats.json",
              extraFormDF=data.frame(name="imei", type="integer", label="IMEI"))
 good_eatsX
 }
