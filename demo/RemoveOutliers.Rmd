@@ -2,7 +2,7 @@
 Data Cleaning - How to remove outliers & duplicates
 ==============================
   
-After learning to [read formhub datasets into R](http://SEL-Columbia.github.com/formhub.R/demo/Basics_of_formhub.R.html), you may want to take a few steps in cleaning your data. In this example, we'll learn step-by-step how to select the variables, paramaters and desired values for outlier elimination. 
+After learning to [read ona datasets into R](https://github.com/onaio/ona.R/demo/Basics_of_ona.R.html), you may want to take a few steps in cleaning your data. In this example, we'll learn step-by-step how to select the variables, paramaters and desired values for outlier elimination. 
 
 Begin with reading in your data set... we'll use an example data set about schools.
   
