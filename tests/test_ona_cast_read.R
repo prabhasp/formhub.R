@@ -1,9 +1,9 @@
 library(testthat)
 library(stringr)
-library(formhub)
+library(ona)
 
 test_dir = ""
-#test_dir("~/Code/formhub.R/tests/")
+#test_dir("~/Code/ona.R/tests/")
 
 edu_datafile <- str_c(test_dir, "fixtures/edu1.csv")
 edu_formfile <- str_c(test_dir, "fixtures/edu1.json")
@@ -15,16 +15,16 @@ good_eats_formfile <- str_c(test_dir, "fixtures/good_eats.json")
 edu_rawdf <- read.csv(edu_datafile, na.strings="n/a", stringsAsFactors=FALSE, header=TRUE)
 hlt_form_df <- form_to_df(fromJSON(hlt_formfile))
 
-edu_formhubObj <- formhubRead(edu_datafile, edu_formfile)
-edu_df <- edu_formhubObj
-edu_form_df <- edu_formhubObj@form
+edu_onaObj <- onaRead(edu_datafile, edu_formfile)
+edu_df <- edu_onaObj
+edu_form_df <- edu_onaObj@form
 
-good_eats <- formhubRead(good_eats_datafile, good_eats_formfile)
+good_eats <- onaRead(good_eats_datafile, good_eats_formfile)
 
 test_that("convert.dates works", {
-  ef <- formhubRead(edu_datafile, edu_formfile)
+  ef <- onaRead(edu_datafile, edu_formfile)
   expect_true(is.instant(ef$start))
-  ef <- formhubRead(edu_datafile, edu_formfile, convert.dates=F)
+  ef <- onaRead(edu_datafile, edu_formfile, convert.dates=F)
   expect_false(is.instant(ef$start))
 })
 
@@ -66,12 +66,12 @@ test_that("formdf is read properly when keepGroupNames is FALSE", {
 # test_that("reCastingRVectors Works as expected", {
 #   expect_true(is.character(edu_rawdf$mylga))
 #   
-#   expect_true(is.factor(recastRVectorBasedOnFormhubType(edu_rawdf$mylga, "select one")))
-#   expect_true(is.character(recastRVectorBasedOnFormhubType(edu_rawdf$ward, "text")))
+#   expect_true(is.factor(recastRVectorBasedOnonaType(edu_rawdf$mylga, "select one")))
+#   expect_true(is.character(recastRVectorBasedOnonaType(edu_rawdf$ward, "text")))
 # 
-#   expect_true(is.numeric(recastRVectorBasedOnFormhubType(
+#   expect_true(is.numeric(recastRVectorBasedOnonaType(
 #       edu_rawdf$num_students_total_gender.num_students_female, "integer")))
-#   expect_true(is.numeric(recastRVectorBasedOnFormhubType(
+#   expect_true(is.numeric(recastRVectorBasedOnonaType(
 #     edu_rawdf$num_students_total_gender.num_students_female, "integer")))
 # })
 
@@ -98,7 +98,7 @@ test_that("groups and select multiples convert correctly", {
   expect_true(is.logical(edu_df2$power_sources.grid))
 })
 
-test_that("formhubRead converted types properly", {
+test_that("onaRead converted types properly", {
   expect_true(is.factor(edu_df$mylga_zone)) # type: select one
   expect_true(is.factor(edu_df$mylga_lga_in_benue))
 
@@ -128,7 +128,7 @@ test_that("formhubRead converted types properly", {
   
 })  
   
-test_that("formhubRead parses dates in wild formhub data properly", {
+test_that("onaRead parses dates in wild ona data properly", {
   expect_true(is.instant(recastDataFrameBasedOnFormDF(
       read.csv(textConnection("date\n2012-08-15T00:00:00.000000\n2012-08-15T00:00:00.000000")),
       data.frame(name=c("date"), type=c("today"), label=c("Today's date:"), stringsAsFactors=F))
@@ -142,7 +142,7 @@ test_that("passing nice extraFormDF in works", {
                            type=c("select one", "select one", "integer"),
                            label=c("LGA",       "STATE",      "Device ID"))
   
-  edu_df_with_extra <- formhubRead(edu_datafile, edu_formfile, extraFormDF=extraFormDF)
+  edu_df_with_extra <- onaRead(edu_datafile, edu_formfile, extraFormDF=extraFormDF)
   expect_true(is.factor(edu_df_with_extra$mylga))
   expect_true(is.factor(edu_df_with_extra$mylga_state))
   expect_true(is.numeric(edu_df_with_extra$deviceid))
@@ -157,34 +157,34 @@ test_that("passing bad extraFormDF in works", {
     c("mylga_state", "select one", "State"))),
                          c("name", "type", "label"))
   
-  edu_df_with_extra <- formhubRead(edu_datafile, edu_formfile, extraFormDF=extraFormDF)
+  edu_df_with_extra <- onaRead(edu_datafile, edu_formfile, extraFormDF=extraFormDF)
   expect_true(is.factor(edu_df_with_extra$mylga))
   expect_true(is.factor(edu_df_with_extra$mylga_state))
 })
 
 test_that("passing na.strings works", {
   na.strings = c("southeast")
-  edu_df_wo_SE <- formhubRead(edu_datafile, edu_formfile, na.strings=na.strings)
+  edu_df_wo_SE <- onaRead(edu_datafile, edu_formfile, na.strings=na.strings)
   expect_equal(levels(edu_df_wo_SE$mylga_zone), c("northwest"))
 })
 
-test_that("formhubRead works when keepGroupNames is FALSE", {
-  edu <- formhubRead(edu_datafile, edu_formfile, keepGroupNames=F)
+test_that("onaRead works when keepGroupNames is FALSE", {
+  edu <- onaRead(edu_datafile, edu_formfile, keepGroupNames=F)
   expect_true(all(c("num_ss_total", "num_students_female") %in% names(edu)))
   
-  edu_with_groups <- formhubRead(edu_datafile, edu_formfile)
+  edu_with_groups <- onaRead(edu_datafile, edu_formfile)
   expect_false(all(names(edu_with_groups) == names(edu)))
   expect_equivalent(setNames(edu, names(edu_with_groups)), edu_with_groups)
   expect_equivalent(setNames(edu_with_groups, names(edu)), edu)
   
-  hlt <- formhubRead(hlt_datafile, hlt_formfile, keepGroupNames=F)
+  hlt <- onaRead(hlt_datafile, hlt_formfile, keepGroupNames=F)
   expect_false(any(str_detect(names(hlt), 'not_for_private')))
   expect_true(all(c("num_flush_or_pour_flush_piped", "power_sources.generator") %in%
                     names(hlt)))
   expect_true(is.numeric(hlt$num_flush_or_pour_flush_piped))
   expect_true(is.logical(hlt$power_sources.generator))
   
-  hlt_with_groups <- formhubRead(hlt_datafile, hlt_formfile)
+  hlt_with_groups <- onaRead(hlt_datafile, hlt_formfile)
   expect_false(all(names(hlt_with_groups) == names(hlt)))
   expect_equivalent(setNames(hlt, names(hlt_with_groups)), hlt_with_groups)
   expect_equivalent(setNames(hlt_with_groups, names(hlt)), hlt)

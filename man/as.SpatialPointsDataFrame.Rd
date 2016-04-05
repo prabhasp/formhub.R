@@ -3,14 +3,14 @@
 \title{Produce a SpatialPointsDataFrame if data has a column of type `gps` or `geopoint`.
 Otherwise, return NA.}
 \usage{
-as.SpatialPointsDataFrame(formhubObj)
+as.SpatialPointsDataFrame(onaObj)
 }
 \arguments{
-  \item{the}{formhub object which will be possibly co-erced
+  \item{the}{ona object which will be possibly co-erced
   to a SpatialPointsDataFrame object.}
 }
 \value{
-A SpatialPointsDataFrame representation of this formhub
+A SpatialPointsDataFrame representation of this ona
 Object
 }
 \description{
@@ -18,7 +18,7 @@ Produce a SpatialPointsDataFrame if data has a column of
 type `gps` or `geopoint`. Otherwise, return NA.
 }
 \examples{
-good_eats_data <- as.data.frame(formhubDownload("good_eats", "mberg"))
+good_eats_data <- as.data.frame(onaDownload("good_eats", "mberg", "mberg"))
 ge_spdf <- as.SpatialPointsDataFrame(good_eats_data)
 class(ge_spdf) # "SpatialPointsDataFrame"
 }

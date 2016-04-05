@@ -1,8 +1,8 @@
-\name{formhubCast}
-\alias{formhubCast}
+\name{onaCast}
+\alias{onaCast}
 \title{Casts a dataframe to the right types based on a form-dataframe.}
 \usage{
-formhubCast(dataDF, formDF, extraFormDF = data.frame(), dropCols = "",
+onaCast(dataDF, formDF, extraFormDF = data.frame(), dropCols = "",
   convert.dates = TRUE)
 }
 \arguments{
@@ -17,17 +17,17 @@ formhubCast(dataDF, formDF, extraFormDF = data.frame(), dropCols = "",
   that matches that regexp will be dropped}
 }
 \value{
-formhubDataObj a formhubData Object, with "data" and "form"
+onaDataObj a onaData Object, with "data" and "form"
 slots
 }
 \description{
-This function creates a formhubData object based on a pair
+This function creates a onaData object based on a pair
 of dataframes: the data and the form that describes the
 data. The column names of the data match with the "name"
 column of the form, and the "type" column in the form
 provide information for type conversion.
 }
 \examples{
-#See examples under formhubRead; this should be used through formhubRead in almost all cases
+#See examples under onaRead; this should be used through onaRead in almost all cases
 }
 

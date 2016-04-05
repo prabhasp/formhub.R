@@ -1,24 +1,24 @@
-\name{as.data.frame.formhubData}
-\alias{as.data.frame.formhubData}
-\title{Produce a data.frame out of a formhubDataObj}
+\name{as.data.frame.onaData}
+\alias{as.data.frame.onaData}
+\title{Produce a data.frame out of a onaDataObj}
 \usage{
-\method{as.data.frame}{formhubData}(fhD, ...)
+\method{as.data.frame}{onaData}(fhD, ...)
 }
 \arguments{
-  \item{the}{formhub object which will be possibly co-erced
+  \item{the}{ona object which will be possibly co-erced
   to a dataframe.}
 
-  \item{the}{formhub object which will be possibly co-erced
+  \item{the}{ona object which will be possibly co-erced
   to a SpatialPointsDataFrame object.}
 }
 \value{
-A data.frame represntation of this formhub oject
+A data.frame represntation of this ona oject
 
-A SpatialPointsDataFrame representation of this formhub
+A SpatialPointsDataFrame representation of this ona
 Object
 }
 \description{
-Produce a data.frame out of a formhubDataObj
+Produce a data.frame out of a onaDataObj
 }
 \examples{
 #' Produce a SpatialPointsDataFrame if data has a column of type `gps` or `geopoint`.

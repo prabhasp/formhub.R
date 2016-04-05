@@ -1,16 +1,16 @@
 <link href="http://kevinburke.bitbucket.org/markdowncss/markdown.css" rel="stylesheet"></link>
-Making maps using formhub.R
+Making maps using ona.R
 ========================================================
 
-formhub.R makes is easy to download and work with datasets on [formhub](http://formhub.org). In this example, I'll show off how formhub.R makes it easy to make printable maps... similar to the ones available on formhub.org for you to view.
+ona.R makes is easy to download and work with datasets on [ona](https://ona.io). In this example, I'll show off how ona.R makes it easy to make printable maps... similar to the ones available on ona for you to view.
 
-This time, we'll be using a water point dataset. I am not at liberty to show you the full dataset, but maps aren't a problem. Plus, that gives me an excuse to demonstrate how formhub.R can import datasets from a file. The inputs required are two files, the `csv` file that makes up your data and the `form.json` file, which is a convenient representation of the XLSform used to collect data in the first place.
+This time, we'll be using a water point dataset. I am not at liberty to show you the full dataset, but maps aren't a problem. Plus, that gives me an excuse to demonstrate how ona.R can import datasets from a file. The inputs required are two files, the `csv` file that makes up your data and the `form.json` file, which is a convenient representation of the XLSform used to collect data in the first place.
 
 
 ```r
 # Read water points dataset directly from saved data and form.
-library("formhub")
-waterpoints <- data.frame(formhubRead("~/Downloads/_08_Water_points_train3_2012_09_06.csv", 
+library("ona")
+waterpoints <- data.frame(onaRead("~/Downloads/_08_Water_points_train3_2012_09_06.csv", 
     "~/Downloads/_08_Water_points_train3.json"))
 ```
 
@@ -77,7 +77,7 @@ ngbaselayer +
 ![plot of chunk map3](figure/map32.png) 
 
 
-Unfortunately, I'm not quite sure how we can replicate the formhub.org-style density hexbins, which tell us areas in which a high proportion of existing water points are non-functional. However, we can map where there is a preponderence of non-functioning water points within our set, overlaying all points for contrast:
+Unfortunately, I'm not quite sure how we can replicate the ona-style density hexbins, which tell us areas in which a high proportion of existing water points are non-functional. However, we can map where there is a preponderence of non-functioning water points within our set, overlaying all points for contrast:
 
 ```r
 
@@ -91,4 +91,4 @@ ngbaselayer + stat_binhex(data = only_functioning_points, aes(x = X_water_point_
 
 
 Pretty cool, eh?
-In Making Maps II with formhub.R, we will show how to make choropleth maps using shapefiles downloaded from [gadm](http://gadm.org).
+In Making Maps II with ona.R, we will show how to make choropleth maps using shapefiles downloaded from [gadm](http://gadm.org).
