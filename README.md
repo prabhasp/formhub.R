@@ -1,8 +1,9 @@
-<link href="http://kevinburke.bitbucket.org/markdowncss/markdown.css" rel="stylesheet"></link>
 ona.R
 =====
 
 ona.R is a library for making reading data form [ona.io](https://ona.io) into R easier.
+
+This project is fork of [formhub.r](https://github.com/prabhasp/formhub.R) by Prabhas Pokharel.  Future developments and improvements of the library will be done here.
 
 Examples
 --------
