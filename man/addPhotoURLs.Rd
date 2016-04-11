@@ -22,9 +22,5 @@ Add columns corresponding to the original, as well as
 medium and small thumbnails of images as stored on the
 ona server.
 }
-\examples{
-good_eats <- as.data.frame(onaDownload("good_eats", "mberg","mberg"))
-good_eats_with_photos <- addPhotoURLs(good_eats, "mberg","mberg")
-grep("URL", names(good_eats_with_photo), value=T) # the new columns
-}
+
 
