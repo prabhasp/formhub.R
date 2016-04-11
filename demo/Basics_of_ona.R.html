@@ -270,15 +270,7 @@ str(data.frame(good_eats)[1:10])
 ##  $ : chr [1:78] NA &quot;1325234137252.jpg&quot; &quot;1325233817453.jpg&quot; &quot;1325233694501.jpg&quot; ...
 </code></pre>
 
-<p>Notice that <code>submit_data</code> and <code>submit_date</code>, both of which were <code>today</code> (ie, date) questions in your form, are converted to <code>POXIXct</code>, which is R&#39;s date type. What does this mean? That means that we can do date-time calculations, for example, to check how long mberg has been collecting data:</p>
 
-<pre><code class="r">max(good_eats$submit_data) - min(good_eats$submit_date)
-</code></pre>
-
-<pre><code>## Time difference of 490 days
-</code></pre>
-
-<p>Over a year&hellip; awesome!</p>
 
 <p>Similiarly, things like <code>select one</code>, <code>imei</code>, and others are converted to factors, <code>integers</code> and <code>decimals</code> to numbers. Lets see how this compares with if we had simply just read the file as a csv without any type conversions:</p>
 
@@ -319,7 +311,7 @@ qplot(data = good_eats2, x = amount)  # from data read in without formhub.R
 <p>Okay, hopefully by now, you are sold on the usefulness of ona.R, and see some value in it. Since this is a &ldquo;basics of&rdquo; document, I&#39;ll end by describing a couple of other high-level functions in ona.R (lower-level functions will be documented over time).</p>
 
 <ul>
-<li><code>onaDownload</code> &ndash; download data directly from ona by passing form name, account/username,username, and password for private data</li>
+<li><code>onaDownload</code> &ndash; download data directly from ona by passing form name, account/username/org_username,username, and password for private data</li>
 <li><code>onaRead</code> &ndash; create a onaData object from pre-downloaded files. The first file argument is the csv file, the second is the form.json file (which you can download from the form settings page on ona). Note: unexpected things will happen if the files aren&#39;t the right ones. See the full documentation by using <code>help(onaRead)</code>.</li>
 <li><code>replaceHeaderNamesWithLabels</code> &ndash; get a version of the data where the header row is re-written as the actual question asked.</li>
 </ul>

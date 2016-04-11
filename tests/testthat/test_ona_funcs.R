@@ -2,9 +2,9 @@ require(testthat)
 require(stringr)
 require(ona)
 
-test_dir = ""
-# test_dir = "~/Code/ona.R/tests/"
-# test_file("~/Code/ona.R/tests/test_ona_funcs.R")
+test_dir = "~/ona.R/tests/"
+# test_dir = "~/ona.R/tests/"
+# test_file("~/ona.R/tests/testthat/test_ona_funcs.R")
 
 edu_datafile <- str_c(test_dir, "fixtures/edu1.csv")
 edu_formfile <- str_c(test_dir, "fixtures/edu1.json")
@@ -99,7 +99,7 @@ test_that("replace Functions work with multi-lingual forms", {
 # Adding photo URLs work
 test_that("adding photo urls works", {
   good_eats <- onaRead(good_eats_datafile, good_eats_formfile)
-  good_eats_with_photo_urls <- addPhotoURLs(good_eats, 'mberg')
+  good_eats_with_photo_urls <- addPhotoURLs(good_eats, 'mberg',type='url')
   # check that new columns were added
   expect_true(all(c("food_photo_URL_original", "food_photo_URL_medium", "food_photo_URL_small",
                 "location_photo_URL_original", "location_photo_URL_medium",
@@ -110,10 +110,10 @@ test_that("adding photo urls works", {
                         which(good_eats_with_photo_urls$food_photo_URL_medium == ""))))
   # check one of the URLs
   expect_equal(subset(good_eats_with_photo_urls, description == "Fistikli")$location_photo_URL_original,
-               "https://api.ona.io//api/v1/files/1557332?filename=mberg/attachments/1460139568128.jpg")
+               "https://api.ona.io/attachment/?media_file=mberg/attachments/1460139580042.jpg")
   expect_equal(subset(good_eats_with_photo_urls, description == "Fistikli")$location_photo_URL_medium,
-               "https://api.ona.io/api/v1/files/1557332?filename=mberg/attachments/1460139568128.jpg&suffix=medium")
+               "https://api.ona.io/attachment/medium?media_file=mberg/attachments/1460139580042.jpg")
   expect_equal(subset(good_eats_with_photo_urls, description == "Fistikli")$location_photo_URL_small,
-               "https://api.ona.io/api/v1/files/1557332?filename=mberg/attachments/1460139568128.jpg&suffix=small")
+               "https://api.ona.io/attachment/small?media_file=mberg/attachments/1460139580042.jpg")
 })
 

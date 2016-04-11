@@ -52,11 +52,8 @@ So the part where R downloaded your data for you was pretty cool. But there is m
 str(data.frame(good_eats)[1:10])
 ```
 
-Notice that `submit_data` and `submit_date`, both of which were `today` (ie, date) questions in your form, are converted to `POXIXct`, which is R's date type. What does this mean? That means that we can do date-time calculations, for example, to check how long mberg has been collecting data:
-```{r warning=FALSE, message=FALSE, fig.height=5, fig.width=7}
-max(good_eats$submit_data) - min(good_eats$submit_date)
-```
-Over a year... awesome!
+
+
 
 Similiarly, things like `select one`, `imei`, and others are converted to factors, `integers` and `decimals` to numbers. Lets see how this compares with if we had simply just read the file as a csv without any type conversions:
 ```{r warning=FALSE, message=FALSE, fig.height=5, fig.width=7}

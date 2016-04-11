@@ -381,11 +381,11 @@ addPhotoURLs = function(onaDataObj, onaUsername, type="url") {
     stopifnot(size %in% c("", "medium", "small"))
     if (type == "url") { 
       ifelse(is.na(photoCol), "",
-           sprintf("https://odk.ona.io/attachment/%s?media_file=%s/attachments/%s",
+           sprintf("https://api.ona.io/attachment/%s?media_file=%s/attachments/%s",
                    size, onaUsername, photoCol))
     } else if (type == "img") {
       ifelse(is.na(photoCol), "",
-             sprintf('<img src="https://odk.ona.io/attachment/%s?media_file=%s/attachments/%s" />',
+             sprintf('<img src="https://api.ona.io/attachment/%s?media_file=%s/attachments/%s" />',
                      size, onaUsername, photoCol))
     } else { 
       stop("Type must be either 'url' or 'img'.")
