@@ -2,8 +2,8 @@ library(testthat)
 library(stringr)
 library(ona)
 
-test_dir = ""
-#source("~/Code/ona.R/R/ona.R");test_file("~/Code/ona.R/tests/testthat/test_ona_writes.R")
+test_dir = "~/ona.R/tests/"
+#test_dir("~/ona.R/tests/")
 
 
 edu_datafile <- str_c(test_dir, "fixtures/edu1.csv")

@@ -1,7 +1,7 @@
 context('')
 library(testthat)
 
-#test_dir("~/Code/ona.R/tests/")
+#test_dir("~/ona.R/tests/")
 
 test_that("downloading public data (with public form) works", {
   good_eats <- onaDownload("good_eats",account="mberg", uname="mberg")

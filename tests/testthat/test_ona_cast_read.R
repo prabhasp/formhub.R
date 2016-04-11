@@ -2,8 +2,11 @@ library(testthat)
 library(stringr)
 library(ona)
 
-test_dir = ""
-#test_dir("~/Code/ona.R/tests/")
+
+test_dir = "~/ona.R/tests/"
+#test_dir("~/ona.R/tests/")
+
+
 
 edu_datafile <- str_c(test_dir, "fixtures/edu1.csv")
 edu_formfile <- str_c(test_dir, "fixtures/edu1.json")
