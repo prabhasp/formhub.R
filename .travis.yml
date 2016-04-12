@@ -4,3 +4,9 @@ cache: packages
 r_packages:
   - devtools
   - sp
+  - doBy
+  - lubridate
+  - plyr
+  - RCurl
+  - RJSONIO
+  - stringr
