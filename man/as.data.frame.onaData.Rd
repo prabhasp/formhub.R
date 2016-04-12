@@ -5,17 +5,14 @@
 \method{as.data.frame}{onaData}(fhD, ...)
 }
 \arguments{
-  \item{the}{ona object which will be possibly co-erced
-  to a dataframe.}
+\item{the}{ona object which will be possibly co-erced to a dataframe.}
 
-  \item{the}{ona object which will be possibly co-erced
-  to a SpatialPointsDataFrame object.}
+\item{the}{ona object which will be possibly co-erced to a SpatialPointsDataFrame object.}
 }
 \value{
 A data.frame represntation of this ona oject
 
-A SpatialPointsDataFrame representation of this ona
-Object
+A SpatialPointsDataFrame representation of this ona Object
 }
 \description{
 Produce a data.frame out of a onaDataObj
@@ -23,5 +20,6 @@ Produce a data.frame out of a onaDataObj
 \examples{
 #' Produce a SpatialPointsDataFrame if data has a column of type `gps` or `geopoint`.
 Otherwise, return NA.
+
 }
 
