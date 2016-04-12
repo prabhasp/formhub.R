@@ -3,3 +3,4 @@ sudo: false
 cache: packages
 r_packages:
   - devtools
+  - sp
