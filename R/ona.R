@@ -9,6 +9,7 @@ library(doBy)
 
 setClass("onaData", representation("data.frame", form="data.frame"), contains="data.frame")
 
+
 #' Produce a data.frame out of a onaDataObj
 #'
 #' @param the ona object which will be possibly co-erced to a dataframe.
@@ -16,7 +17,7 @@ setClass("onaData", representation("data.frame", form="data.frame"), contains="d
 #' @return A data.frame represntation of this ona oject
 #' @examples
 #' #' Produce a SpatialPointsDataFrame if data has a column of type `gps` or `geopoint`.
-#' Otherwise, return NA.
+#' #' Otherwise, return NA.
 #'
 #' @param the ona object which will be possibly co-erced to a SpatialPointsDataFrame object.
 #' @export
@@ -35,7 +36,7 @@ as.data.frame.onaData <- function(fhD, ...) {
 #' @export
 #' @return A SpatialPointsDataFrame representation of this ona Object
 #' @examples
-#' good_eats_data <- as.data.frame(onaDownload("good_eats", "mberg","mberg"))
+#' good_eats_data <- onaDownload("good_eats", "mberg","mberg")
 #' ge_spdf <- as.SpatialPointsDataFrame(good_eats_data)
 #' class(ge_spdf) # "SpatialPointsDataFrame"
 as.SpatialPointsDataFrame <- function(onaObj) {
@@ -204,7 +205,7 @@ onaDownload = function(formName, account, uname, pass=NA, ...) {
 #' @return onaDataObj a onaData Object, with "data" and "form" slots
 #' @examples
 #' # will need to download data.csv and form.json for a specific form on ona, for below, download
-#' https://api.ona.io/mberg/forms/good_eats/data.csv https://api.ona.io/mberg/forms/good_eats/form.json
+#' # https://api.ona.io/mberg/forms/good_eats/data.csv https://api.ona.io/mberg/forms/good_eats/form.json
 #' good_eats <- onaRead("~/Downloads/good_eats_2013_05_05.csv", "~/Downloads/good_eats.json")
 #' head(good_eats) # is a data frame of all the data
 #' good_eatsX <- onaRead("~/Downloads/good_eats_2013_05_05.csv", "~/Downloads/good_eats.json",
@@ -282,9 +283,8 @@ onaCast  = function(dataDF, formDF, extraFormDF=data.frame(), dropCols="", conve
 #' @param keepGroupNames for a question with name foo in group bar, keepGroupName=T will generate
 #'        a name foo.bar, while keepGroupName=F will generate a name bar
 #' @return formDF
-#' @examples
-#' good_eats_form_df <- form_to_df(fromJSON("~/Downloads/good_eats.json"))
-form_to_df = function(formJSON, keepGroupNames=TRUE) {
+
+form_to_df  = function(formJSON, keepGroupNames=TRUE) {
   form_to_df_internal = function(thisJSON, prefix="") {
     ldply(thisJSON[["children"]], function(child) {
       nom <- if (prefix == "") { child[["name"]] } else { paste(prefix, child[["name"]], sep=".") }
@@ -311,7 +311,8 @@ form_to_df = function(formJSON, keepGroupNames=TRUE) {
                    stringsAsFactors=F)
         } else if ("itemset" %in% names(child)) {
             data.frame(name=nom, type=child[["type"]],
-                     options=toJSON(formJSON$choices[[child[['itemset']]]]), # options are more complex with itemset
+                     options=toJSON(formJSON$choices[[child[['itemset']]]]), 
+                     # options are more complex with itemset
                      label=if("label" %in% names(child)) {child[["label"]]} else {child[["name"]]},
                      stringsAsFactors=F)
         }
@@ -372,9 +373,9 @@ recastDataFrameBasedOnFormDF = function(df, formdf, convert.dates=TRUE) {
 #' @export
 #' @return a onaData object, with a few additional URL columns
 #' @examples
-#' good_eats <- as.data.frame(onaDownload("good_eats", "mberg","mberg"))
-#' good_eats_with_photos <- addPhotoURLs(good_eats, "mberg","mberg")
-#' grep("URL", names(good_eats_with_photo), value=T) # the new columns
+#' good_eats <- onaDownload("good_eats", "mberg","mberg")
+#' good_eats_with_photos <- addPhotoURLs(good_eats, "mberg")
+#' grep("URL", names(good_eats_with_photos), value=TRUE) # the new columns
 addPhotoURLs = function(onaDataObj, onaUsername, type="url") {
   photos <- c(subset(onaDataObj@form, type %in% "photo")$name)
   htmlFromCol <- function(photoCol, size, type) {
@@ -409,11 +410,7 @@ addPhotoURLs = function(onaDataObj, onaUsername, type="url") {
 #' @param df data
 #' @param columnNameRegExpMatcher pattern(s) to match to columns; matched columns are dropped.
 #' @return a smaller data frame.
-#' @examples
-#' good_eats_df <- onaDownload("good_eats", "mberg","mberg")
-#' names(good_eats_form_df) # note it includes submit_date and submit_data both
-#' names(removeColumns(good_eats_form_df, "submit*")) # both of which are gone now
-#' names(removeColumns(good_eats_form_df, c("submit*", "_gps*")) # you can pass a list of regular expressions
+
 removeColumns <- function(df, columnNameRegExpMatcher) {
   if (columnNameRegExpMatcher=="" || is.na(columnNameRegExpMatcher)) { 
     df 
