@@ -32,18 +32,18 @@ json form file. These should both be downloaded from ona.io for the same form.
 \examples{
 # will need to download data.csv and form.json for a specific form on ona, for below, download
 # https://api.ona.io/mberg/forms/good_eats/data.csv https://api.ona.io/mberg/forms/good_eats/form.json
-good_eats <- onaRead("~/Downloads/good_eats_2013_05_05.csv", "~/Downloads/good_eats.json")
-head(good_eats) # is a data frame of all the data
-good_eatsX <- onaRead("~/Downloads/good_eats_2013_05_05.csv", "~/Downloads/good_eats.json",
+#' good_eats <- onaRead("~/Downloads/good_eats_2013_05_05.csv", "~/Downloads/good_eats.json")
+#' head(good_eats) # is a data frame of all the data
+#' good_eatsX <- onaRead("~/Downloads/good_eats_2013_05_05.csv", "~/Downloads/good_eats.json",
              extraFormDF=data.frame(name="imei", type="integer", label="IMEI"))
-good_eatsX@form # note that imei is now slated as type "integer" instead of type "imei"
-str(good_eatsX$imei) # also notice that it is numeric instead of a factor
-good_eatsWO <- onaRead("~/Downloads/good_eats_2013_05_05.csv", "~/Downloads/good_eats.json",
+#' good_eatsX@form # note that imei is now slated as type "integer" instead of type "imei"
+#' str(good_eatsX$imei) # also notice that it is numeric instead of a factor
+#' good_eatsWO <- onaRead("~/Downloads/good_eats_2013_05_05.csv", "~/Downloads/good_eats.json",
              dropCols="submit*")
-names(good_eatsWO) # notice how submit_date and submit_date are no longer there
-good_eatsNA <- onaRead("~/Downloads/good_eats_2013_05_05.csv", "~/Downloads/good_eats.json",
+#' names(good_eatsWO) # notice how submit_date and submit_date are no longer there
+#' good_eatsNA <- onaRead("~/Downloads/good_eats_2013_05_05.csv", "~/Downloads/good_eats.json",
              na.strings=c("999"))
-good_eatsNA$amount # notice that the value that was 999 is now missing. This is helpful when using values such
+#' good_eatsNA$amount # notice that the value that was 999 is now missing. This is helpful when using values such
                    # as 999 to indicate no data
 }
 
