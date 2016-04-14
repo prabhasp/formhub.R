@@ -2,7 +2,7 @@ library(testthat)
 library(stringr)
 library(ona)
 
-test_dir = ""
+test_dir = "~/ona.R/tests/"
 #test_dir("~ona.R/tests/")
 
 
