@@ -1,3 +1,4 @@
+warnings_are_errors: false
 language: R
 sudo: false
 cache: packages
