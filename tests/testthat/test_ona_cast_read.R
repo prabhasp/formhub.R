@@ -3,8 +3,8 @@ library(stringr)
 library(ona)
 
 
-test_dir = "~/ona.R/tests/"
-#test_dir("~/ona.R/tests/")
+test_dir = "~/onaio/ona.R/tests/"
+#test_dir("~/onaio/ona.R/tests/")
 
 
 
