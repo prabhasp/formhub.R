@@ -3,17 +3,17 @@ library(stringr)
 library(ona)
 
 
-test_dir = "~/onaio/ona.R/tests/"
+test_dir = "fixtures/"
 #test_dir("~/onaio/ona.R/tests/")
 
 
 
-edu_datafile <- str_c(test_dir, "fixtures/edu1.csv")
-edu_formfile <- str_c(test_dir, "fixtures/edu1.json")
-hlt_datafile <- str_c(test_dir, "fixtures/health1.csv")
-hlt_formfile <- str_c(test_dir, "fixtures/health1.json")
-good_eats_datafile <- str_c(test_dir, "fixtures/good_eats.csv")
-good_eats_formfile <- str_c(test_dir, "fixtures/good_eats.json")
+edu_datafile <- str_c(test_dir, "edu1.csv")
+edu_formfile <- str_c(test_dir, "edu1.json")
+hlt_datafile <- str_c(test_dir, "health1.csv")
+hlt_formfile <- str_c(test_dir, "health1.json")
+good_eats_datafile <- str_c(test_dir, "good_eats.csv")
+good_eats_formfile <- str_c(test_dir, "good_eats.json")
 
 edu_rawdf <- read.csv(edu_datafile, na.strings="n/a", stringsAsFactors=FALSE, header=TRUE)
 hlt_form_df <- form_to_df(fromJSON(hlt_formfile))

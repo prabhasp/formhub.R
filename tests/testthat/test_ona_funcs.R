@@ -2,15 +2,15 @@ require(testthat)
 require(stringr)
 require(ona)
 
-test_dir = "~/onaio/ona.R/tests/"
+test_dir = "fixtures/"
 #test_dir("~/onaio/ona.R/tests/")
 
-edu_datafile <- str_c(test_dir, "fixtures/edu1.csv")
-edu_formfile <- str_c(test_dir, "fixtures/edu1.json")
-good_eats_datafile <- str_c(test_dir, "fixtures/good_eats.csv")
-good_eats_formfile <- str_c(test_dir, "fixtures/good_eats.json")
-pde_datafile <- str_c(test_dir, "fixtures/pde.csv")
-pde_formfile <- str_c(test_dir, "fixtures/pde.json")
+edu_datafile <- str_c(test_dir, "edu1.csv")
+edu_formfile <- str_c(test_dir, "edu1.json")
+good_eats_datafile <- str_c(test_dir, "good_eats.csv")
+good_eats_formfile <- str_c(test_dir, "good_eats.json")
+pde_datafile <- str_c(test_dir, "pde.csv")
+pde_formfile <- str_c(test_dir, "pde.json")
 
 
 # Header Names with Labels works
