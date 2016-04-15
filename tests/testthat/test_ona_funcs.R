@@ -1,31 +1,30 @@
 require(testthat)
 require(stringr)
-require(formhub)
+require(ona)
 
-test_dir = ""
-# test_dir = "~/Code/formhub.R/tests/"
-# test_file("~/Code/formhub.R/tests/test_formhub_funcs.R")
+test_dir = "fixtures/"
+#test_dir("~/onaio/ona.R/tests/")
 
-edu_datafile <- str_c(test_dir, "fixtures/edu1.csv")
-edu_formfile <- str_c(test_dir, "fixtures/edu1.json")
-good_eats_datafile <- str_c(test_dir, "fixtures/good_eats.csv")
-good_eats_formfile <- str_c(test_dir, "fixtures/good_eats.json")
-pde_datafile <- str_c(test_dir, "fixtures/pde.csv")
-pde_formfile <- str_c(test_dir, "fixtures/pde.json")
+edu_datafile <- str_c(test_dir, "edu1.csv")
+edu_formfile <- str_c(test_dir, "edu1.json")
+good_eats_datafile <- str_c(test_dir, "good_eats.csv")
+good_eats_formfile <- str_c(test_dir, "good_eats.json")
+pde_datafile <- str_c(test_dir, "pde.csv")
+pde_formfile <- str_c(test_dir, "pde.json")
 
 
 # Header Names with Labels works
 test_that("replaceHeaderNamesWithLabels basically works", {
-  edu_formhubObj <- formhubRead(edu_datafile, edu_formfile)
-  good_eats <- formhubRead(good_eats_datafile, good_eats_formfile)
+  edu_onaObj <- onaRead(edu_datafile, edu_formfile)
+  good_eats <- onaRead(good_eats_datafile, good_eats_formfile)
   
-  edu_formhubObj_replaced <- replaceHeaderNamesWithLabels(edu_formhubObj)
+  edu_onaObj_replaced <- replaceHeaderNamesWithLabels(edu_onaObj)
   good_eats_replaced <- replaceHeaderNamesWithLabels(good_eats)
   
-  expect_equal(class(edu_formhubObj_replaced), "data.frame")
+  expect_equal(class(edu_onaObj_replaced), "data.frame")
   expect_equal(class(good_eats_replaced), "data.frame")
   
-  expect_false(any(names(edu_formhubObj_replaced) == "NA"))
+  expect_false(any(names(edu_onaObj_replaced) == "NA"))
   expect_false(any(names(good_eats_replaced) == "NA"))
   
   expect_true(all(c("submit_date", "imei", "X_gps_longitude","Rating","Type of Eat", "Food Pic")
@@ -34,11 +33,11 @@ test_that("replaceHeaderNamesWithLabels basically works", {
                     "LGA", "mylga", "num_ss_total_calc", "TOTAL students in Senior Secondary 1 thugh 3",
                     "23. What type(s) of power sources are available at this school? >> Generator",
                     "23. What type(s) of power sources are available at this school? >> None")
-              %in% names(edu_formhubObj_replaced)))
+              %in% names(edu_onaObj_replaced)))
 })
  
 test_that("replaceAllNamesWithLabels works on good_eats", {
-  good_eats <- formhubRead(good_eats_datafile, good_eats_formfile)
+  good_eats <- onaRead(good_eats_datafile, good_eats_formfile)
   good_eats_replaced <- replaceAllNamesWithLabels(good_eats)
   
   expect_equal(class(good_eats_replaced), "data.frame")
@@ -54,7 +53,7 @@ test_that("replaceAllNamesWithLabels works on good_eats", {
 })
 
 test_that("replace Functions work with dot-replaced names", {
-  good_eats <- formhubRead(good_eats_datafile, good_eats_formfile)
+  good_eats <- onaRead(good_eats_datafile, good_eats_formfile)
   names(good_eats)[3] <- 'food.type' # R replaces characters with dot sometimes
                                      # doesn't replace _, but we don't have better
                                      # test data at the moment
@@ -74,7 +73,7 @@ test_that("replace Functions work with dot-replaced names", {
 
 # Replace works with multi-lingual forms
 test_that("replace Functions work with multi-lingual forms", {
-    pde <- formhubRead(pde_datafile, pde_formfile)
+    pde <- onaRead(pde_datafile, pde_formfile)
     pde_names_replaced <- replaceHeaderNamesWithLabels(pde)
     pde_replaced_en <- replaceAllNamesWithLabels(pde, "English")
     pde_replaced_fr <- replaceAllNamesWithLabels(pde, "French")
@@ -98,8 +97,8 @@ test_that("replace Functions work with multi-lingual forms", {
 
 # Adding photo URLs work
 test_that("adding photo urls works", {
-  good_eats <- formhubRead(good_eats_datafile, good_eats_formfile)
-  good_eats_with_photo_urls <- addPhotoURLs(good_eats, 'mberg')
+  good_eats <- onaRead(good_eats_datafile, good_eats_formfile)
+  good_eats_with_photo_urls <- addPhotoURLs(good_eats, 'mberg',type='url')
   # check that new columns were added
   expect_true(all(c("food_photo_URL_original", "food_photo_URL_medium", "food_photo_URL_small",
                 "location_photo_URL_original", "location_photo_URL_medium",
@@ -110,10 +109,10 @@ test_that("adding photo urls works", {
                         which(good_eats_with_photo_urls$food_photo_URL_medium == ""))))
   # check one of the URLs
   expect_equal(subset(good_eats_with_photo_urls, description == "Fistikli")$location_photo_URL_original,
-               "https://formhub.org/attachment/?media_file=mberg/attachments/1325233817453.jpg")
+               "https://api.ona.io/attachment/?media_file=mberg/attachments/1460139580042.jpg")
   expect_equal(subset(good_eats_with_photo_urls, description == "Fistikli")$location_photo_URL_medium,
-               "https://formhub.org/attachment/medium?media_file=mberg/attachments/1325233817453.jpg")
+               "https://api.ona.io/attachment/medium?media_file=mberg/attachments/1460139580042.jpg")
   expect_equal(subset(good_eats_with_photo_urls, description == "Fistikli")$location_photo_URL_small,
-               "https://formhub.org/attachment/small?media_file=mberg/attachments/1325233817453.jpg")
+               "https://api.ona.io/attachment/small?media_file=mberg/attachments/1460139580042.jpg")
 })
 
