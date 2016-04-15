@@ -34,7 +34,7 @@ Question: what kind of beast did we just download?
 str(good_eats)
 ```
 
-R tells us something like `'data.frame':  78 obs. of  19 variables:` as well as `Formal class 'onaData' [package ".GlobalEnv"] with 5 slots`. What this means is that onaData objects can be dealt with data.frames (which makes them very convenient!) and well as "objects" with more properties (such as `form`, which is derived from your XLSform). The `form` gives ona.R information about the exact question that was asked, and the type of the question asked (was it `text` or `select one`? or was it a `date`?), which lets the library change the types of the values to make them right, which is basically the power of this package.
+R tells us something like `'data.frame':  1103 obs. of  24 variables:` as well as `Formal class 'onaData' [package "ona"] with 5 slots`. What this means is that onaData objects can be dealt with data.frames (which makes them very convenient!) and well as "objects" with more properties (such as `form`, which is derived from your XLSform). The `form` gives ona.R information about the exact question that was asked, and the type of the question asked (was it `text` or `select one`? or was it a `date`?), which lets the library change the types of the values to make them right, which is basically the power of this package.
 
 For simplicity, if you want just a data frame and not this complicated onaData object, you can always use the `data.frame` method.
 

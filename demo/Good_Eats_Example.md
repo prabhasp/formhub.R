@@ -34,4 +34,4 @@ qplot(data = good_eats_data, x = submit_date, fill = risk_factor)
 
 ![plot of chunk plot2](figure/plot2.png) 
 
-Looks like it has! mberg's getting riskier as time goes on.
+Looks like it has mberg's getting riskier as time goes on.

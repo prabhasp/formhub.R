@@ -28,7 +28,7 @@ The package for ona.R in R is simply called `ona`. For now, it cannot be install
 
 And voila! The `ona` package is installed in your R system! You can check by running:
 
-    help(formhubDownload)
+    help(onaDownload)
  
 Features
 --------

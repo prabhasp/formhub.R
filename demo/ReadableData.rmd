@@ -42,8 +42,7 @@ qplot(data=good_eats_readable, x=submit_date, fill=`Risk Factor`)
 
 For multi-lingual forms, the `replaceAllNamesWithLabels` function takes a language argument:
 ```{r RD.6, warning=FALSE, message=FALSE}
-pde <- onaDownload("points_d_eau", "Roxance")
-pde_fr <- replaceAllNamesWithLabels(pde, language="French")
-qplot(data=pde_fr, x=`A-6.6 Qui gère cette source/ ce point d’eau ?`) +
-    coord_flip()
+waterpoint <- onaDownload("waterpoint", "mberg","mberg")
+waterpoint_swa <- replaceAllNamesWithLabels(waterpoint, language="Swahili")
+qplot(data=waterpoint_swa,x=`Siku ya kukaguliwa`,y=`Hali ya kisima`)
 ```
