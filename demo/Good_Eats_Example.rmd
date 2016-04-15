@@ -24,4 +24,4 @@ How about riskiness of the food he is trying and reporting about... has that cha
 ```{r plot2, warning=FALSE, message=FALSE, fig.height=5, fig.width=7}
 qplot(data=good_eats_data, x=submit_date, fill=risk_factor)
 ```
-Looks like it has! mberg's getting riskier as time goes on.
+Looks like it has mberg's getting riskier as time goes on.

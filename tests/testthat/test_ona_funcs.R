@@ -109,10 +109,10 @@ test_that("adding photo urls works", {
                         which(good_eats_with_photo_urls$food_photo_URL_medium == ""))))
   # check one of the URLs
   expect_equal(subset(good_eats_with_photo_urls, description == "Fistikli")$location_photo_URL_original,
-               "https://api.ona.io/attachment/?media_file=mberg/attachments/1460139580042.jpg")
+               "https://api.ona.io/attachment/?media_file=mberg/attachments/1460708481327.jpg")
   expect_equal(subset(good_eats_with_photo_urls, description == "Fistikli")$location_photo_URL_medium,
-               "https://api.ona.io/attachment/medium?media_file=mberg/attachments/1460139580042.jpg")
+               "https://api.ona.io/attachment/medium?media_file=mberg/attachments/1460708481327.jpg")
   expect_equal(subset(good_eats_with_photo_urls, description == "Fistikli")$location_photo_URL_small,
-               "https://api.ona.io/attachment/small?media_file=mberg/attachments/1460139580042.jpg")
+               "https://api.ona.io/attachment/small?media_file=mberg/attachments/1460708481327.jpg")
 })
 
