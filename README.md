@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/onaio/ona.R.svg?branch=master)](https://travis-ci.org/onaio/ona.R)
+
 ona.R
 =====
 
