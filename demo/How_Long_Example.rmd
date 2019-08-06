@@ -2,15 +2,15 @@
 Quality control -- how long did survey authoring take?
 ========================================================
 
-formhub.R makes is easy to download and work with datasets on [formhub](http://formhub.org). If you haven't read the [basics document](http://SEL-Columbia.github.com/formhub.R/demo/Basics_of_formhub.R.html), I recommend that you read that first. In this showcase, we will demonstrate how to figure out how long enumerators take to enter survey data, and correlate completion time with enumerator and date of survey. 
+ona.R makes is easy to download and work with datasets on [ona](https://ona.io). If you haven't read the [basics document](https://github.com/onaio/ona.R/demo/Basics_of_ona.R.html), I recommend that you read that first. In this showcase, we will demonstrate how to figure out how long enumerators take to enter survey data, and correlate completion time with enumerator and date of survey. 
 
 After reading the dataset, we want to prepare two basic fields, the first one, `completion_time` will denote how long it took someone to fill the survey out. The second will be the enumerator's initial (which in this case is completely identifying, and helps us process multiple spellings).
 
 
 ```{r read, warning=FALSE, message=FALSE}
-library(formhub)
-formhubData <- formhubRead("~/Downloads/Some_Data.csv","~/Downloads/Some_Form.json")
-some_data <- data.frame(formhubData)
+library(ona)
+onaData <- onaRead("~/Downloads/Some_Data.csv","~/Downloads/Some_Form.json")
+some_data <- data.frame(onaData)
 
 # first subtract start time from end time, then, convert that to minutes
 some_data$completion_time <- some_data$end - some_data$start

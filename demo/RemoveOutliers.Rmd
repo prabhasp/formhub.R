@@ -2,13 +2,13 @@
 Data Cleaning - How to remove outliers & duplicates
 ==============================
   
-After learning to [read formhub datasets into R](http://SEL-Columbia.github.com/formhub.R/demo/Basics_of_formhub.R.html), you may want to take a few steps in cleaning your data. In this example, we'll learn step-by-step how to select the variables, paramaters and desired values for outlier elimination. 
+After learning to [read ona datasets into R](https://github.com/onaio/ona.R/demo/Basics_of_ona.R.html), you may want to take a few steps in cleaning your data. In this example, we'll learn step-by-step how to select the variables, paramaters and desired values for outlier elimination. 
 
 Begin with reading in your data set... we'll use an example data set about schools.
   
 ```{r read, warning=FALSE, message=FALSE, cache=TRUE}
-library(formhub)
-my_data <- formhubRead("~/Downloads/MyDataSet.csv", "~/Downloads/MyForm.json")
+library(ona)
+my_data <- onaRead("~/Downloads/MyDataSet.csv", "~/Downloads/MyForm.json")
 ```
 
 followed by selecting a variable that you want to do outlier work on. Let's look at the total amount of female pupils per school for this particular data set, labeled as `num_students_total_gender.num_students_female`.  
@@ -33,12 +33,12 @@ qplot(data = my_data, x = num_students_total_gender.num_students_female) + ylab(
 qplot(data = my_data, x = num_students_total_gender.num_students_female) + ylab("Number of Schools") + xlim(c(990,1010))
 ```
 
-Oh, looks like the spike is of the value "999", which (in its negative version) is often used as a "Do Not Know" type of value in surveys. R lets us deal with individual vlaues like this by specifying an `na.strings` parameter when reading in csvs; this is exposed in the formhubRead function. So we can get rid of this value by re-reading our dataset while providing the na.strings parameter:
+Oh, looks like the spike is of the value "999", which (in its negative version) is often used as a "Do Not Know" type of value in surveys. R lets us deal with individual vlaues like this by specifying an `na.strings` parameter when reading in csvs; this is exposed in the onaRead function. So we can get rid of this value by re-reading our dataset while providing the na.strings parameter:
 ```{r warning=FALSE, message=FALSE, fig.height=5, fig.width=9}
-my_data <- formhubRead("~/Downloads/MyDataSet.csv", "~/Downloads/MyForm.json", na.strings=c("999"))
+my_data <- onaRead("~/Downloads/MyDataSet.csv", "~/Downloads/MyForm.json", na.strings=c("999"))
 qplot(data = my_data, x = num_students_total_gender.num_students_female) + ylab("Number of Schools") + xlim(c(0,1500))
 ```
-Phew, no weird spike near 1000! If you are using values such as "-999", "999" or something else for your "NA" values, it is good practice to include them in your na.strings when you call `formhubRead` or `formhubDownload`.
+Phew, no weird spike near 1000! If you are using values such as "-999", "999" or something else for your "NA" values, it is good practice to include them in your na.strings when you call `onaRead` or `onaDownload`.
 
 Round 2: outlier cut-offs
 ----------------
@@ -86,7 +86,7 @@ Caveat: replace data with extreme care
 Okay, so that cap of 500 was just a quick demo, lets undo that. But how? We can't simply replace the value with 500 with somethine else, because it could have been anything 500 or above. Replacing data is hard to undo easily, so be  careful with functions like `outlierReplace`! In order to undo, we will have to re-read our dataset, and re-perform all the actions before the replace. Thankfully, however, we haven't saved our data, and there is only one thing we did before the replace, which is easy to re-create:
 
 ```{r warning=FALSE, message=FALSE}
-my_data <- formhubRead("~/Downloads/MyDataSet.csv", "~/Downloads/MyForm.json") 
+my_data <- onaRead("~/Downloads/MyDataSet.csv", "~/Downloads/MyForm.json") 
 outlierReplace(my_data, 
                c('num_students_total_gender.num_students_female', 'num_students_total_gender.num_students_total'),
                which(my_data$num_students_total_gender.num_students_female > 1000,
@@ -98,17 +98,17 @@ Saving your dataset
 -----------------------
 Don't forget to save your new data set!
 
-There are two ways to do the save. If you want all the form information preserved (and maybe the ability to run functions like `replaceHeaderNamesWithLabels` in the future, you can save the formhubData object as is, in an `.rds` file. Only R will be able to read this file. If you need a widely usable file, then use `data.frame`, and save the data frame, for example as a csv.
+There are two ways to do the save. If you want all the form information preserved (and maybe the ability to run functions like `replaceHeaderNamesWithLabels` in the future, you can save the onaData object as is, in an `.rds` file. Only R will be able to read this file. If you need a widely usable file, then use `data.frame`, and save the data frame, for example as a csv.
 
 Option 1:
 ```{r message=FALSE, fig.height=5, fig.width=7}
-  saveRDS(my_data, file="~/Desktop/MyFormhubData.rds")
+  saveRDS(my_data, file="~/Desktop/MyonaData.rds")
   # later, you can do
-  # my_data <- loadRDS("~/Desktop/MyFormhubData.rds")
+  # my_data <- loadRDS("~/Desktop/MyonaData.rds")
   # to re-load this same object
 ```  
 
 Option 2:
 ```{r message=FALSE, fig.height=5, fig.width=7}
-  write.csv(data.frame(my_data), file="~/Desktop/MyFormhubData.csv")
+  write.csv(data.frame(my_data), file="~/Desktop/MyonaData.csv")
 ```
