@@ -1,16 +1,16 @@
 <link href="http://kevinburke.bitbucket.org/markdowncss/markdown.css" rel="stylesheet"></link>
-A simple example using formhub.R -- good eats
+A simple example using Ona.R -- good eats
 ========================================================
 
-formhub.R makes is easy to download and work with datasets on [formhub](http://formhub.org). After downloading, formhub.R post-processes your dataset to convert the different columns to the correct type, which it derives from the `type` you specified during the creation of your XLSform. If you haven't read the [basics document](http://SEL-Columbia.github.com/formhub.R/demo/Basics_of_formhub.R.html), I recommend that you read that first.
+ona.R makes is easy to download and work with datasets on [ona](https://ona.io). After downloading, ona.R post-processes your dataset to convert the different columns to the correct type, which it derives from the `type` you specified during the creation of your XLSform. If you haven't read the [basics document](https://github.com/onaio/ona.R/demo/Basics_of_ona.R.html), I recommend that you read that first.
 
 Let us illustrate this with a simple example:
 
 
 ```r
-library(formhub)
+library(ona)
 # Download the dataset named good_eats in the account of mberg
-good_eats_data <- formhubDownload("good_eats", "mberg")
+good_eats_data <- onaDownload("good_eats", "mberg","mberg")
 ```
 
 
