@@ -24,7 +24,7 @@ setClass("onaData", representation("data.frame", form="data.frame"), contains="d
 #' @return A SpatialPointsDataFrame representation of this ona Object
 #' @examples
 #' good_eats_data <- as.data.frame(onaDownload("good_eats", "mberg","mberg"))
-#' class(ge_spdf) # "data.frame"
+#' class(good_eats_data) # "data.frame"
 as.data.frame.onaData <- function(fhD, ...) {
    data.frame(setNames(fhD@.Data, names(fhD)))
 }
