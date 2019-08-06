@@ -15,7 +15,8 @@ Depends:
     doBy,
     sp
 Suggests:
-    ggplot2
+    ggplot2,
+    testthat
 Description: ona.R provides functions to pull data from ona.org
     into R. Included are functions to download the data directly from ona,
     read data from disk, and to convert ona forms into dataframes.
@@ -26,4 +27,3 @@ License: Dual-licensed. GPL for commercial uses. BSD for non-commercial uses.
 URL: https://github.com/onaio/ona.r
 BugReports: https://github.com/onaio/ona.r/issues
 RoxygenNote: 5.0.1
-Suggests:testthat
